@@ -1,0 +1,48 @@
+/**
+ * File name: PathPhotoSource.h
+ * Project: Liquid Flow (A photo management software)
+ *
+ * Copyright (C) 2022 Iurie Nistor
+ *
+ * This file is part of Liquid Flow.
+ *
+ * GeonKick is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
+#idndef LQUID_FLOW_PATH_PHOTO_SOURCE_H
+#define LQUID_FLOW_PATH_PHOTO_SOURCE_H
+
+#include "PhotoSource.h"
+
+#include <QString>
+
+class PathPhotoSource : public PhotoSource {
+public:        
+        PhotoSource(const QString &path = QString());
+        ~PhotoSource() = default;
+        void setPath(const QString &path);
+        const QString getPath() const;
+        void setIsRecursively(bool recursively = true);
+        bool getIsRecursively() const;
+        bool setHasPreviews(bool previews = true);
+        bool getHasPreviews() const;
+
+private:
+        QString sourcePath;
+        bool isRecursively;
+        bool hasPreviews;
+};
+
+#endif // LQUID_FLOW_PATH_PHOTO_SOURCE_H
