@@ -1,12 +1,12 @@
 /**
  * File name: PathWorker.cpp
- * Project: Liquid Flow (A photo management software)
+ * Project: Neofluxon (a photography workflow software)
  *
- * Copyright (C) 2023 Iurie Nistor
+ * Copyright (C) 2026 Iurie Nistor
  *
- * This file is part of Liquid Flow.
+ * This file is part of Neofluxon.
  *
- * GeonKick is free software; you can redistribute it and/or modify
+ * Neofluxon is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
@@ -58,7 +58,7 @@ void PathWorker::run()
                 auto file = QFileInfo(it.next());
                 if (!file.exists())
                         continue;
-                Liquid FlowApplication::guiSemaphore().acquire();
+                NeofluxonApplication::guiSemaphore().acquire();
                 auto thumbWorker = new PhotoWorker(file.filePath(), photoWorkerSem);
                 QObject::connect(thumbWorker,
                                  &PhotoWorker::photoAvailable,

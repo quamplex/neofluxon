@@ -1,12 +1,12 @@
 /**
  * File name: LqfPanel.cpp
- * Project: Liquid Flow (a photography software)
+ * Project: Neofluxon (a photography workflow software)
  *
- * Copyright (C) 2022 Iurie Nistor
+ * Copyright (C) 2026 Iurie Nistor
  *
- * This file is part of Liquid Flow.
+ * This file is part of Neofluxon.
  *
- * GeonKick is free software; you can redistribute it and/or modify
+ * Neofluxon is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.

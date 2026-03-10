@@ -1,12 +1,12 @@
 /**
  * File name: PhotoSourceLoader.cpp
- * Project: Liquid Flow (A photo management software)
+ * Project: Neofluxon (a photography workflow software)
  *
- * Copyright (C) 2023 Iurie Nistor
+ * Copyright (C) 2026 Iurie Nistor
  *
- * This file is part of Liquid Flow.
+ * This file is part of Neofluxon.
  *
- * GeonKick is free software; you can redistribute it and/or modify
+ * Neofluxon is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
@@ -51,7 +51,7 @@ PhotoSourceLoader::~PhotoSourceLoader()
 {
         pathWorker->stop();
         threadPool->clear();
-        Liquid FlowApplication::releaseGuiSemaphore();
+        NeofluxonApplication::releaseGuiSemaphore();
         threadPool->waitForDone();
 }
 
@@ -73,13 +73,13 @@ void PhotoSourceLoader::setSource(const PhotoSource* source)
         
         pathWorker->stop();
         threadPool->clear();
-        Liquid FlowApplication::releaseGuiSemaphore();
+        NeofluxonApplication::releaseGuiSemaphore();
 
         lflow_debug() << "wait for done...";
         threadPool->waitForDone();
 
         lflow_debug() << "process events...";
-        Liquid FlowApplication::processEvents();
+        NeofluxonApplication::processEvents();
         lflow_debug() << "process events done";
 
         emit pathChanged(rootPath);

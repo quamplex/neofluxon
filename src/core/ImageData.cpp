@@ -1,12 +1,12 @@
 /**
  * File name: ImageData.cpp
- * Project: Liquid Flow (A photo management software)
+ * Project: Neofluxon (a photography workflow software)
  *
- * Copyright (C) 2023 Iurie Nistor
+ * Copyright (C) 2026 Iurie Nistor
  *
- * This file is part of Liquid Flow.
+ * This file is part of Neofluxon.
  *
- * GeonKick is free software; you can redistribute it and/or modify
+ * Neofluxon is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
@@ -74,7 +74,7 @@ QImage ImageData::thumbnail() const
 {
         auto img = imageDecoder->thumbnail();
         if (!img.isNull() && img.size().isValid()) {
-                auto imgSize = Liquid FlowApplication::getAppInstance()->thumbnailsSize();
+                auto imgSize = NeofluxonApplication::getAppInstance()->thumbnailsSize();
                 return imageDecoder->thumbnail().scaled(imgSize,
                                                         Qt::KeepAspectRatio/*,
                                                                              Qt::SmoothTransformation*/);
@@ -86,7 +86,7 @@ QString ImageData::getPreviewPath() const
 {
         if (getUniqueId().isEmpty())
                 return QString();
-        auto previewPath = Liquid FlowApplication::getAppInstance()->getPreviewPath();
+        auto previewPath = NeofluxonApplication::getAppInstance()->getPreviewPath();
         return previewPath + QDir::separator() + getUniqueId() + ".jpg";
 }
 
@@ -94,8 +94,8 @@ bool ImageData::createImagePreview() const
 {
         if (getPreviewPath().isEmpty())
                 return false;
-        auto previewSize = Liquid FlowApplication::getAppInstance()->previewSize();
-        auto previewQuality = Liquid FlowApplication::getAppInstance()->previewQuality();
+        auto previewSize = NeofluxonApplication::getAppInstance()->previewSize();
+        auto previewQuality = NeofluxonApplication::getAppInstance()->previewQuality();
         auto previewImage = image().convertToFormat(QImage::Format_RGB888);
         if (previewImage.width() > previewSize.width()
             || previewImage.height() <= previewSize.height())

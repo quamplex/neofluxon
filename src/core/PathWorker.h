@@ -1,12 +1,12 @@
 /**
  * File name: PathWorker.h
- * Project: Liquid Flow (A photo management software)
+ * Project: Neofluxon (a photography workflow software)
  *
- * Copyright (C) 2023 Iurie Nistor
+ * Copyright (C) 2026 Iurie Nistor
  *
- * This file is part of Liquid Flow.
+ * This file is part of Neofluxon.
  *
- * GeonKick is free software; you can redistribute it and/or modify
+ * Neofluxon is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
@@ -24,7 +24,7 @@
 #ifndef PATH_WORKER_H
 #define PATH_WORKER_H
 
-#include "Liquid Flow.h"
+#include "Neofluxon.h"
 
 #include <QObject>
 #include <QRunnable>

@@ -1,12 +1,12 @@
 /**
  * File name: JpgImageDecoder.cpp
- * Project: Liquid Flow (A photo management software)
+ * Project: Neofluxon (a photography workflow software)
  *
- * Copyright (C) 2023 Iurie Nistor
+ * Copyright (C) 2026 Iurie Nistor
  *
- * This file is part of Liquid Flow.
+ * This file is part of Neofluxon.
  *
- * GeonKick is free software; you can redistribute it and/or modify
+ * Neofluxon is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
@@ -38,7 +38,7 @@ JpgImageDecoder::JpgImageDecoder(const QString &path)
 QImage JpgImageDecoder::thumbnail() const
 {
         //LIQUIDFLOW_LOG_DEBUG() << path();
-        auto size = Liquid FlowApplication::getAppInstance()->thumbnailsSize();
+        auto size = NeofluxonApplication::getAppInstance()->thumbnailsSize();
         return QImage(path()).scaled(size,
                                      Qt::KeepAspectRatio/*,
                                                           Qt::SmoothTransformation*/);
