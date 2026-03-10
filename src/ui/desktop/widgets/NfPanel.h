@@ -1,5 +1,5 @@
 /**
- * File name: LqfPanel.cpp
+ * File name: NfPanel.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,30 +21,40 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "LqfPanel.h"
+#ifndef NF_PANEL_H
+#define NF_PANEL_H
 
+#include <QFrame>
 #include <QWidget>
-#include <QGraphicsDropShadowEffect>
 
 namespace Desktop {
 
-LqfPanel::LqfPanel(QWidget *parent, PanelPosition position)
-        : QFrame(parent)
-        , panelPosition{position}
-{
-        setAttribute(Qt::WA_StyledBackground, true);
-        setProperty("side", panelPosition == PanelPosition::Left ? "left" : "right");
+class NfPanel : public QFrame {
+        Q_OBJECT
 
-        //        setStyleSheet("  background-color: #fff;"
-        //                     );
+public:
+        enum class PanelPosition {
+                AlignLeft,
+                AlignRight
+        };
 
-        /*auto shadow = new QGraphicsDropShadowEffect(this);
-        shadow->setBlurRadius(15);
-        shadow->setColor(QColor(0, 0, 0,
-                                panelPosition == PanelPosition::Left ? 35 : 30));
-        shadow->setOffset(panelPosition == PanelPosition::Left ? 3 : -3, 0);
-        setGraphicsEffect(shadow);*/
-}
+        explicit NfPanel(QWidget *parent = nullptr,
+                         PanelPosition position = PanelPosition::AlignLeft);
+        virtual ~NfPanel() = default;
+
+        PanelPosition panelPosition() const;
+        void setPanelPosition(PanelPosition position);
+
+signals:
+        void panelPositionChanged(PanelPosition position);
+
+protected:
+        void updateAppearance();
+
+private:
+        PanelPosition m_panelPosition;  // Qt naming convention: m_ prefix
+};
 
 } // namespace Desktop
 
+#endif // NF_PANEL_H

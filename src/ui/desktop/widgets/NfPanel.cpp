@@ -1,5 +1,5 @@
 /**
- * File name: MainWindow.h
+ * File name: NfPanel.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,30 +21,42 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef LQF_PANEL_H
-#define LQF_PANEL_H
-
-#include <QFrame>
+#include "NfPanel.h"
 
 namespace Desktop {
 
-class LqfPanel : public QFrame {
+NfPanel::NfPanel(QWidget *parent, PanelPosition position)
+        : QFrame(parent),
+          m_panelPosition(position)
+{
+        setAttribute(Qt::WA_StyledBackground, true);
+        updateAppearance();
+}
 
-        Q_OBJECT
+NfPanel::PanelPosition NfPanel::panelPosition() const
+{
+        return m_panelPosition;
+}
 
- public:
-        enum class PanelPosition {
-                Left,
-                Right,
-        };
+void NfPanel::setPanelPosition(PanelPosition position)
+{
+        if (m_panelPosition != position) {
+                m_panelPosition = position;
+                updateAppearance();
+                emit panelPositionChanged(position);
+        }
+}
 
-        explicit LqfPanel(QWidget *parent = nullptr,
-                          PanelPosition position = PanelPosition::Left);
-
-private:
-        PanelPosition panelPosition;
-};
+void NfPanel::updateAppearance()
+{
+        switch (m_panelPosition) {
+        case PanelPosition::AlignLeft:
+                setProperty("side", "left");
+                break;
+        case PanelPosition::AlignRight:
+                setProperty("side", "right");
+                break;
+        }
+}
 
 } // namespace Desktop
-
-#endif // LQF_PANEL_H

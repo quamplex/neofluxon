@@ -22,7 +22,7 @@
  */
 
 #include "LqfMainWindow.h"
-#include "LqfPanel.h"
+#include "NfPanel.h"
 
 #include <QFrame>
 #include <QWidget>
@@ -120,7 +120,7 @@ LqfMainWindow::LqfMainWindow()
         hLayout->setSpacing(0);
 
         // Left panel (shadow → centre)
-        auto leftPanel = new LqfPanel(nullptr, LqfPanel::PanelPosition::Left);
+        auto leftPanel = new NfPanel(nullptr, NfPanel::PanelPosition::AlignLeft);
         leftPanel->setFixedWidth(250);
         hLayout->addWidget(leftPanel);
         leftPanel->show();
@@ -136,7 +136,7 @@ LqfMainWindow::LqfMainWindow()
         hLayout->addWidget(centralWidget);   // stretch factor 1 → fill width
 
         // Right panel (shadow ← centre)
-        auto rightPanel = new LqfPanel(nullptr, LqfPanel::PanelPosition::Right);
+        auto rightPanel = new NfPanel(nullptr, NfPanel::PanelPosition::AlignRight);
         rightPanel->setFixedWidth(250);
         hLayout->addWidget(rightPanel);
 
