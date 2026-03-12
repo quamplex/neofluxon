@@ -18,10 +18,14 @@ QPushButton:pressed {
 
 /* Top bar and panels */
 
-#NfTopBar, #NfPanel {
+#NfTopBar, #NfPanel, #NfMainMenu {
     background-color: #242632;
     border: 1px solid #323546;
     border-radius: 2px;
+}
+
+#NfMainMenu {
+    border: none;
 }
 
 /* Top bar */

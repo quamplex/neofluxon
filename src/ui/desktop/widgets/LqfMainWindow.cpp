@@ -24,6 +24,7 @@
 #include "LqfMainWindow.h"
 #include "NfTopBar.h"
 #include "NfPanel.h"
+#include "NfLeftPanel.h"
 
 #include <QFrame>
 #include <QWidget>
@@ -57,7 +58,7 @@ LqfMainWindow::LqfMainWindow()
         hLayout->setSpacing(0);
 
         // Left panel (shadow → centre)
-        auto leftPanel = new NfPanel(nullptr, NfPanel::PanelPosition::AlignLeft);
+        auto leftPanel = new NfLeftPanel(this);
         hLayout->addWidget(leftPanel);
 
         // Central widget – any background you like.
@@ -82,7 +83,6 @@ LqfMainWindow::LqfMainWindow()
         topBar->raise();
 
         setCentralWidget(container);
-        //showMaximized();
 }
 
 LqfMainWindow::~LqfMainWindow()
