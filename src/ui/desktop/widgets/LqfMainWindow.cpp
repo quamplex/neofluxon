@@ -36,11 +36,10 @@ namespace Desktop {
 LqfMainWindow::LqfMainWindow()
         : QMainWindow()
 {
+        setWindowTitle("Neofluxon");
+
         resize(1400, 800);
         setGeometry(200, 200, 1400, 800);
-
-        setWindowFlags(Qt::FramelessWindowHint);
-        setAttribute(Qt::WA_TranslucentBackground);
 
         auto container = new QWidget(this);
         container->setObjectName("container");

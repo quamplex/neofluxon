@@ -1,0 +1,111 @@
+QWidget {
+    background-color: #1e1f28;
+    color: #e6eaf2;
+}
+
+QPushButton:hover {
+    border: 1px solid #3ddcff;
+}
+
+QPushButton:pressed {
+    background-color: #3ddcff;
+    color: #0b0d12;
+}
+
+#container {
+    border-radius: 8px;
+}
+
+/* Top bar and panels */
+
+#NfTopBar, #NfPanel {
+    background-color: #242632;
+    border: 1px solid #323546;
+    border-radius: 2px;
+}
+
+/* Top bar */
+
+#NfTopBar {
+    border-top: 3px solid #323546;
+    border-left: 1px solid #323546;
+    border-right: 1px solid #323546;
+
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+
+    margin-bottom: 2px;
+}
+
+#NfTopBar QPushButton#btnMinimize,
+#NfTopBar QPushButton#btnMaximize,
+#NfTopBar QPushButton#btnClose {
+    background-color: #8f91a0;
+    border-radius: 4px;
+    color: #1e1f28; /* matches your dark background */
+}
+
+#NfTopBar QPushButton#btnClose {
+    background-color: #c0c0c0;
+}
+
+#NfTopBar QPushButton:hover {
+    filter: brightness(1.2); /* subtle brighten on hover */
+}
+
+#NfTopBar QPushButton:pressed {
+    filter: brightness(0.9); /* subtle darken on press */
+}
+
+/* Side panels */
+
+#NfPanel {
+    width: 250px;
+    min-width: 250px;
+    max-width: 250px;
+
+    /* subtle checker pattern */
+    background-image: linear-gradient(
+        45deg,
+        #2e3140 25%,
+        transparent 25%,
+        transparent 75%,
+        #2e3140 75%,
+        #2e3140
+    ),
+    linear-gradient(
+        45deg,
+        #2e3140 25%,
+        transparent 25%,
+        transparent 75%,
+        #2e3140 75%,
+        #2e3140
+    );
+
+    background-size: 4px 4px;
+    background-position: 0 0, 2px 2px;
+}
+
+/* Left panel */
+
+#NfPanel[side="left"] {
+    border-left: 1px solid #323546;
+    border-bottom: 1px solid #323546;
+    border-bottom-left-radius: 8px;
+}
+
+/* Right panel */
+
+#NfPanel[side="right"] {
+    border-right: 1px solid #323546;
+    border-bottom: 1px solid #323546;
+    border-bottom-right-radius: 8px;
+}
+
+/* Central area */
+
+#NfCentralWidget {
+    background-color: #20222e;
+    border-bottom: 1px solid #323546;
+}
+

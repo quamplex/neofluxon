@@ -39,11 +39,11 @@ QDirIterator it(":", QDirIterator::Subdirectories);
 while (it.hasNext()) {
     qDebug() << "Found resource:" << it.next();
 }
-        
-        qDebug() << QDir(":/").entryList();
-        qDebug() << QFile(":/style-desktop.qcss").exists();
 
-        QFile styleFile(":/style-desktop.qcss");  // matches the prefix "/" + file name
+        qDebug() << QDir(":/").entryList();
+        qDebug() << QFile(":/style-cool-teal-desktop.qcss").exists();
+
+        QFile styleFile(":/style-cool-teal-desktop.qcss");  // matches the prefix "/" + file name
         if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 QString style = QString::fromUtf8(styleFile.readAll());
                 setStyleSheet(style);  // applies to entire application
