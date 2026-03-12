@@ -23,7 +23,9 @@
 
 #include "NfTopBar.h"
 
-#include <QStyle>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPixmap>
 
 namespace Desktop {
 
@@ -31,6 +33,15 @@ NfTopBar::NfTopBar(QWidget *parent)
         : NfStyledWidget(parent)
 {
         setObjectName("NfTopBar");
+
+        auto topBarLayout = new QHBoxLayout(this);
+
+        auto logoLabel = new QLabel(this);
+        logoLabel->setAttribute(Qt::WA_TranslucentBackground);
+        logoLabel->setPixmap(QPixmap(":/logo.png"));
+        topBarLayout->addWidget(logoLabel);
+
+        setLayout(topBarLayout);
 }
 
 } // namespace Desktop
