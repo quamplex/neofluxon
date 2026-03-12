@@ -1,5 +1,5 @@
 /**
- * File name: NfPanel.cpp
+ * File name: NfStyledWidget.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,44 +21,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfPanel.h"
-
-#include <QStyle>
+#include "NfStyledWidget.h"
 
 namespace Desktop {
 
-NfPanel::NfPanel(QWidget *parent, PanelPosition position)
-        : NfStyledWidget(parent)
-        , m_panelPosition{position}
+NfStyledWidget::NfStyledWidget(QWidget *parent)
+        : QFrame(parent)
 {
-        setObjectName("NfPanel");
-        updateAppearance();
-}
-
-NfPanel::PanelPosition NfPanel::panelPosition() const
-{
-        return m_panelPosition;
-}
-
-void NfPanel::setPanelPosition(PanelPosition position)
-{
-        if (m_panelPosition != position) {
-                m_panelPosition = position;
-                updateAppearance();
-                emit panelPositionChanged(position);
-        }
-}
-
-void NfPanel::updateAppearance()
-{
-        switch (m_panelPosition) {
-        case PanelPosition::AlignLeft:
-                setProperty("side", "left");
-                break;
-        case PanelPosition::AlignRight:
-                setProperty("side", "right");
-                break;
-        }
+        setAttribute(Qt::WA_StyledBackground, true);
 }
 
 } // namespace Desktop

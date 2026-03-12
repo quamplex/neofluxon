@@ -24,12 +24,11 @@
 #ifndef NF_PANEL_H
 #define NF_PANEL_H
 
-#include <QFrame>
-#include <QWidget>
+#include "NfStyledWidget.h"
 
 namespace Desktop {
 
-class NfPanel : public QFrame {
+class NfPanel : public NfStyledWidget {
         Q_OBJECT
 
 public:

@@ -22,6 +22,7 @@
  */
 
 #include "LqfMainWindow.h"
+#include "NfTopBar.h"
 #include "NfPanel.h"
 
 #include <QFrame>
@@ -31,18 +32,6 @@
 #include <QHBoxLayout>
 
 namespace Desktop {
-
-// ---------------------------------------------------------------
-// Helpers (unchanged except for a slightly stronger shadow)
-// ---------------------------------------------------------------
-static QFrame* buildTopbar(int height)
-{
-        QFrame *panel = new QFrame;
-        panel->setFixedHeight(height);
-        panel->setObjectName("NfTopBar");
-        panel->setAttribute(Qt::WA_StyledBackground, true);
-        return panel;
-}
 
 LqfMainWindow::LqfMainWindow()
         : QMainWindow()
@@ -56,22 +45,14 @@ LqfMainWindow::LqfMainWindow()
         auto container = new QWidget(this);
         container->setObjectName("container");
 
-        // -----------------------------------------------------------
-        // Vertical layout – top bar + content area
-        // -----------------------------------------------------------
         auto *vLayout = new QVBoxLayout(container);
         vLayout->setContentsMargins(0,0,0,0);
         vLayout->setSpacing(0);   // no extra vertical space; shadow draws into the gap
 
-        // -----------------------------------------------------------
-        //  Add the top bar (shadow goes downwards)
-        // -----------------------------------------------------------
-        auto topBar = buildTopbar(48);
+        auto topBar = new NfTopBar();
+        topBar->setFixedHeight(48);
         vLayout->addWidget(topBar);
 
-        // -----------------------------------------------------------
-        //  Horizontal layout for left / centre / right
-        // -----------------------------------------------------------
         auto *hLayout = new QHBoxLayout;
         hLayout->setContentsMargins(0,0,0,0);
         hLayout->setSpacing(0);
