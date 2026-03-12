@@ -39,36 +39,8 @@ static QFrame* buildTopbar(int height)
 {
         QFrame *panel = new QFrame;
         panel->setFixedHeight(height);
-        panel->setObjectName("topBar");
-
-        // Make sure the style‑sheet background is really painted
+        panel->setObjectName("NfTopBar");
         panel->setAttribute(Qt::WA_StyledBackground, true);
-
-        // Background colour – change to match your theme
-
-        /*panel->setStyleSheet(
-                             "QFrame {"
-                             "  background-color: #201f27;"
-                             "  border: 3px solid #23222b;"
-                             "  border-top: 5px solid #23222b;"
-                             "  border-radius: 10px;"
-                             "}"
-                             );*/
-
-        panel->setStyleSheet(
-                             ""
-                             "  background-color: #201f27;"
-                             "  border-left: 3px solid #23222b;"
-                             "  border-right: 3px solid #23222b;"
-                             "  border-bottom: 3px solid #23222b;"
-                             "  border-top: 3px solid #23222b;"
-
-                             "  border-top-left-radius: 8px;"
-                             "  border-top-right-radius: 8px;"
-                             "  border-bottom-left-radius: 0px;"
-                             "  border-bottom-right-radius: 0px;"
-                             );
-
         return panel;
 }
 
@@ -78,24 +50,11 @@ LqfMainWindow::LqfMainWindow()
         resize(1400, 800);
         setGeometry(200, 200, 1400, 800);
 
-        // Give the whole window a dark colour – this will be the fallback
-        // if anything else fails to paint.
-        //setStyleSheet("background-color:#18171e;");
-
         setWindowFlags(Qt::FramelessWindowHint);
         setAttribute(Qt::WA_TranslucentBackground);
 
         auto container = new QWidget(this);
         container->setObjectName("container");
-
-        setStyleSheet(
-                      "#container {"
-                      "  background-color: #18171e;"
-                      "  border: 3px;"
-                      "  border-top: 5px;"
-                      "  border-radius: 10px;"
-                      "}"
-                      );
 
         // -----------------------------------------------------------
         // Vertical layout – top bar + content area
@@ -110,8 +69,6 @@ LqfMainWindow::LqfMainWindow()
         auto topBar = buildTopbar(48);
         vLayout->addWidget(topBar);
 
-        vLayout->addSpacing(2);
-
         // -----------------------------------------------------------
         //  Horizontal layout for left / centre / right
         // -----------------------------------------------------------
@@ -121,28 +78,22 @@ LqfMainWindow::LqfMainWindow()
 
         // Left panel (shadow → centre)
         auto leftPanel = new NfPanel(nullptr, NfPanel::PanelPosition::AlignLeft);
-        leftPanel->setFixedWidth(250);
         hLayout->addWidget(leftPanel);
-        leftPanel->show();
 
         // Central widget – any background you like.
         auto *centralWidget = new QWidget;
-        centralWidget->setStyleSheet(
-                                     "background-color:#18171e;"   // same colour as window, or change it
-                                     "border: 0px;"
-                                     "border-bottom: 3px solid #23222b;"
-                                     );
+        centralWidget->setObjectName("NfCentralWidget");
 
         hLayout->addWidget(centralWidget);   // stretch factor 1 → fill width
 
         // Right panel (shadow ← centre)
         auto rightPanel = new NfPanel(nullptr, NfPanel::PanelPosition::AlignRight);
-        rightPanel->setFixedWidth(250);
         hLayout->addWidget(rightPanel);
 
         // Wrap the horizontal layout in a dummy widget so it can be added
         // to the vertical layout as a single item.
         QWidget *contentWrapper = new QWidget;
+        contentWrapper->setAttribute(Qt::WA_TranslucentBackground);
         contentWrapper->setLayout(hLayout);
         vLayout->addWidget(contentWrapper);   // stretch factor 1 → fill remaining height
 
@@ -151,7 +102,7 @@ LqfMainWindow::LqfMainWindow()
         topBar->raise();
 
         setCentralWidget(container);
-        //        showMaximized();
+        //showMaximized();
 }
 
 LqfMainWindow::~LqfMainWindow()

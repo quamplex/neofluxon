@@ -24,23 +24,31 @@
 #include "LqfApplication.h"
 
 #include <QProcessEnvironment>
-#include <QFile>
+
 #include <QDebug>
+#include <QFile>
+#include <QDir>
+#include <QDirIterator>
 
 namespace Desktop {
 
 LqfApplication::LqfApplication(int &argc, char **argv, int falgs)
         : QApplication(argc, argv, falgs)
 {
-        auto stylePath = QCoreApplication::applicationDirPath()
-                + "/resources/style-desktop.qcss";
-        qDebug() << "stylePath: " << stylePath;
+QDirIterator it(":", QDirIterator::Subdirectories);
+while (it.hasNext()) {
+    qDebug() << "Found resource:" << it.next();
+}
+        
+        qDebug() << QDir(":/").entryList();
+        qDebug() << QFile(":/style-desktop.qcss").exists();
 
-        QFile styleFile(stylePath);
-        if(styleFile.open(QIODevice::ReadOnly)) {
-                QString style = QLatin1String(styleFile.readAll());
-                qApp->setStyleSheet(style);
-                qDebug() << "style: " << style;
+        QFile styleFile(":/style-desktop.qcss");  // matches the prefix "/" + file name
+        if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QString style = QString::fromUtf8(styleFile.readAll());
+                setStyleSheet(style);  // applies to entire application
+        } else {
+                qDebug() << "Failed to open style-desktop.qcss!";
         }
 }
 

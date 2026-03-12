@@ -24,37 +24,17 @@
 #include "LqfMainWindow.h"
 #include "LqfApplication.h"
 
+#include <QFile>
+
 using namespace Desktop;
 
 int main(int argc, char **argv)
 {
         LqfApplication app(argc, argv);
 
-        QString globalStyle = R"(
-/* Set the base font and text color for all widgets */
-* {
-    font-family: "Roboto", "Segoe UI", "Arial", sans-serif;
-    font-size: 10pt;
-    color: #444;  /* dark gray text */
-}
-
-/* QMainWindow background */
-QMainWindow, QCentralWidget, PhotoEditor {
-    background-color: #191820;
-}
-
-QWidget {
-    background-color: #23232b;
-}
-
-
-
-)";
-
-        //        app.setStyleSheet(globalStyle);
-
-
         LqfMainWindow mainWin;
         mainWin.show();
+
+
         return app.exec();
 }

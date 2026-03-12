@@ -23,13 +23,17 @@
 
 #include "NfPanel.h"
 
+#include <QStyle>
+
 namespace Desktop {
 
 NfPanel::NfPanel(QWidget *parent, PanelPosition position)
-        : QFrame(parent),
-          m_panelPosition(position)
+        : QFrame(parent)
+        , m_panelPosition{position}
 {
         setAttribute(Qt::WA_StyledBackground, true);
+        setObjectName("NfPanel");
+
         updateAppearance();
 }
 
