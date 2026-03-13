@@ -25,6 +25,9 @@
 #include "NfTopBar.h"
 #include "NfPanel.h"
 #include "NfLeftPanel.h"
+#include "NfStyledWidget.h"
+#include "NfBrowserModel.h"
+#include "NfBrowserView.h"
 
 #include <QFrame>
 #include <QWidget>
@@ -62,8 +65,12 @@ LqfMainWindow::LqfMainWindow()
         hLayout->addWidget(leftPanel);
 
         // Central widget – any background you like.
-        auto *centralWidget = new QWidget;
+        auto model = new NfBrowserModel(this);
+        model->setPhotoCount(100000);
+
+        auto *centralWidget = new NfBrowserView(this);
         centralWidget->setObjectName("NfCentralWidget");
+        centralWidget->setModel(model);
 
         hLayout->addWidget(centralWidget);   // stretch factor 1 → fill width
 
