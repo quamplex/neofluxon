@@ -113,3 +113,57 @@ QPushButton:pressed {
     border-bottom: 1px solid #323546;
 }
 
+/* Settings Dialog */
+
+QDialog {
+    background-color: #1e1f28;
+    color: #e6eaf2;
+    border-radius: 8px;
+}
+
+QTabWidget::pane {
+    border: 1px solid #323546;
+    background-color: #242632;
+    border-radius: 6px;
+}
+
+QTabBar::tab {
+    background: #2a2c3a;
+    border: 1px solid #323546;
+    padding: 6px 12px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    margin-right: 2px;
+}
+
+QTabBar::tab:selected {
+    background: #3ddcff;
+    color: #0b0d12;
+}
+
+QPushButton {
+    background-color: #242632;
+    border: 1px solid #323546;
+    border-radius: 4px;
+    padding: 4px 12px;
+}
+
+QPushButton:hover {
+    border: 1px solid #3ddcff;
+}
+
+QPushButton:pressed {
+    background-color: #3ddcff;
+    color: #0b0d12;
+}
+
+QLineEdit, QComboBox, QSlider {
+    background-color: #20222e;
+    color: #e6eaf2;
+    border: 1px solid #323546;
+    border-radius: 4px;
+}
+
+QCheckBox {
+    padding: 2px;
+}

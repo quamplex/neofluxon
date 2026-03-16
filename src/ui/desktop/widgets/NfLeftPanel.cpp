@@ -23,6 +23,7 @@
 
 #include "NfLeftPanel.h"
 #include "NfMainMenu.h"
+#include "NfSettingsDialog.h"
 
 #include <QVBoxLayout>
 
@@ -32,7 +33,24 @@ NfLeftPanel::NfLeftPanel(QWidget *parent)
         : NfPanel(parent, NfPanel::PanelPosition::AlignLeft)
 {
         auto panelLayout = new QVBoxLayout(this);
-        panelLayout->addWidget(new NfMainMenu(this));
+
+        auto mainMenu = new NfMainMenu(this);
+        panelLayout->addWidget(mainMenu);
+
+        QObject::connect(mainMenu, &NfMainMenu::settingsClicked, [this]() {
+                // create dialog, parent is the main window
+                NfSettingsDialog dlg(this);
+
+                // execute modal dialog
+                if (dlg.exec() == QDialog::Accepted) {
+                        // user clicked OK, retrieve settings here if needed
+                        //int diskSize = dlg.diskCacheSize();
+                        //int ramLimit = dlg.ramCacheLimit();
+                        //bool lazy = dlg.lazyLoading();
+                        // apply these settings to ThumbnailProvider or app
+                }
+        });
+
         panelLayout->addStretch();
         setLayout(panelLayout);
 }

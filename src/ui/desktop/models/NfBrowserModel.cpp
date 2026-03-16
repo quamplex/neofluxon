@@ -59,10 +59,11 @@ void NfBrowserModel::setPhotoCount(int count)
 
         QPixmap pixmap(":/thumb_w160.jpg");
 
-        for (int i = 0; i < count; ++i)
+        for (int i = 0; i < count; ++i) {
                 m_photos.append(pixmap);
+        }
 
         endResetModel();
 }
 
-} // namesapce Desktop
+} // namespace Desktop
