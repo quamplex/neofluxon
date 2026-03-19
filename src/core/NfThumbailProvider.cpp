@@ -1,5 +1,5 @@
 /**
- * File name: NfBrowserModel.h
+ * File name: NfThumbnailProvider.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,33 +21,41 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_BROWSER_MODEL_H
-#define NF_BROWSER_MODEL_H
+#include "NfThumbnailProvider.h"
+#include "ForegroundThreadPool.h"
 
-#include <QAbstractListModel>
-#include <QPixmap>
-#include <QVector>
+namespace NfCore {
 
-namespace Desktop {
-
-class NfThumbnailProvider;
-
-class NfBrowserModel : public QAbstractListModel
+NfThumbnailProvider::NfThumbnailProvider()
 {
-        Q_OBJECT
-
-public:
-        explicit NfBrowserModel(QObject* parent = nullptr, NfThumbnailProvider* thumbnailProvider);
-
-        int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-        QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
-
-        void setPhotoCount(int count);
-
-private:
-        NfThumbnailProvider* m_thumbnailProvider;
 };
 
-} // namespace Desktop
+NfThumbnailProvider::~NfThumbnailProvider()
+{
+}
 
-#endif // NF_BROWSER_MODEL_H
+void NfThumbnailProvider::setThumbnailReadyCallback(ThumbnailReadyCallback callback)
+{
+        m_thumbnailReadyCallback = std::move(callback);
+}
+
+NfThumbnail NfThumbnailProvider::getThumbnailAt(size_t index) const
+{
+        return {};
+}
+
+size_t NfThumbnailProvider::numberOfThumbnails() const
+{
+        return 0;
+}
+
+void NfThumbnailProvider::requestThumbnails(size_t startIndex, size_t count)
+{
+}
+
+void NfThumbnailProvider::generateThumbnail(size_t index)
+{
+
+}
+
+} // namespace NfCore

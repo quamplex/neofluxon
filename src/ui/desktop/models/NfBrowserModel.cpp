@@ -22,19 +22,36 @@
  */
 
 #include "NfBrowserModel.h"
+#include "NfThumbnailProvider.h"
+
+using namespace NfCore;
 
 namespace Desktop {
 
-NfBrowserModel::NfBrowserModel(QObject* parent)
+NfBrowserModel::NfBrowserModel(QObject* parent, NfThumbnailProvider* thumbnailProvider)
         : QAbstractListModel(parent)
+        , m_thumbnailProvider{thumbnailProvider}
 {
+        m_thumbnailProvider->setThumbnailReadyCallback([this](size_t index){
+                // Queue the thumbnail update on the main GUI thread
+                // Only do this if the thumbnail is currently visible.
+                QMetaObject::invokeMethod(this, [this, index]() {
+                        if (!isIndexVisible(index)) {
+                                // User scrolled away, drop this thumbnail.
+                                return;
+                        }
+
+                        QModelIndex modelIndex = this->index(index);
+                        emit dataChanged(modelIndex, modelIndex, {Qt::DecorationRole});
+                }, Qt::QueuedConnection);
+        });
 }
 
 int NfBrowserModel::rowCount(const QModelIndex& parent) const
 {
         if (parent.isValid())
                 return 0;
-        return m_photos.size();
+        return m_thumbnailProvider->numberOfThubnails();
 }
 
 QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
@@ -43,27 +60,25 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
                 return QVariant();
 
         switch (role) {
-                case Qt::DecorationRole:
-                        return m_photos[index.row()];   // thumbnail pixmap
-                case Qt::DisplayRole:
-                        return QString("Photo %1").arg(index.row() + 1); // optional text
-                default:
-                        return QVariant();
-        }
-}
+        case Qt::DecorationRole: {
+                // Try to get the thumbnail from the core provider
+                auto thumbnail = m_thumbnailProvider->getThumbnailAt(index.row());
 
-void NfBrowserModel::setPhotoCount(int count)
-{
-        beginResetModel();
-        m_photos.clear();
+                if (thumbnail.isNull()) {
+                        // Thumbnail not ready yet → return a placeholder
+                        return QPixmap(160, 120);
+                }
 
-        QPixmap pixmap(":/thumb_w160.jpg");
-
-        for (int i = 0; i < count; ++i) {
-                m_photos.append(pixmap);
+                return thumbnail;
         }
 
-        endResetModel();
+        case Qt::DisplayRole:
+                // Optional text label
+                return QString("Photo %1").arg(index.row() + 1);
+
+        default:
+                return QVariant();
+        }
 }
 
 } // namespace Desktop
