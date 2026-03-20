@@ -1,5 +1,5 @@
 /**
- * File name: PathWorker.h
+ * File name: NfBrowser.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -11,7 +11,7 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it wil be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
@@ -21,35 +21,34 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef PATH_WORKER_H
-#define PATH_WORKER_H
+#include "NfBrowser.h"
+#include "ForegroundThreadPool.h"
 
-#include "Neofluxon.h"
+namespace NfCore {
 
-#include <QObject>
-#include <QRunnable>
-#include <QSemaphore>
-
-#include <atomic>
-
-class PhotoItem;
-
-class PathWorker : public QObject, public QRunnable
+NfBrowser::NfBrowser()
 {
-        Q_OBJECT
-public:
-        PathWorker(QObject *parent);
-        void setPath(const QString path);
-        void stop();
-        void run() override;
-
-signals:
-        void photoAvailable(PhotoItem *item);
-   
-private:
-        QString rootPath;
-        std::atomic<bool> isRunning;
-        QSemaphore photoWorkerSem;
 };
 
-#endif // PATH_WORKER_H
+NfBrowser::~NfBrowser()
+{
+}
+
+void NfBrowser::setThumbnailReadyCallback(ThumbnailReadyCallback callback)
+{
+        m_thumbnailReadyCallback = std::move(callback);
+}
+
+NfThumbnail NfBrowser::getThumbnailAt(size_t index) const
+{
+        m_photoCache->getThumbnail();
+        if ()....
+        return {};
+}
+
+size_t NfBrowser::numberOfThumbnails() const
+{
+        return 0;
+}
+
+} // namespace NfCore

@@ -1,5 +1,5 @@
 /**
- * File name: NfThumbnailProvider.h
+ * File name: NfDiskCache.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,31 +21,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_THUMBNAIL_PROVIDER_H
-#define NF_THUMBNAIL_PROVIDER_H
+#ifndef NF_DISK_CHACHE_H
+#define NF_DISK_CHACHE_H
 
-#include <functional>
+#include "NfThumbnail.h"
+#include "NfPreview.h"
 
 namespace NfCore {
 
-class NfThumbnailProvider {
+class NfPhotoId;
+
+class NfDiskCache {
 public:
-        using ThumbnailReadyCallback = std::function<void(size_t index)>;
+    NfDiskCache() = default;
+    ~NfDiskCache() = default;
+    NfThumbnail getThumbnail(const NfPhotoId& id);
+    NfPreview getPreview(const NfPhotoId& id);
+    void insertThumbnail(const NfThumbnail& thumbnail, NfPhotoId& id);
+    void insertPreview(const NfPreview& preview, NfPhotoId& id);
 
-        NfThumbnailProvider();
-        ~NfThumbnailProvider();
-        void setThumbnailReadyCallback(ThumbnailReadyCallback callback);
-        NfThumbnail getThumbnailAt(size_t index) const;
-        size_t numberOfThumbnails() const;
-        void requestThumbnails(size_t startIndex, size_t count);
-
- protected:
-        void generateThumbnail(size_t index);
-
- private:
-        ThumbnailReadyCallback m_thumbnailReadyCallback;
+private:
 };
 
-} // namespace NfCore
+} // namespace NfDiskCache
 
-#endif // NF_THUMBNAIL_PROVIDER_H
+#endif // NF_DISK_CHACHE_H

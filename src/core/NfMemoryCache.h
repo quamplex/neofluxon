@@ -1,5 +1,5 @@
 /**
- * File name: RawImage.h
+ * File name: NfMemoryCache.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,25 +21,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef LIB_RAW_IMAGE_DECODER_H
-#define LIB_RAW_IMAGE_DECODER_H
+#ifndef NF_MEMORY_CHACHE_H
+#define NF_MEMORY_CHACHE_H
 
-#include "ImageDecoder.h"
+#include "NfThumbnail.h"
+#include "NfPreview.h"
 
-#include "libraw/libraw.h"
+namespace NfCore {
 
-class LibRawImageDecoder : public ImageDecoder
-{
+class NfPhotoId;
+
+class NfMemoryCache {
 public:
-        
-        LibRawImageDecoder(const QString &path);
-        QImage thumbnail() const override;
-        QImage image() const override;
+    NfMemoryCache() = default;
+    ~NfMemoryCache() = default;
+    NfThumbnail getThumbnail(const NfPhotoId& id);
+    NfPreview getPreview(const NfPhotoId& id);
+    void insertThumbnail(const NfThumbnail& thumbnail, NfPhotoId& id);
+    void insertPreview(const NfPreview& preview, NfPhotoId& id);
 
-protected:
-        std::unique_ptr<LibRaw> getProcessor() const;
-        std::unique_ptr<RawImageInfo> loadImageInfo() override;
-        std::unique_ptr<RawImageInfo> loadRawInfo(const std::unique_ptr<LibRaw> &processor);
+private:
 };
 
-#endif // LIB_RAW_IMAGE_DECODER_H
+} // namespace NfMemoryCache
+
+#endif // NF_MEMORY_CHACHE_H

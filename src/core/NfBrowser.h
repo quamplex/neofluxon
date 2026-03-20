@@ -1,5 +1,5 @@
 /**
- * File name: JpgImageDecoder.h
+ * File name: NfBrowser.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,28 +21,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef JPG_IMAGE_DECODER_H
-#define JPG_IAMGE_DECODER_H
+#ifndef NF_THUMBNAIL_PROVIDER_H
+#define NF_THUMBNAIL_PROVIDER_H
 
-#include "ImageDecoder.h"
+#include <functional>
 
-#include <QStringList>
+namespace NfCore {
 
-class QImageReader;
+class NfBrowser {
+public:
+        using ThumbnailReadyCallback = std::function<void(size_t index)>;
+        NfBrowser();
+        ~NfBrowser();
+        void setThumbnailReadyCallback(ThumbnailReadyCallback callback);
+        NfThumbnail getThumbnailAt(size_t index) const;
+        size_t numberOfThumbnails() const;
 
-class JpgImageDecoder : public ImageDecoder
-{
- public:
-        JpgImageDecoder(const QString &path);
-        QImage thumbnail() const override;
-        QImage image() const override;
+ protected:
 
-protected:
-        std::unique_ptr<RawImageInfo> loadImageInfo() override;
-        std::filesystem::file_time_type parseTakenDate(QImageReader &reader,
-                                                       const QStringList &keys) const;
-        double parseLensFocalLengh(QImageReader &reader,
-                                   const QStringList &keys) const;
+ private:
+        ThumbnailReadyCallback m_thumbnailReadyCallback;
 };
 
-#endif // JPG_IAMGE_DECODER_H
+} // namespace NfCore
+
+#endif // NF_THUMBNAIL_PROVIDER_H

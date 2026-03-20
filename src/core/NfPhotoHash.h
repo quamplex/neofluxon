@@ -1,5 +1,5 @@
 /**
- * File name: NfThumbnailProvider.cpp
+ * File name: NfPhotoHash.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,41 +21,29 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfThumbnailProvider.h"
-#include "ForegroundThreadPool.h"
+#ifndef NF_PHOTO_HASH_H
+#define NF_PHOTO_HASH_H
 
-namespace NfCore {
+class NfPhotoHash {
+public:
+    enum class HashType {
+        HashSHA256 = NfHash::HashType::HashSHA256,
+        HashXXHASH64 = NfHash::HashType::HashXXHASH64,
+    };
 
-NfThumbnailProvider::NfThumbnailProvider()
-{
+    NfPhotoHash(HashType type = HashType::HashSHA256);
+    explicit NfPhotoHash(const std::filesystem::path& photoPath,
+                         HashType type = HashType::HashSHA256);
+    explicit NfPhotoHash(const uint8_t* data,
+                         size_t size,
+                         HashType type = HashType::SHA256);
+    bool operator==(const NfPhotoHash& other) const;
+    bool operator!=(const NfPhotoHash& other) const;
+    bool isValid() const;
+    HashType type() const;
+
+private:
+    NfHash m_hash;
 };
 
-NfThumbnailProvider::~NfThumbnailProvider()
-{
-}
-
-void NfThumbnailProvider::setThumbnailReadyCallback(ThumbnailReadyCallback callback)
-{
-        m_thumbnailReadyCallback = std::move(callback);
-}
-
-NfThumbnail NfThumbnailProvider::getThumbnailAt(size_t index) const
-{
-        return {};
-}
-
-size_t NfThumbnailProvider::numberOfThumbnails() const
-{
-        return 0;
-}
-
-void NfThumbnailProvider::requestThumbnails(size_t startIndex, size_t count)
-{
-}
-
-void NfThumbnailProvider::generateThumbnail(size_t index)
-{
-
-}
-
-} // namespace NfCore
+#endif // NF_PHOTO_HASH_H

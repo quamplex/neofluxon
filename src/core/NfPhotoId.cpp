@@ -1,5 +1,5 @@
 /**
- * File name: PathPhotoSource.cpp
+ * File name: NfPhotoId.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,42 +21,29 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "PathPhotoSource.h"
+#include "NfPhotoId.h"
 
-PathPhotoSource::PathPhotoSource(const QString &path)
-        : PhotoSource(PhotoSource::Type::Path)
-        , sourcePath{path}
-        , isRecursively{false}
-        , hasPreviews{false}
+NfPhotoId::NfPhotoId(const PhotoHash& hash)
+        : m_hash{hash}
 {
 }
 
-void PathPhotoSource::setPath(const QString &path)
+NfPhotoId::NfPhotoId(const std::filsystem::path& photoPath)
+        : m_hash{imagePath, NfPhotoHash::HashType::HashSHA256}
 {
-        sourcePath = path;
 }
 
-const QString PathPhotoSource::getPath() const
+bool NfPhotoId::operator==(const NfPhotoId& other) const
 {
-        return sourcePath;
+        return m_hash == other.m_hash;
 }
 
-void PathPhotoSource::setIsRecursively(bool recursively)
+bool NfPhotoId::operator!=(const NfPhotoId& other) const
 {
-        isRecursively = recursively;
+        return m_hash != other.m_hash;
 }
 
-bool PathPhotoSource::getIsRecursively() const
+bool NfPhotoId::isValid() const
 {
-        return isRecursively;
-}
-
-bool PathPhotoSource::setHasPreviews(bool previews)
-{
-        hasPreviews = previews;
-}
-
-bool PathPhotoSource::getHasPreviews() const
-{
-        return hasPreviews;
+        return m_hash.type() == PhotoHash::HashType::HashSHA256 && m_hash.isValid();
 }

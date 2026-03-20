@@ -30,14 +30,14 @@
 
 namespace Desktop {
 
-class NfThumbnailProvider;
+class NfBrowser;
 
 class NfBrowserModel : public QAbstractListModel
 {
         Q_OBJECT
 
 public:
-        explicit NfBrowserModel(QObject* parent = nullptr, NfThumbnailProvider* thumbnailProvider);
+        explicit NfBrowserModel(NfBrowser* browserProxy, QObject* parent = nullptr);
 
         int rowCount(const QModelIndex& parent = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -45,7 +45,7 @@ public:
         void setPhotoCount(int count);
 
 private:
-        NfThumbnailProvider* m_thumbnailProvider;
+        NfBrowser* m_browser;
 };
 
 } // namespace Desktop

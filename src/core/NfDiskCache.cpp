@@ -1,5 +1,5 @@
 /**
- * File name: ImageDecoder.cpp
+ * File name: NfDiskCache.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,39 +21,35 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "ImageDecoder.h"
+#include "NfDiskCache.h"
+#include "NfPhotoId.h"
 
-ImageDecoder::ImageDecoder(const QString &path)
-        : imagePath{path}
-        , rawImageInfo{nullptr}
+namespace NfCore {
+
+NfDiskCache::NfDiskCache(size_t cacheSize)
 {
 }
 
-void ImageDecoder::setPath(const QString &path)
+NfDiskCache::~NfDiskCache()
 {
-        imagePath = path;
 }
 
-const QString& ImageDecoder::path() const
+NfThumbnail NfDiskCache::getThumbnail(const PhotoId& id)
 {
-        return imagePath;
+        return {};
 }
 
-const RawImageInfo* ImageDecoder::imageInfo()
+NfPreview NfDiskCache::getPreview(const NfPhotoId& id)
 {
-        if (!getImageInfo()) {
-                auto img = loadImageInfo();
-                setImageInfo(std::move(img));
-        }
-        return rawImageInfo.get();
+        return {};
 }
 
-void ImageDecoder::setImageInfo(std::unique_ptr<RawImageInfo> info)
+void NfDiskCache::insertThumbnail(const NfThumbnail& thumbnail, NfPhotoId& id)
 {
-        rawImageInfo = std::move(info);
 }
 
-RawImageInfo* ImageDecoder::getImageInfo() const
+void NfDiskCache::insertPreview(const NfPreview& preview, NfPhotoId& id)
 {
-        return rawImageInfo.get();
 }
+
+} // namespace NfDiskCache

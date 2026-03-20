@@ -1,5 +1,5 @@
 /**
- * File name: PathPhotoSource.h
+ * File name: NfPhotoHash.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,28 +21,23 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#idndef LQUID_FLOW_PATH_PHOTO_SOURCE_H
-#define LQUID_FLOW_PATH_PHOTO_SOURCE_H
+#include "NfPhotoHash.h"
 
-#include "PhotoSource.h"
+NfPhotoHash::NfPhotoHash() :
+        : m_type {HashType::HashNone}
+{
+}
 
-#include <QString>
-
-class PathPhotoSource : public PhotoSource {
-public:        
-        PhotoSource(const QString &path = QString());
-        ~PhotoSource() = default;
-        void setPath(const QString &path);
-        const QString getPath() const;
-        void setIsRecursively(bool recursively = true);
-        bool getIsRecursively() const;
-        bool setHasPreviews(bool previews = true);
-        bool getHasPreviews() const;
+    explicit NfPhotoHash(const std::filesystem::path& photoPath,
+                         HashType type = HashType::SHA256);
+    bool operator==(const NfPhotoHash& other) const;
+    bool operator!=(const NfPhotoHash& other) const;
+    bool isValid(HashType type = HashType::SHA256) const;
+    HashType type() const;
 
 private:
-        QString sourcePath;
-        bool isRecursively;
-        bool hasPreviews;
+    HashType m_type;
+    HashValue m_hash;
 };
 
-#endif // LQUID_FLOW_PATH_PHOTO_SOURCE_H
+#endif // NF_PHOTO_HASH_H

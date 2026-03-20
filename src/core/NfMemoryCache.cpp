@@ -1,5 +1,5 @@
 /**
- * File name: DefaultImageDecoder.h
+ * File name: NfMemoryCache.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,20 +21,35 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef DEFAULT_IMAGE_DECODER_H
-#define DEFAULT_IAMGE_DECODER_H
+#include "NfMemoryCache.h"
+#include "NfPhotoId.h"
 
-#include "ImageDecoder.h"
+namespace NfCore {
 
-class DefaultImageDecoder : public ImageDecoder
+NfMemoryCache::NfMemoryCache(size_t cacheSize)
 {
- public:
-        DefaultImageDecoder(const QString &path);
-        QImage thumbnail() const override;
-        QImage image() const override;
+}
 
-protected:
-        std::unique_ptr<RawImageInfo> loadImageInfo() override;
-};
+NfMemoryCache::~NfMemoryCache()
+{
+}
 
-#endif // DEFAULT_IAMGE_DECODER_H
+NfThumbnail NfMemoryCache::getThumbnail(const PhotoId& id)
+{
+        return {};
+}
+
+NfPreview NfMemoryCache::getPreview(const NfPhotoId& id)
+{
+        return {};
+}
+
+void NfMemoryCache::insertThumbnail(const NfThumbnail& thumbnail, NfPhotoId& id)
+{
+}
+
+void NfMemoryCache::insertPreview(const NfPreview& preview, NfPhotoId& id)
+{
+}
+
+} // namespace NfMemoryCache

@@ -1,5 +1,5 @@
 /**
- * File name: ImageDecoder.h
+ * File name: NfPhotoId.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,31 +21,25 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef IMAGE_DECODER_H
-#define IMAGE_DECODER_H
+#ifndef NF_PHOTO_ID_H
+#define NF_PHOTO_ID_H
 
-#include "RawImageInfo.h"
+#include "PhotoHash.h"
 
-#include <QImage>
-
-class ImageDecoder
-{
+class NfPhotoId {
 public:
-        ImageDecoder(const QString &path);
-        void setPath(const QString &path);
-        const QString& path() const;
-        virtual QImage thumbnail() const = 0;
-        virtual QImage image() const = 0;
-        const RawImageInfo* imageInfo();
+    explicit NfPhotoId(const PhotoHash& hash = {});
+    explicit NfPhotoId(const std::filsystem::path& photoPath);
 
-protected:
-        void setImageInfo(std::unique_ptr<RawImageInfo> info);
-        RawImageInfo* getImageInfo() const;
-        virtual std::unique_ptr<RawImageInfo> loadImageInfo() = 0;
+    bool operator==(const NfPhotoId& other) const;
+    bool operator!=(const NfPhotoId& other) const;
+    explicit operator bool() const { return isValid(); }
 
- private:
-        QString imagePath;
-        std::unique_ptr<RawImageInfo> rawImageInfo;
+    bool isValid();
+    const NfPhotoHash& getHash() const;
+
+private:
+    NfPhotoHash m_hash;
 };
 
-#endif // IMAGE_DECODER_H
+#endif // NF_PHOTO_ID_H

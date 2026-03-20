@@ -22,17 +22,17 @@
  */
 
 #include "NfBrowserModel.h"
-#include "NfThumbnailProvider.h"
+#include "NfBrowser.h"
 
 using namespace NfCore;
 
 namespace Desktop {
 
-NfBrowserModel::NfBrowserModel(QObject* parent, NfThumbnailProvider* thumbnailProvider)
+NfBrowserModel::NfBrowserModel(NfBrowser* browser, QObject* parent)
         : QAbstractListModel(parent)
-        , m_thumbnailProvider{thumbnailProvider}
+        , m_browser{browser}
 {
-        m_thumbnailProvider->setThumbnailReadyCallback([this](size_t index){
+        m_browser->setThumbnailReadyCallback([this](size_t index) {
                 // Queue the thumbnail update on the main GUI thread
                 // Only do this if the thumbnail is currently visible.
                 QMetaObject::invokeMethod(this, [this, index]() {
@@ -51,7 +51,7 @@ int NfBrowserModel::rowCount(const QModelIndex& parent) const
 {
         if (parent.isValid())
                 return 0;
-        return m_thumbnailProvider->numberOfThubnails();
+        return m_browser->numberOfThubnails();
 }
 
 QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
@@ -62,10 +62,9 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
         switch (role) {
         case Qt::DecorationRole: {
                 // Try to get the thumbnail from the core provider
-                auto thumbnail = m_thumbnailProvider->getThumbnailAt(index.row());
-
+                auto thumbnail = m_browser->getThumbnailAt(index.row());
                 if (thumbnail.isNull()) {
-                        // Thumbnail not ready yet → return a placeholder
+                        // Thumbnail not ready yet, return a placeholder;
                         return QPixmap(160, 120);
                 }
 

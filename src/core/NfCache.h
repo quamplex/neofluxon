@@ -1,5 +1,5 @@
 /**
- * File name: PhotoSourceLoader.h
+ * File name: NfCache.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,37 +21,32 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef PATH_LOADER_H
-#define PATH_LOADER_H
+#ifndef NF_CHACHE_H
+#define NF_CHACHE_H
 
-#include <QObject>
+#include "NfThumbnail.h"
+#include "NfPreview.h"
+#include "NfMemoryCache.h"
+#include "NfDiskCache.h"
 
-class PhotoSource;
-class PhotoItem;
-class PathWorker;
-class QThreadPool;
+namespace NfCore {
 
-class PhotoSourceLoader : public QObject
-{
-        Q_OBJECT
+class PhotoId;
 
+class NfCache {
 public:
-        explicit PhotoSourceLoader(QObject *parent = nullptr);
-        ~PhotoSourceLoader();
-        void setSource(const PhotoSource* source);
-        PhotoSource* getSource() const;
-        std::vector<PhotoItem> getPhotoItems() const;
-                                   
-signals:
-        void sourceChanged();
+    NfCache() = default;
+    ~NfCache() = default;
+    NfThumbnail getThumbnail(const NfPhotoId& id);
+    NfPreview getPreview(const NfPhotoId& id);
+    void insertThumbnail(const NfThumbnail& thumbnail, const NfPhotoId& id);
+    void insertPreview(const NfPreview& preview, const NfPhotoId& id);
 
 private:
-        std::unique_ptr<PhotoSource> photoSource;
-        QSemaphore photoItemQueueSize;
-        std::queue<PhotoItem> photoItemQueue;
-        PathWorker *pathWorker;
-        QThreadPool *threadPool;
-        bool isSetSource;
+    MemoryCache m_memoryCache;
+    DiskCache m_diskCache;
 };
 
-#endif // PATH_LOADER_H
+} // namespace NfCache
+
+#endif // NF_CHACHE_H
