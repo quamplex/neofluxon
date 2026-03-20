@@ -1,5 +1,5 @@
 /**
- * File name: NfPhotoHash.h
+ * File name: Neofluxon.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,34 +21,31 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_PHOTO_HASH_H
-#define NF_PHOTO_HASH_H
+#ifndef NEOFLUXON_H
+#define NEOFLUXON_H
 
-#include "NfHash.h"
+#include <cstdint>
+#include <cstddef>
+#include <string>
+#include <vector>
+#include <filesystem>
+#include <memory>
+#include <utility>
 
-namespace NfCore {
+#define NEOFLUXON_VERSION NEOFLUXON_VERSION_HEX
+#define NEOFLUXON_VERSION_MAJOR ((NEOFLUXON_VERSION_HEX >> 16) & 0xFF)
+#define NEOFLUXON_VERSION_MINOR ((NEOFLUXON_VERSION_HEX >> 8) & 0xFF)
+#define NEOFLUXON_VERSION_PATCH (NEOFLUXON_VERSION_HEX & 0xFF)
+#define NEOFLUXON_NAME "Neofluxon"
+#define NEOFLUXON_APP_NAME "neofluxon"
+#define NEOFLUXON_VERSION_STRING NEOFLUXON_VERSION_STR
 
-class NfPhotoHash {
-public:
-    enum class HashType {
-        HashSHA256
-    };
+#if defined(_WIN32) || defined(_WIN64)
+    #define NF_PLATFORM_WINDOWS
+#elif defined(__linux__)
+    #define NF_PLATFORM_GNU
+#else
+    #error "Neofluxon: Platform not implemented"
+#endif
 
-    NfPhotoHash(HashType type = HashType::HashSHA256);
-    explicit NfPhotoHash(const std::filesystem::path& photoPath,
-                         HashType type = HashType::HashSHA256);
-    explicit NfPhotoHash(const uint8_t* data,
-                         size_t size,
-                         HashType type = HashType::SHA256);
-    bool operator==(const NfPhotoHash& other) const;
-    bool operator!=(const NfPhotoHash& other) const;
-    bool isValid() const;
-    HashType type() const;
-
-private:
-        NfHash m_hash;
-};
-
-} // namespace NfCore
-
-#endif // NF_PHOTO_HASH_H
+#endif // NEOFLUXON_H
