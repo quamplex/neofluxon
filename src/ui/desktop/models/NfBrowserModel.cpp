@@ -32,7 +32,30 @@ NfBrowserModel::NfBrowserModel(NfBrowser* browser, QObject* parent)
         : QAbstractListModel(parent)
         , m_browser{browser}
 {
-        m_browser->setThumbnailReadyCallback([this](size_t index) {
+        m_browser->setItemNumberChangedCallback([this]() {
+                QMetaObject::invokeMethod(this, [this]() {
+                        // Notify the view that the rows may have changed.
+                        // The view will query rowCount() again.
+                        beginResetModel();
+                        endResetModel();
+                }, Qt::QueuedConnection);
+        });
+
+        m_browser->setThumbnailReadyCb([this](size_t index) {
+                // Queue the thumbnail update on the main GUI thread
+                // Only do this if the thumbnail is currently visible.
+                QMetaObject::invokeMethod(this, [this, index]() {
+                        if (!isIndexVisible(index)) {
+                                // User scrolled away, drop this thumbnail.
+                                return;
+                        }
+
+                        QModelIndex modelIndex = this->index(index);
+                        emit dataChanged(modelIndex, modelIndex, {Qt::DecorationRole});
+                }, Qt::QueuedConnection);
+        });
+
+        m_browser->setItemNumberChanged([this]() {
                 // Queue the thumbnail update on the main GUI thread
                 // Only do this if the thumbnail is currently visible.
                 QMetaObject::invokeMethod(this, [this, index]() {

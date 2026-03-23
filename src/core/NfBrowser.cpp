@@ -23,15 +23,24 @@
 
 #include "NfBrowser.h"
 #include "ForegroundThreadPool.h"
+#include "NfPathLoader.h"
 
 namespace NfCore {
 
-NfBrowser::NfBrowser()
+NfBrowser::NfBrowser(NfCache *cache)
+        : m_cache{cache}
+        , m_photoLoader{std::make_unique<NfPathLoader>()}
 {
-};
+        
+}
 
 NfBrowser::~NfBrowser()
 {
+}
+
+void NfBrowser::setItemNumberChangedCallback(ItemNumberChangedCallback callback)
+{
+        m_itemNumberChangedCallback = std::move(callback);
 }
 
 void NfBrowser::setThumbnailReadyCallback(ThumbnailReadyCallback callback)
@@ -39,16 +48,36 @@ void NfBrowser::setThumbnailReadyCallback(ThumbnailReadyCallback callback)
         m_thumbnailReadyCallback = std::move(callback);
 }
 
+void NfBrowser::setPath(const std::filesystem::path &path)
+{
+        m_pathLoader->setPath(path);
+}
+
+std::filesystem::path NfBrowser::getPath() const
+{
+        return m_pathLoader->getPath(path);
+}
+
 NfThumbnail NfBrowser::getThumbnailAt(size_t index) const
 {
-        m_photoCache->getThumbnail();
-        if ()....
-        return {};
+        auto photoId = m_pathLoader->getId(index);
+        if (!photoId) {
+                m_thumbnailReadyCallback
+                return {};
+        }
+
+        auto thumbail = m_cache->getThumbnail(photoId);
+        if (!thumbail) {
+                m_photoProvider->requestThumbail(photoId);
+                return {};
+        }
+
+        return thumbail;
 }
 
 size_t NfBrowser::numberOfThumbnails() const
 {
-        return 0;
+        return m_pathLoader->numberOfFiles();
 }
 
 } // namespace NfCore

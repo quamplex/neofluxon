@@ -24,23 +24,39 @@
 #ifndef NF_THUMBNAIL_PROVIDER_H
 #define NF_THUMBNAIL_PROVIDER_H
 
-#include <functional>
+#include "Neofluxon.h"
 
 namespace NfCore {
 
+class NfCache;
+class NfPathLoader;
+
 class NfBrowser {
 public:
+        using ItemNumberChangedCallback = std::function<void()>;
         using ThumbnailReadyCallback = std::function<void(size_t index)>;
         NfBrowser();
         ~NfBrowser();
+
+        // Browsers callbacks
+        void setItemNumberChangedCallback(ItemNumberChangedCallback callback);
         void setThumbnailReadyCallback(ThumbnailReadyCallback callback);
+
+        void setPath(const std::filesystem::path &path);
+        std::filesystem::path getPath() const;
+        void setCache(NfCache *cache);
+        NfCache* getCache() const;
         NfThumbnail getThumbnailAt(size_t index) const;
         size_t numberOfThumbnails() const;
 
  protected:
 
  private:
+        ItemsNumberChangedCallback m_itemNumberChangedCallback;
         ThumbnailReadyCallback m_thumbnailReadyCallback;
+
+        std::unique_ptr<NfPathLoader> m_pathLoader;
+        NfCache* m_cache;
 };
 
 } // namespace NfCore
