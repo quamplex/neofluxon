@@ -30,9 +30,9 @@ namespace Desktop {
 
 NfBrowserModel::NfBrowserModel(NfBrowser* browser, QObject* parent)
         : QAbstractListModel(parent)
-        , m_browser{browser}
+        , m_browserCore{browser}
 {
-        m_browser->setItemNumberChangedCallback([this]() {
+        m_browserCore->setItemNumberChangedCallback([this]() {
                 QMetaObject::invokeMethod(this, [this]() {
                         // Notify the view that the rows may have changed.
                         // The view will query rowCount() again.
@@ -41,21 +41,7 @@ NfBrowserModel::NfBrowserModel(NfBrowser* browser, QObject* parent)
                 }, Qt::QueuedConnection);
         });
 
-        m_browser->setThumbnailReadyCb([this](size_t index) {
-                // Queue the thumbnail update on the main GUI thread
-                // Only do this if the thumbnail is currently visible.
-                QMetaObject::invokeMethod(this, [this, index]() {
-                        if (!isIndexVisible(index)) {
-                                // User scrolled away, drop this thumbnail.
-                                return;
-                        }
-
-                        QModelIndex modelIndex = this->index(index);
-                        emit dataChanged(modelIndex, modelIndex, {Qt::DecorationRole});
-                }, Qt::QueuedConnection);
-        });
-
-        m_browser->setItemNumberChanged([this]() {
+        m_browserCore->setThumbnailReadyCb([this](size_t index) {
                 // Queue the thumbnail update on the main GUI thread
                 // Only do this if the thumbnail is currently visible.
                 QMetaObject::invokeMethod(this, [this, index]() {
@@ -74,7 +60,7 @@ int NfBrowserModel::rowCount(const QModelIndex& parent) const
 {
         if (parent.isValid())
                 return 0;
-        return m_browser->numberOfThubnails();
+        return m_browserCore->numberOfPhotos();
 }
 
 QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
@@ -83,21 +69,15 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
                 return QVariant();
 
         switch (role) {
-        case Qt::DecorationRole: {
-                // Try to get the thumbnail from the core provider
-                auto thumbnail = m_browser->getThumbnailAt(index.row());
-                if (thumbnail.isNull()) {
-                        // Thumbnail not ready yet, return a placeholder;
-                        return QPixmap(160, 120);
-                }
-
-                return thumbnail;
+        case Qt::DecorationRole:
+        {
+                if (auto* thumbnail = dynamic_cast<const NfQtPixmap*>(m_browserCore->getThumbnail(row)))
+                        return thumbnail->pixmap();
+                return QPixmap(150, 150);
         }
-
         case Qt::DisplayRole:
                 // Optional text label
                 return QString("Photo %1").arg(index.row() + 1);
-
         default:
                 return QVariant();
         }

@@ -46,6 +46,7 @@ public:
 
 private:
         NfBrowser* m_browser;
+        std::vector<NfPhotosInfo> m_photos;
 };
 
 } // namespace Desktop

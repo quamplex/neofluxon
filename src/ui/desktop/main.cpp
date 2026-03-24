@@ -29,9 +29,28 @@
 
 using namespace Desktop;
 
+class NfQtPixmap : NfImageObject {
+public:
+        QtPixmapChaceObject(const NfImage* image) {
+                QImage img(image->data(),
+                           image->width(),
+                           image->height(),
+                           image->stride(),
+                           QImage::Format_RGBA8888);
+                m_pixmap = QPixmap::fromImage(img.copy());
+        }
+
+private:
+        m_pixmap;
+};
+
+
 int main(int argc, char **argv)
 {
         NfCore coreApp;
+        coreApp.setConversionCallback([](const NfImage* image) -> std::unique_ptr<NfCacheObject> {
+                        return std::make_unique<NfQtPixmapObject>(image);
+                });
 
         LqfApplication app(argc, argv);
 

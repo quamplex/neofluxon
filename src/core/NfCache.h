@@ -31,22 +31,31 @@
 
 namespace NfCore {
 
-class PhotoId;
+using NfCacheKey = std::size_t;
 
+class NfCacheObject;
+class NfImageData;
+
+// Framework-specific conversion callback.
+
+// The cache class
 class NfCache {
 public:
+    using ConversionCallback = std::function<void>(NfImageData*)>;
+
     NfCache() = default;
     ~NfCache() = default;
-    NfThumbnail getThumbnail(const NfPhotoId& id);
-    NfPreview getPreview(const NfPhotoId& id);
-    void insertThumbnail(const NfThumbnail& thumbnail, const NfPhotoId& id);
-    void insertPreview(const NfPreview& preview, const NfPhotoId& id);
+
+    void setConversionCallback(ConversionCallback cb);
+    void insert(const NfCacheKey &key, std::unique_ptr<NfCacheObject> obj);
+    NfCacheObject* getObject(NfImageData* data) const;
+    void clear();
 
 private:
-    MemoryCache m_memoryCache;
-    DiskCache m_diskCache;
+    std::unordered_map<NfCacheKey, std::unique_ptr<NfCacheObject>> m_cacheMap;
+    ConversionCallback conversionCallback;
 };
 
-} // namespace NfCache
+} // namespace NfCore
 
 #endif // NF_CHACHE_H
