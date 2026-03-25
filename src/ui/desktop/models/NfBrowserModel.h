@@ -21,32 +21,43 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_BROWSER_MODEL_H
-#define NF_BROWSER_MODEL_H
+#include "NfPhotoId.h"
 
 #include <QAbstractListModel>
 #include <QPixmap>
-#include <QVector>
 
 namespace Desktop {
 
-class NfBrowser;
+class NfPhotoProvider;
+class NfGuiCache;
+class NfPhotoInfo;
 
 class NfBrowserModel : public QAbstractListModel
 {
         Q_OBJECT
 
 public:
-        explicit NfBrowserModel(NfBrowser* browserProxy, QObject* parent = nullptr);
+        explicit NfBrowserModel(NfPhotoProvider* browserProxy,
+                                NfGuiCache* cache,
+                                QObject* parent = nullptr);
+        ~NfBrowserModel();
+
+        void setPath(const std::filesystem::path& path);
+        const std::filesystem::path& getPath() const;
 
         int rowCount(const QModelIndex& parent = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
-        void setPhotoCount(int count);
+protected:
+        QVariant getThumbnail(const QModelIndex& index) const;
 
 private:
-        NfBrowser* m_browser;
-        std::vector<NfPhotosInfo> m_photos;
+        NfPhotoProvider* m_photoProvider;
+        NfGuiCache* m_cache;
+        std::vector<std::unique_ptr<NfPhotoInfo>> m_photos;
+        std::unordered_map<NfPhotoId, QPersistentModelIndex> m_itemsMap;
+        std::filesystem::path m_path;
+        QPixmap m_thumbnailPlaceholder;
 };
 
 } // namespace Desktop

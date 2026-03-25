@@ -22,45 +22,90 @@
  */
 
 #include "NfBrowserModel.h"
-#include "NfBrowser.h"
+#include "NfCacheQtPixmap.h"
+#include "NfPhotoProvider.h"
+#include "NfGuiCache.h"
+#include "NfPhotoInfo.h"
+#include "NfThumbnail.h"
 
 using namespace NfCore;
 
 namespace Desktop {
 
-NfBrowserModel::NfBrowserModel(NfBrowser* browser, QObject* parent)
+NfBrowserModel::NfBrowserModel(NfPhotoProvider* photoProvider,
+                               NfGuiCache *cache,
+                               QObject* parent)
         : QAbstractListModel(parent)
-        , m_browserCore{browser}
+        , m_photoProvider{photoProvider}
+        , m_cache{cache}
+        , m_thumbnailPlaceholder{QPixmap(150, 150)}
 {
-        m_browserCore->setItemNumberChangedCallback([this]() {
-                QMetaObject::invokeMethod(this, [this]() {
-                        // Notify the view that the rows may have changed.
-                        // The view will query rowCount() again.
-                        beginResetModel();
-                        endResetModel();
-                }, Qt::QueuedConnection);
-        });
+        // Callback for new photos
+        m_photoProvider->setNewPhotosCallback([this](std::vector<std::unique_ptr<NfPhotoInfo>> newPhotos) {
+                QMetaObject::invokeMethod(this, [this, newPhotos = std::move(newPhotos)]() mutable {
 
-        m_browserCore->setThumbnailReadyCb([this](size_t index) {
-                // Queue the thumbnail update on the main GUI thread
-                // Only do this if the thumbnail is currently visible.
-                QMetaObject::invokeMethod(this, [this, index]() {
-                        if (!isIndexVisible(index)) {
-                                // User scrolled away, drop this thumbnail.
-                                return;
+                        const int firstRow = static_cast<int>(m_photos.size());
+                        const int count    = static_cast<int>(newPhotos.size());
+                        const int lastRow  = firstRow + count - 1;
+
+                        beginInsertRows(QModelIndex(), firstRow, lastRow);
+
+                        m_photos.reserve(m_photos.size() + count);
+                        std::ranges::for_each(newPhotos, [this](auto& ptr) {
+                                m_photos.push_back(std::move(ptr));
+                        });
+
+                        // Update map: PhotoId -> QPersistentModelIndex
+                        for (int i = 0; i < count; ++i) {
+                                const auto& photoInfo = m_photos[firstRow + i];
+                                m_itemsMap[photoInfo->id()] = QPersistentModelIndex(index(firstRow + i));
                         }
 
-                        QModelIndex modelIndex = this->index(index);
-                        emit dataChanged(modelIndex, modelIndex, {Qt::DecorationRole});
+                        endInsertRows();
                 }, Qt::QueuedConnection);
         });
+
+        // Thumbnails ready callback
+        m_photoProvider->setThumbnailsReadyCb([this](std::vector<NfThumbnail> thumbnails) {
+                QMetaObject::invokeMethod(this, [this, thumbnails = std::move(thumbnails)]() mutable {
+                        std::ranges::for_each(thumbnails, [this](auto& thumb) {
+                                auto cacheObject = std::make_unique<NfCacheQtPixmap>(thumb.releaseImage());
+                                m_cache->addThumbail(id, std::move(cacheObject));
+
+                                if (auto it = m_itemsMap.find(thumb.id()); it != m_itemsMap.end()) {
+                                        const auto& idx = it->second;
+                                        if (idx.isValid() && isIndexVisible(idx))
+                                                emit dataChanged(idx, idx, {Qt::DecorationRole});
+                                }
+                        });
+                }, Qt::QueuedConnection);
+        });
+ }
+
+void NfBrowserModel::~NfBrowserModel()
+{
+        m_photoProvider->setNewPhotosCallback({});
+        m_photoProvider->setThumbnailsReadyCb({});
+}
+
+void NfBrowserModel::setPath(const std::filesystem::path &path)
+{
+        beginResetModel();
+        m_photos.clear();
+        m_itemsMap.clear();
+        endResetModel();
+
+        m_photoProvider->loadPath(m_path);
+}
+
+const std::filesystem::path& int NfBrowserModel::getPath() const
+{
+        return m_path;
 }
 
 int NfBrowserModel::rowCount(const QModelIndex& parent) const
 {
-        if (parent.isValid())
-                return 0;
-        return m_browserCore->numberOfPhotos();
+        return parent.isValid() ? 0 : static_cast<int>(m_photos.size());
 }
 
 QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
@@ -70,17 +115,27 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
 
         switch (role) {
         case Qt::DecorationRole:
-        {
-                if (auto* thumbnail = dynamic_cast<const NfQtPixmap*>(m_browserCore->getThumbnail(row)))
-                        return thumbnail->pixmap();
-                return QPixmap(150, 150);
-        }
+                return getThumbnail(index);
         case Qt::DisplayRole:
-                // Optional text label
                 return QString("Photo %1").arg(index.row() + 1);
         default:
                 return QVariant();
         }
+}
+
+QVariant NfBrowserModel::getThumbnail(const QModelIndex &index)
+{
+        const auto& photoInfo = m_photos[index.row()];
+        auto const *cahceObject = m_cache->getThumbnail(photoInfo->id());
+        if (cahceObject) {
+                auto const *thumbnail = dynamic_cast<const NfCacheQtPixmap*>(cahceObject);
+                if (thubnail)
+                        return thumbnail->pixmap();
+        }
+
+        m_photoProvider->requestThumbnail(photoInfo);
+
+        return m_thumbnailPlaceholder;
 }
 
 } // namespace Desktop
