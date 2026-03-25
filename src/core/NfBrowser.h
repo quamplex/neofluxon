@@ -1,5 +1,5 @@
 /**
- * File name: NfBrowser.h
+ * File name: NfPhotoProvider.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -31,12 +31,14 @@ namespace NfCore {
 class NfCache;
 class NfPathLoader;
 
-class NfBrowser {
+class NfPhotoProvider {
 public:
         using ItemNumberChangedCallback = std::function<void()>;
         using ThumbnailReadyCallback = std::function<void(size_t index)>;
-        NfBrowser();
-        ~NfBrowser();
+        NfPhotoProvider();
+        ~NfPhotoProvider();
+
+        void requestThumbnail(const NfPhotoInfo &info);
 
         // Browsers callbacks
         void setItemNumberChangedCallback(ItemNumberChangedCallback callback);

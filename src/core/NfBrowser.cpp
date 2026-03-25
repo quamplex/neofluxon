@@ -1,5 +1,5 @@
 /**
- * File name: NfBrowser.cpp
+ * File name: NfPhotoProvider.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,63 +21,58 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfBrowser.h"
+#include "NfPhotoProvider.h"
 #include "ForegroundThreadPool.h"
 #include "NfPathLoader.h"
 
 namespace NfCore {
 
-NfBrowser::NfBrowser(NfCache *cache)
+NfPhotoProvider::NfPhotoProvider(NfCache *cache)
         : m_cache{cache}
         , m_photoLoader{std::make_unique<NfPathLoader>()}
 {
         
 }
 
-NfBrowser::~NfBrowser()
+NfPhotoProvider::~NfPhotoProvider()
 {
 }
 
-void NfBrowser::setItemNumberChangedCallback(ItemNumberChangedCallback callback)
+void NfPhotoProvider::setItemNumberChangedCallback(ItemNumberChangedCallback callback)
 {
         m_itemNumberChangedCallback = std::move(callback);
 }
 
-void NfBrowser::setThumbnailReadyCallback(ThumbnailReadyCallback callback)
+void NfPhotoProvider::setThumbnailReadyCallback(ThumbnailReadyCallback callback)
 {
         m_thumbnailReadyCallback = std::move(callback);
 }
 
-void NfBrowser::setPath(const std::filesystem::path &path)
+void NfPhotoProvider::requestThumbnail(std::unique_ptr<NfImage> info)
+{
+    {
+        std::scoped_lock lock(m_queueMutex);
+        m_thubnailsQueue.push(std::move(info));
+    }
+
+    m_cv.notify_one();
+}
+
+void NfPhotoProvider::generateThumbnail(std::unique_ptr<NfImage> image)
+{
+        NfImageData image = getThumbnailData(info->path());
+        info->setImageData(image);
+        m_thumbnailReadyCallback(std::move());
+}
+
+void NfPhotoProvider::setPath(const std::filesystem::path &path)
 {
         m_pathLoader->setPath(path);
 }
 
-std::filesystem::path NfBrowser::getPath() const
+std::filesystem::path NfPhotoProvider::getPath() const
 {
         return m_pathLoader->getPath(path);
-}
-
-NfThumbnail NfBrowser::getThumbnailAt(size_t index) const
-{
-        auto photoId = m_pathLoader->getId(index);
-        if (!photoId) {
-                m_thumbnailReadyCallback
-                return {};
-        }
-
-        auto thumbail = m_cache->getThumbnail(photoId);
-        if (!thumbail) {
-                m_photoProvider->requestThumbail(photoId);
-                return {};
-        }
-
-        return thumbail;
-}
-
-size_t NfBrowser::numberOfThumbnails() const
-{
-        return m_pathLoader->numberOfFiles();
 }
 
 } // namespace NfCore
