@@ -69,8 +69,9 @@ NfBrowserModel::NfBrowserModel(NfPhotoProvider* photoProvider,
         m_photoProvider->setThumbnailsReadyCb([this](std::vector<NfThumbnail> thumbnails) {
                 QMetaObject::invokeMethod(this, [this, thumbnails = std::move(thumbnails)]() mutable {
                         std::ranges::for_each(thumbnails, [this](auto& thumb) {
-                                auto cacheObject = std::make_unique<NfCacheQtPixmap>(thumb.releaseImage());
-                                m_cache->addThumbail(id, std::move(cacheObject));
+
+                                // Add thubnail image to cache.
+                                m_cache->addThumbail(thumb.id(), std::move(thumbnails.releaseImage()));
 
                                 if (auto it = m_itemsMap.find(thumb.id()); it != m_itemsMap.end()) {
                                         const auto& idx = it->second;
@@ -133,7 +134,7 @@ QVariant NfBrowserModel::getThumbnail(const QModelIndex &index)
                         return thumbnail->pixmap();
         }
 
-        m_photoProvider->requestThumbnail(photoInfo);
+        m_photoProvider->requestThumbnail(photoInfo, std::make_unique<NfQtPixmap*>());
 
         return m_thumbnailPlaceholder;
 }
