@@ -124,19 +124,19 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
         }
 }
 
-QVariant NfBrowserModel::getThumbnail(const QModelIndex &index)
+QPixmap& NfBrowserModel::getThumbnail(const QModelIndex &index) const
 {
-        const auto& photoInfo = m_photos[index.row()];
-        auto const *cahceObject = m_cache->getThumbnail(photoInfo->id());
-        if (cahceObject) {
-                auto const *thumbnail = dynamic_cast<const NfCacheQtPixmap*>(cahceObject);
-                if (thubnail)
-                        return thumbnail->pixmap();
-        }
+    const auto& photoInfo = m_photos[index.row()];
+    auto const *cacheImage = m_cache->getThumbnail(photoInfo->id());
+    if (cacheImage) {
+            auto const *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
+        if (thumbnail)
+                return thumbnail->pixmap();
+    }
 
-        m_photoProvider->requestThumbnail(photoInfo, std::make_unique<NfQtPixmap>());
+    m_photoProvider->requestThumbnail(photoInfo, std::make_unique<NfQtPixmap>());
 
-        return m_thumbnailPlaceholder;
+    return m_thumbnailPlaceholder;
 }
 
 } // namespace Desktop

@@ -23,59 +23,36 @@
 
 #include "NfQtPixmap.h"
 
-void NfQtPixmap::loadData(const NfImageData& imageData)
+void NfQtPixmap::setImageData(const NfImageData& imageData)
 {
-    if (imageData.pixels.empty() || imageData.width <= 0 || imageData.height <= 0)
-    {
-        m_pixmap = QPixmap();
-        return;
-    }
+        if (imageData.empty() || imageData.width() <= 0 || imageData.height() <= 0) {
+                m_pixmapImage = QPixmap();
+                return;
+        }
 
-    // Determine format based on channels
-    QImage::Format fmt = QImage::Format_Invalid;
-    if (imageData.channels == 3)
-        fmt = QImage::Format_RGB888;
-    else if (imageData.channels == 4)
-        fmt = QImage::Format_RGBA8888;
+        auto fmt = QImage::Format_Invalid;
+        auto imageFormat = imageData.format();
 
-    if (fmt == QImage::Format_Invalid)
-    {
-        m_pixmap = QPixmap();
-        return;
-    }
+        switch (imageFormat) {
+        case NfImageData::ImageFromat::Format_RGB888:
+                fmt = QImage::Format_RGB888;
+                break;
+        case NfImageData::ImageFromat::Format_RGBA888:
+                fmt = QImage::Format_RGBA8888;
+                break;
+        case NfImageData::ImageFromat::Format_ARGB32_Premultiplied:
+                fmt = QImage::Format_ARGB32_Premultiplied;
+                break;
+        default:
+                m_pixmapImage = QPixmap();
+                return;
+        }
 
-    // Construct QImage from raw data (copy)
-    QImage img(imageData.data(), imageData.size(), fmt);
-
-    // Make a deep copy to own the data
-    m_pixmap = QPixmap::fromImage(img.copy());
-}
-
-NfImageData NfQtPixmap::getImageData() const
-{
-    NfImageData out;
-
-    if (m_pixmap.isNull())
-        return out;
-
-    // Convert QPixmap -> QImage
-    QImage img = m_pixmap.toImage();
-
-    // Convert to known format (RGB888)
-    img = img.convertToFormat(QImage::Format_RGB888);
-
-    out.width = img.width();
-    out.height = img.height();
-    out.channels = 3;
-
-    // Copy raw pixel data
-    out.pixels.resize(out.width * out.height * out.channels);
-    std::memcpy(out.pixels.data(), img.bits(), out.pixels.size());
-
-    return out;
+        QImage img(imageData.data(), imageData.size(), fmt);
+        m_pixmap = QPixmap::fromImage(img.copy());
 }
 
 const QPixmap& NfQtPixmap::pixmap() const
 {
-    return m_pixmap;
+    return m_pixmapImage;
 }

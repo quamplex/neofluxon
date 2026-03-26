@@ -24,20 +24,19 @@
 #ifndef NF_QTPIXMAP_H
 #define NF_QTPIXMAP_H
 
-#include "NfImage.h"
+#include "NfGuiImage.h"
 
 #include <QPixmap>
 
-class NfQtPixmap : public NfImage {
+class NfQtPixmap : public NfGuiImage {
 public:
     NfQtPixmap() = default;
     ~NfQtPixmap() = default;
-    void loadData(const NfImageData& data) override;
-    NfImageData getData() const override;
+    void setImageData(const NfImageData& imageData) override;
     const QPixmap& pixmap() const;
 
 private:
-    QPixmap m_pixmap;
+    QPixmap m_pixmapImage;
 };
 
 #endif // NF_QTPIXMAP_H
