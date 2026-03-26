@@ -23,53 +23,97 @@
 
 #include "NfImageData.h"
 
-#include <cstring>
+namespace NfCore {
 
 NfImageData::NfImageData()
-        : m_width{0}
+        : m_data{}
+        , m_width{0}
+        , m_height{0}
+        , m_channels{0}
+{
+}
+
+NfImageData::NfImageData(size_t size)
+        : m_data{size}
+        , m_width{0}
         , m_height{0}
         , m_channels{0}
 {
 }
 
 NfImageData::NfImageData(int w, int h, int c)
-        : m_width{w}
+        : m_data{static_cast<size_t>(w) * static_cast<size_t>(h) * static_cast<size_t>(c)}
+        , m_width{w}
         , m_height{h}
         , m_channels{c}
-{
-    pixels.resize(static_cast<size_t>(w) * h * c);
-}
 
-const unsigned char* NfImageData::data() const
 {
-    return pixels.data();
-}
-
-unsigned char* NfImageData::data()
-{
-    return pixels.data();
-}
-
-size_t NfImageData::size() const
-{
-    return pixels.size();
-}
-
-bool NfImageData::empty() const
-{
-    return pixels.empty() || width <= 0 || height <= 0 || channels <= 0;
 }
 
 void NfImageData::setData(const void* ptr, size_t len)
 {
-    if (!ptr || len == 0)
-    {
-        pixels.clear();
-        width = height = channels = 0;
-        return;
-    }
-
-    pixels.resize(len);
-    std::memcpy(pixels.data(), ptr, len);
-    // TODO: width/height/channels must be set separately if needed
+        m_data.assign(static_cast<const unsigned char*>(ptr),
+                      static_cast<const unsigned char*>(ptr) + len);
 }
+
+const unsigned char* NfImageData::data() const
+{
+        return m_data.data();
+}
+
+unsigned char* NfImageData::data()
+{
+        return m_data.data();
+}
+
+void NfImageData::resize(size_t newSize)
+{
+        m_data.resize(newSize);
+}
+
+size_t NfImageData::size() const
+{
+        return m_data.size();
+}
+
+void NfImageData::clear()
+{
+        m_data.clear();
+}
+
+bool NfImageData::empty() const
+{
+        return m_data.empty();
+}
+
+int NfImageData::setWidth(int w)
+{
+        m_width = h;
+}
+
+int NfImageData::width() const
+{
+        return m_width;
+}
+
+int NfImageData::setHeight(int h)
+{
+        m_height = h;
+}
+
+int NfImageData::height() const
+{
+        return m_height = h;
+}
+
+int NfImageData::setChannels(int c)
+{
+        m_channels = c;
+}
+
+int NfImageData::channels() const
+{
+        return m_channels;
+}
+
+} // namespace NfCore

@@ -26,26 +26,41 @@
 
 #include "Nefluxon.h"
 
+#ifndef NF_IMAGE_DATA_H
+#define NF_IMAGE_DATA_H
+
 #include <cstddef>
+#include <vector>
 
-struct NfImageData
+class NfImageData
 {
-    std::vector<unsigned char> pixels; // raw pixel data
-    int width;
-    int height;
-    int channels; // 3 = RGB, 4 = RGBA
-
+public:
     NfImageData();
+    NfImageData(size_t size);
     NfImageData(int w, int h, int c);
-
-    // Accessors
+    NfImageData(const NfImageData&) = default;
+    NfImageData(NfImageData&&) noexcept = default;
+    NfImageData& operator=(const NfImageData&) = default;
+    NfImageData& operator=(NfImageData&&) noexcept = default;
+    void setData(const void* ptr, size_t len);
     const unsigned char* data() const;
     unsigned char* data();
+    void resize(size_t newSize);
     size_t size() const;
-    bool empty() const;
+    void clear();
+    bool empty() const
+    int setWidth(int w);
+    int width() const;
+    int setHeight(int h);
+    int height() const;
+    int setChannels(int c);
+    int channels() const;
 
-    // Set data from raw memory
-    void setData(const void* ptr, size_t len);
+private:
+    std::vector<unsigned char> m_data;
+    int m_width;
+    int m_height;
+    int m_channels;
 };
 
 #endif // NF_IMAGE_DATA_H

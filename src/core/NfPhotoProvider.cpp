@@ -48,7 +48,8 @@ void NfPhotoProvider::setThumbnailReadyCallback(ThumbnailReadyCallback callback)
         m_thumbnailReadyCallback = std::move(callback);
 }
 
-void NfPhotoProvider::requestThumbnail(std::unique_ptr<NfImage> info)
+void NfPhotoProvider::requestThumbnail(const NfPhotoInfo &info,
+                                       std::unique_ptr<NfImage> imageContainer)
 {
     {
         std::scoped_lock lock(m_queueMutex);
@@ -60,8 +61,9 @@ void NfPhotoProvider::requestThumbnail(std::unique_ptr<NfImage> info)
 
 void NfPhotoProvider::generateThumbnail(std::unique_ptr<NfImage> image)
 {
-        NfImageData image = getThumbnailData(info->path());
-        info->setImageData(image);
+        // Ge the thubnail data
+
+        image->setData(imageData);
         m_thumbnailReadyCallback(std::move());
 }
 

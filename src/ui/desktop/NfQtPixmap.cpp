@@ -45,10 +45,7 @@ void NfQtPixmap::loadData(const NfImageData& imageData)
     }
 
     // Construct QImage from raw data (copy)
-    QImage img(imageData.pixels.data(),
-               imageData.width,
-               imageData.height,
-               fmt);
+    QImage img(imageData.data(), imageData.size(), fmt);
 
     // Make a deep copy to own the data
     m_pixmap = QPixmap::fromImage(img.copy());

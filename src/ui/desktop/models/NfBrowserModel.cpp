@@ -134,7 +134,7 @@ QVariant NfBrowserModel::getThumbnail(const QModelIndex &index)
                         return thumbnail->pixmap();
         }
 
-        m_photoProvider->requestThumbnail(photoInfo, std::make_unique<NfQtPixmap*>());
+        m_photoProvider->requestThumbnail(photoInfo, std::make_unique<NfQtPixmap>());
 
         return m_thumbnailPlaceholder;
 }
