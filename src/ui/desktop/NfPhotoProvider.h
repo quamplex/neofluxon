@@ -1,5 +1,5 @@
 /**
- * File name: NfBrowserModel.h
+ * File name: NfPhotoProvider.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,42 +21,39 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_BROWSER_MODEL_H
-#define NF_BROWSER_MODEL_H
+#ifndef NF_PHOTO_PROVIDER_H
+#define NF_PHOTO_PROVIDER_H
 
-#include <QAbstractListModel>
+#include <QObject>
 
 namespace Desktop {
 
-class NfPhotoProvider;
-class NfPhoto;
-
-class NfBrowserModel : public QAbstractListModel
+class NfPhotoProvider : public Object
 {
         Q_OBJECT
 
 public:
-        explicit NfBrowserModel(NfPhotoProvider &photoProvider,
-                                QObject* parent = nullptr);
-        ~NfBrowserModel();
+        explicit NfPhotoProvider(NfPhotoProvider* browserProxy,
+                                 NfGuiCache* cache,
+                                 QObject* parent = nullptr);
+        ~NfPhotoProvider();
 
-        void setPath(const std::filesystem::path& path);
+        void loadPath(const std::filesystem::path& path);
         const std::filesystem::path& getPath() const;
 
-        int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-        QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+        QPixmap& getThumbnail(const NfPhotoId &id) const;
 
 protected:
-        void onPhotosLoaded(const std::vector<std::unique_ptr<NfPhoto>>& newPhotos);
-        void onThumbnailsLoaded(const std::vector<NfPhotoId>& ids);
 
 private:
-        NfPhotoProvider& m_photoProvider;
-        std::vector<std::unique_ptr<NfPhoto>> m_photos;
+        NfPhotoProvider* m_photoProvider;
+        NfGuiCache* m_cache;
+        std::vector<std::unique_ptr<NfPhotoInfo>> m_photos;
         std::unordered_map<NfPhotoId, QPersistentModelIndex> m_itemsMap;
         std::filesystem::path m_path;
+        QPixmap m_thumbnailPlaceholder;
 };
 
 } // namespace Desktop
 
-#endif // NF_BROWSER_MODEL_H
+#endif // NF_PHOTO_PROVIDER_H
