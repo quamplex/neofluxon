@@ -22,6 +22,7 @@
  */
 
 #include "NfQtPixmap.h"
+#include "NfImageData.h"
 
 void NfQtPixmap::setImageData(const NfImageData& imageData)
 {
@@ -30,17 +31,16 @@ void NfQtPixmap::setImageData(const NfImageData& imageData)
                 return;
         }
 
-        auto fmt = QImage::Format_Invalid;
-        auto imageFormat = imageData.format();
+        QImage::Format fmt = QImage::Format_Invalid;
 
-        switch (imageFormat) {
-        case NfImageData::ImageFromat::Format_RGB888:
+        switch (imageData.format()) {
+        case NfImageData::ImageFormat::Format_RGB888:
                 fmt = QImage::Format_RGB888;
                 break;
-        case NfImageData::ImageFromat::Format_RGBA888:
+        case NfImageData::ImageFormat::Format_RGBA8888:
                 fmt = QImage::Format_RGBA8888;
                 break;
-        case NfImageData::ImageFromat::Format_ARGB32_Premultiplied:
+        case NfImageData::ImageFormat::Format_ARGB32_Premultiplied:
                 fmt = QImage::Format_ARGB32_Premultiplied;
                 break;
         default:
@@ -48,11 +48,28 @@ void NfQtPixmap::setImageData(const NfImageData& imageData)
                 return;
         }
 
-        QImage img(imageData.data(), imageData.size(), fmt);
-        m_pixmap = QPixmap::fromImage(img.copy());
+        const int bytesPerLine = imageData.width() * imageData.channels();
+        QImage img(imageData.data(),
+                   imageData.width(),
+                   imageData.height(),
+                   bytesPerLine,
+                   fmt);
+
+        // Deep copy to detach from NfImageData memory
+        m_pixmapImage = QPixmap::fromImage(img.copy());
 }
 
 const QPixmap& NfQtPixmap::pixmap() const
 {
-    return m_pixmapImage;
+        return m_pixmapImage;
+}
+
+std::size_t NfQtPixmap::size() const
+{
+        if (m_pixmapImage.isNull())
+                return 0;
+
+        return static_cast<std::size_t>(m_pixmapImage.width()) *
+                static_cast<std::size_t>(m_pixmapImage.height()) *
+                static_cast<std::size_t>(m_pixmapImage.depth()) / 8;
 }

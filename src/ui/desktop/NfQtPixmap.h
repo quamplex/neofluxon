@@ -1,5 +1,5 @@
 /**
- * File name: NfQtPixmap.cpp
+ * File name: NfQtPixmap.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -31,9 +31,11 @@
 class NfQtPixmap : public NfGuiImage {
 public:
     NfQtPixmap() = default;
-    ~NfQtPixmap() = default;
+    ~NfQtPixmap() override = default;
+
     void setImageData(const NfImageData& imageData) override;
     const QPixmap& pixmap() const;
+    std::size_t size() const override;
 
 private:
     QPixmap m_pixmapImage;
