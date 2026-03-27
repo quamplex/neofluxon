@@ -1,50 +1,88 @@
+/**
+ * File name: NfPhotoProvider.cpp
+ * Project: Neofluxon (a photography workflow software)
+ *
+ * Copyright (C) 2026 Iurie Nistor
+ *
+ * This file is part of Neofluxon.
+ *
+ * Neofluxon is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
 
-        QObject::connect(m_photoProvider, photosLoaded(const QList<NfPhotoId>& ids))
+#include "NfPhotoProvider.h"
+
+NfPhotoProvider::NfPhotoProvider(NfPhotoLoader& m_photoLoader,
+                                 NfGuiCache &cache,
+                                 QObject* parent)
+        : QtObject(parent)
+        , m_cache{cache}
+        , m_photoLoader{cache}
+{
         // Callback for new photos
-        m_photoProvider->setNewPhotosCallback([this](std::vector<std::unique_ptr<NfPhotoInfo>> newPhotos) {
-                QMetaObject::invokeMethod(this, [this, newPhotos = std::move(newPhotos)]() mutable {
+        m_photoLoader->setPhotosLoadedCallback([this](std::vector<NfPhoto> newPhotos) {
+                QMetaObject::invokeMethod(this, [this, newPhotos = std::move(newPhotos)]() mutable
+                {
+                        emit photosLoaded(std::move(newPhotos));
+                },
+                Qt::QueuedConnection);
+        });
 
-                        const int firstRow = static_cast<int>(m_photoIds.size());
-                        const int count    = static_cast<int>(newPhotos.size());
-                        const int lastRow  = firstRow + count - 1;
+        // Thumbnails loaded callback
+        m_photoProvider->setThumbnailsLoadedCallback([this](std::vector<NfGuiThumbail> thumbnails) {
+                QMetaObject::invokeMethod(this, [this, thumbnails = std::move(thumbnails)]() mutable {
+                        std::vector<NfPhotoId> ids;
+                        ids.reserve(thumbnails.size());
 
-                        beginInsertRows(QModelIndex(), firstRow, lastRow);
-
-                        m_photoIds.reserve(m_photoIds.size() + count);
-                        std::ranges::for_each(newPhotos, [this](auto& ptr) {
-                                m_photoIds.push_back(std::move(ptr));
-                        });
-
-                        // Update map: PhotoId -> QPersistentModelIndex
-                        for (int i = 0; i < count; ++i) {
-                                const auto& photoInfo = m_photoIds[firstRow + i];
-                                m_itemsMap[photoInfo->id()] = QPersistentModelIndex(index(firstRow + i));
+                        for (auto& thumbnail : thumbnails) {
+                                m_cache->add(thumbnail.id(), thumbnail.releaseImage());
+                                ids.push_back(thumbnail.id());
                         }
 
-                        endInsertRows();
+                        emit thumbnailsLoaded(ids);
                 }, Qt::QueuedConnection);
         });
-
-
-
-        // Thumbnails ready callback
-        m_photoProvider->setThumbnailsReadyCb([this](std::vector<NfThumbnail> thumbnails) {
-                QMetaObject::invokeMethod(this, [this, thumbnails = std::move(thumbnails)]() mutable {
-                }, Qt::QueuedConnection);
-        });
-
-
-QPixmap& NfBrowserModel::getThumbnail(const QModelIndex &index) const
-{
-    const auto& photoInfo = m_photos[index.row()];
-    auto const *cacheImage = ;
-    if (cacheImage) {
-            auto const *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
-        if (thumbnail)
-                return thumbnail->pixmap();
-    }
-
-    m_photoProvider->requestThumbnail(photoInfo, std::make_unique<NfQtPixmap>());
-
-    return m_thumbnailPlaceholder;
 }
+
+void NfPhotoProvider::setPath(const std::filesystem::path& path)
+{
+        m_path = path;
+        m_photoLoader.setPath(path);
+}
+
+const std::filesystem::path& NfPhotoProvider::getPath() const
+{
+        return m_path;
+}
+
+QPixmap& NfBrowserModel::getThumbnail(const std::unique_ptr<NfPhoto> &photo) const
+{
+        auto const *cacheImage = m_cache.getThumbail(photo->id());
+        if (cacheImage) {
+                auto const *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
+                if (thumbnail)
+                        return thumbnail->pixmap();
+        }
+
+        m_photoLoader.requestThumbnail(photo, std::make_unique<NfQtPixmap>());
+
+        return m_thumbnailPlaceholder;
+}
+
+
+
+
+
+
+

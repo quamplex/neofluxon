@@ -24,12 +24,13 @@
 #ifndef NF_BROWSER_MODEL_H
 #define NF_BROWSER_MODEL_H
 
+#include "NfPhoto.h"
+
 #include <QAbstractListModel>
 
 namespace Desktop {
 
 class NfPhotoProvider;
-class NfPhoto;
 
 class NfBrowserModel : public QAbstractListModel
 {
@@ -46,13 +47,13 @@ public:
         int rowCount(const QModelIndex& parent = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
-protected:
-        void onPhotosLoaded(const std::vector<std::unique_ptr<NfPhoto>>& newPhotos);
-        void onThumbnailsLoaded(const std::vector<NfPhotoId>& ids);
+protected slots:
+        void onPhotosLoaded(std::vector<NfPhoto> newPhotos);
+        void onThumbnailsLoaded(std::vector<NfPhotoId> ids);
 
 private:
         NfPhotoProvider& m_photoProvider;
-        std::vector<std::unique_ptr<NfPhoto>> m_photos;
+        std::vector<NfPhoto> m_photos;
         std::unordered_map<NfPhotoId, QPersistentModelIndex> m_itemsMap;
         std::filesystem::path m_path;
 };

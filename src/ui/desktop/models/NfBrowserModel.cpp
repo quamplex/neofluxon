@@ -34,13 +34,13 @@ NfBrowserModel::NfBrowserModel(NfPhotoProvider &photoProvider, QObject* parent)
         , m_photoProvider{photoProvider}
 {
         QtObject::connect(m_thumbnailProvider,
-                          &NfThumbnailGenerator::photosLoaded,
+                          &NfPhotoProvider::photosLoaded,
                           this,
                           &NfBrowserModel::onPhotosLoaded);
         QtObject::connect(m_thumbnailProvider,
-                          &NfThumbnailGenerator::thumbnailsReady,
+                          &NfPhotoProvider::thumbnailsLoaded,
                           this,
-                          &NfBrowserModel::onThumbnailsReady);
+                          &NfBrowserModel::onThumbnailsLoaded);
  }
 
 void NfBrowserModel::~NfBrowserModel()
@@ -54,7 +54,7 @@ void NfBrowserModel::setPath(const std::filesystem::path &path)
         m_itemsMap.clear();
         endResetModel();
 
-        m_photoProvider->loadPath(m_path);
+        m_photoProvider->setPath(m_path);
 }
 
 const std::filesystem::path& int NfBrowserModel::getPath() const
@@ -74,7 +74,7 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
 
         switch (role) {
         case Qt::DecorationRole:
-                return m_photoProvider->getThumbnail(m_photos[index.row()]->id());
+                return m_photoProvider->getThumbnail(m_photos[index.row()]);
         case Qt::DisplayRole:
                 return QString("Photo %1").arg(index.row() + 1);
         default:
@@ -82,7 +82,7 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
         }
 }
 
-void NfBrowserModel::onPhotosLoaded(const std::vector<std::unique_ptr<NfPhoto>>& newPhotos)
+void NfBrowserModel::onPhotosLoaded(std::vector<NfPhoto> newPhotos)
 {
         const int firstRow = static_cast<int>(m_photos.size());
         const int count    = static_cast<int>(newPhotos.size());
@@ -90,22 +90,20 @@ void NfBrowserModel::onPhotosLoaded(const std::vector<std::unique_ptr<NfPhoto>>&
 
         beginInsertRows(QModelIndex(), firstRow, lastRow);
 
-        // Reserver and add the ids.
         m_photos.reserve(m_photos.size() + count);
-        std::ranges::for_each(newPhotos, [this](auto& ptr) {
-                m_photos.push_back(std::move(ptr));
-        });
+        m_photos.insert(m_photos.end(),
+                        std::make_move_iterator(newPhotos.begin()),
+                        std::make_move_iterator(newPhotos.end()));
 
-        // Update map: PhotoId -> QPersistentModelIndex
         for (int i = 0; i < count; ++i) {
                 const auto& photo = m_photos[firstRow + i];
-                m_itemsMap[photo->id()] = QPersistentModelIndex(index(firstRow + i));
+                m_itemsMap[photo.id()] = QPersistentModelIndex(index(firstRow + i));
         }
 
         endInsertRows();
 }
 
-void NfBrowserModel::onThumbnailsLoaded(const std::vector<NfPhotoId>& ids)
+void NfBrowserModel::onThumbnailsLoaded(const std::vector<NfPhotoId> ids)
 {
         std::ranges::for_each(ids, [this](auto& id) {
                 if (auto it = m_itemsMap.find(thumb.id()); it != m_itemsMap.end()) {

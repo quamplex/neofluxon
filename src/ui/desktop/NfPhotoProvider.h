@@ -24,32 +24,37 @@
 #ifndef NF_PHOTO_PROVIDER_H
 #define NF_PHOTO_PROVIDER_H
 
+#include "NfPhoto.h"
+
 #include <QObject>
+#include <QPixmap>
 
 namespace Desktop {
+
+class NfPhotoLoader;
+class NfGuiCache;
 
 class NfPhotoProvider : public Object
 {
         Q_OBJECT
 
 public:
-        explicit NfPhotoProvider(NfPhotoProvider* browserProxy,
-                                 NfGuiCache* cache,
+        explicit NfPhotoProvider(NfPhotoLoader& photoProvider,
+                                 NfGuiCache& cache,
                                  QObject* parent = nullptr);
         ~NfPhotoProvider();
 
-        void loadPath(const std::filesystem::path& path);
+        void setPath(const std::filesystem::path& path);
         const std::filesystem::path& getPath() const;
-
         QPixmap& getThumbnail(const NfPhotoId &id) const;
 
-protected:
+signal:
+        void photosLoaded(std::vector<NfPhoto> photos);
+        void phumbnailsLoaded(std::vector<NfPhotoId> ids);
 
 private:
-        NfPhotoProvider* m_photoProvider;
-        NfGuiCache* m_cache;
-        std::vector<std::unique_ptr<NfPhotoInfo>> m_photos;
-        std::unordered_map<NfPhotoId, QPersistentModelIndex> m_itemsMap;
+        NfPhotoProvider& m_photoProvider;
+        NfGuiCache& m_cache;
         std::filesystem::path m_path;
         QPixmap m_thumbnailPlaceholder;
 };
