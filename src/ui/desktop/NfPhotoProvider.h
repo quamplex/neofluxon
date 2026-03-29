@@ -29,7 +29,7 @@
 #include <QObject>
 #include <QPixmap>
 
-namespace Desktop {
+namespace NfDesktop {
 
 class NfPhotoLoader;
 class NfGuiCache;
@@ -59,6 +59,6 @@ private:
         QPixmap m_thumbnailPlaceholder;
 };
 
-} // namespace Desktop
+} // namespace NfDesktop
 
 #endif // NF_PHOTO_PROVIDER_H

@@ -1,5 +1,5 @@
 /**
- * File name: NfPhotoProvider.cpp
+ * File name: NfPhotoLoader.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,58 +21,52 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfPhotoProvider.h"
+#include "NfPhotoLoader.h"
 #include "ForegroundThreadPool.h"
-#include "NfPathLoader.h"
 
 namespace NfCore {
 
-NfPhotoProvider::NfPhotoProvider(NfCache *cache)
-        : m_cache{cache}
+NfPhotoLoader::NfPhotoLoader(NfCache *cache)
         , m_photoLoader{std::make_unique<NfPathLoader>()}
 {
         
 }
 
-NfPhotoProvider::~NfPhotoProvider()
+NfPhotoLoader::~NfPhotoLoader()
 {
 }
 
-void NfPhotoProvider::setItemNumberChangedCallback(ItemNumberChangedCallback callback)
+void NfPhotoLoader::setPhotosLoadedCallback(PhotosLoadedCallback callback)
 {
-        m_itemNumberChangedCallback = std::move(callback);
+        m_photosLoadedCallback = std::move(callback);
 }
 
-void NfPhotoProvider::setThumbnailReadyCallback(ThumbnailReadyCallback callback)
+void NfPhotoLoader::setThumbnailsLoadedCallback(ThumbnailsLoadedCallback callback)
 {
-        m_thumbnailReadyCallback = std::move(callback);
+        m_thumbnailsLoadedCallback = std::move(callback);
 }
 
-void NfPhotoProvider::requestThumbnail(const NfPhotoInfo &info,
-                                       std::unique_ptr<NfImage> imageContainer)
+void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
+                                       std::unique_ptr<NfGuiImage> imageContainer)
 {
     {
-        std::scoped_lock lock(m_queueMutex);
-        m_thubnailsQueue.push(std::move(info));
+            std::scoped_lock lock(m_thumbailRequetsMutex);
+            m_thumbailRequestsQueue.emplace_back(photo, std::move(imageContainer));
     }
-
-    m_cv.notify_one();
+    ////
 }
 
-void NfPhotoProvider::generateThumbnail(std::unique_ptr<NfImage> image)
+void NfPhotoLoader::setPath(const std::filesystem::path &path)
 {
-        // Ge the thubnail data
+        {
+                std::scoped_lock lock(m_thumbailRequetsMutex);
+                m_thumbailRequestsQueue.clear();
+        }
 
-        image->setData(imageData);
-        m_thumbnailReadyCallback(std::move());
-}
-
-void NfPhotoProvider::setPath(const std::filesystem::path &path)
-{
         m_pathLoader->setPath(path);
 }
 
-std::filesystem::path NfPhotoProvider::getPath() const
+std::filesystem::path NfPhotoLoader::getPath() const
 {
         return m_pathLoader->getPath(path);
 }

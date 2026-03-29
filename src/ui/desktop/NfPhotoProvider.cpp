@@ -22,13 +22,16 @@
  */
 
 #include "NfPhotoProvider.h"
+#include "NfPhotoLoader.h"
 
-NfPhotoProvider::NfPhotoProvider(NfPhotoLoader& m_photoLoader,
+namespace NfDesktop {
+
+NfPhotoProvider::NfPhotoProvider(NfPhotoLoader& photoLoader,
                                  NfGuiCache &cache,
                                  QObject* parent)
         : QtObject(parent)
+        , m_photoLoader{photoLoader}
         , m_cache{cache}
-        , m_photoLoader{cache}
 {
         // Callback for new photos
         m_photoLoader->setPhotosLoadedCallback([this](std::vector<NfPhoto> newPhotos) {
@@ -80,9 +83,4 @@ QPixmap& NfBrowserModel::getThumbnail(const std::unique_ptr<NfPhoto> &photo) con
         return m_thumbnailPlaceholder;
 }
 
-
-
-
-
-
-
+} // namespace NfDesktop

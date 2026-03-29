@@ -1,18 +1,40 @@
+/**
+ * File name: NfPathLoader.cpp
+ * Project: Neofluxon (a photography workflow software)
+ *
+ * Copyright (C) 2026 Iurie Nistor
+ *
+ * This file is part of Neofluxon.
+ *
+ * Neofluxon is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 #include "PathLoader.h"
-#include <filesystem>
-#include <chrono>
-#include <stop_token>
 
 using namespace std::chrono_literals;
 
-PathLoader::PathLoader() = default;
+PathLoader::PathLoader()
+        : m_recursive {false}
+{
+}
 
-PathLoader::~PathLoader() {
-    // Stop scan and clear callbacks
+PathLoader::~PathLoader()
+{
     {
         std::lock_guard lock(m_mutex);
-        m_itemCountChangedCallback = nullptr;
-        m_fileFoundCallback = nullptr;
+        m_photosLoadedCallback = nullptr;
     }
 
     if (m_scanThread.joinable()) {
@@ -21,42 +43,11 @@ PathLoader::~PathLoader() {
     }
 }
 
-void PathLoader::setDirectory(const std::string& path, bool recursive) {
-    std::lock_guard lock(m_mutex);
-
-    // Stop previous scan
-    if (m_scanThread.joinable()) {
-        m_stopFlag = true;
-        m_scanThread.join();
-        m_stopFlag = false;
-    }
-
-    m_directory = path;
-    m_recursive = recursive;
-    m_files.clear();
-
-    startScan();
-}
-
-void PathLoader::setItemCountChangedCallback(ItemCountChangedCallback cb) {
-    std::lock_guard lock(m_mutex);
-    m_itemCountChangedCallback = std::move(cb);
-}
-
-void PathLoader::setFileFoundCallback(FileFoundCallback cb) {
-    std::lock_guard lock(m_mutex);
-    m_fileFoundCallback = std::move(cb);
-}
-
-size_t PathLoader::numberOfFiles() const {
-    std::lock_guard lock(m_mutex);
-    return m_files.size();
-}
-
-std::string PathLoader::getFile(size_t index) const {
-    std::lock_guard lock(m_mutex);
-    if (index >= m_files.size()) return {};
-    return m_files[index];
+void PathLoader::setPath(const std::string& path, bool recursive)
+{
+        std::lock_guard lock(m_mutex);
+        m_directory = path;
+        m_recursive = recursive;
 }
 
 void PathLoader::startScan() {
@@ -74,55 +65,47 @@ void PathLoader::startScan() {
     });
 }
 
-void PathLoader::scanDirectory(const std::string& path, bool recursive, std::stop_token stopToken)
+void PathLoader::scanDirectory(const std::string& path,
+                               bool recursive,
+                               std::stop_token stopToken)
 {
-    namespace fs = std::filesystem;
+        namespace fs = std::filesystem;
 
-    size_t notifyCounter = 0;
-    auto lastNotifyTime = std::chrono::steady_clock::now();
+        auto lastNotifyTime = std::chrono::steady_clock::now();
+        auto shouldNotify = [&]() {
+                auto now = std::chrono::steady_clock::now();
+                return (now - lastNotifyTime > 100ms);
+        };
 
-    auto shouldNotify = [&]() {
-        auto now = std::chrono::steady_clock::now();
-        return notifyCounter >= 100 || (now - lastNotifyTime > 100ms);
-    };
+        std::vector<NfPhoto> loadedPhotos;
+        std::function<void(const fs::path&)> scanRecursive;
+        scanRecursive = [&](const fs::path& p) {
+                for (auto& entry : fs::directory_iterator(p)) {
+                        if (stopToken.stop_requested())
+                                return;
 
-    std::function<void(const fs::path&)> scanRecursive;
-    scanRecursive = [&](const fs::path& p) {
-        for (auto& entry : fs::directory_iterator(p)) {
-            if (stopToken.stop_requested() || m_stopFlag)
-                return;
+                        if (entry.is_directory() && recursive)
+                                scanRecursive(entry.path());
 
-            if (entry.is_directory() && recursive)
-                scanRecursive(entry.path());
-
-            if (entry.is_regular_file()) {
-                size_t index;
-                {
-                    std::lock_guard lock(m_mutex);
-                    m_files.push_back(entry.path().string());
-                    index = m_files.size() - 1;
-
-                    if (m_fileFoundCallback)
-                        m_fileFoundCallback(index);
+                        if (entry.is_regular_file()) {
+                                loadedPhotos.push_back(NfPhoto(entry.path()));
+                                if (shouldNotify()) {
+                                        lastNotifyTime = std::chrono::steady_clock::now();
+                                        std::lock_guard lock(m_mutex);
+                                        if (m_photosLoadedCallback)
+                                                m_photosLoadedCallback(std::move(loadedPhotos));
+                                }
+                        }
                 }
+        };
 
-                notifyCounter++;
-                if (shouldNotify()) {
-                    notifyCounter = 0;
-                    lastNotifyTime = std::chrono::steady_clock::now();
-                    std::lock_guard lock(m_mutex);
-                    if (m_itemCountChangedCallback)
-                        m_itemCountChangedCallback();
-                }
-            }
+        if (!path.empty())
+                scanRecursive(path);
+
+        // Final notification after scan completes
+        if (!m_photos.empty()) {
+                std::lock_guard lock(m_mutex);
+                if (m_photosLoadedCallback)
+                        m_photosLoadedCallback(std::move(loadedPhotos));
         }
-    };
-
-    if (!path.empty())
-        scanRecursive(path);
-
-    // Final notification after scan completes
-    std::lock_guard lock(m_mutex);
-    if (m_itemCountChangedCallback)
-        m_itemCountChangedCallback();
 }

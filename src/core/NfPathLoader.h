@@ -28,33 +28,28 @@
 
 class NfPhotoPathLoader {
 public:
-    using PhotoCountChangedCallback = std::function<void()>;
+        using PhotosLoadedCallback = std::function<void(std::vector<Photos>)>;
 
-    PathLoader();
-    ~PathLoader();
+        PathLoader();
+        ~PathLoader();
 
-    void setPhotoCountChangedCallback(FileCountChangedCallback cb);
-
-    void setPath(const std::string& path, bool recursive = true);
-
-    size_t numberOfPhotos() const;
-    NfPhotoId getPhotoId(size_t index) const;
+        void setPhotosLoadedCallback(PhotosLoadedCallback callback);
+        void setPath(const std::string& path, bool recursive = true);
+        std::filesystem::path getPath(const std::string& path) const;
 
 srotected:
-    void startScan();
-    void scanDirectory(const std::string& path, bool recursive, std::stop_token stopToken);
+        void startScan();
+        void scanDirectory(const std::string& path, bool recursive, std::stop_token stopToken);
 
 private:
-    // Member variables
-    mutable std::mutex m_mutex;
-    std::vector<std::filesystem::path> m_files;
-    std::vector<NfPhotoId> m_photoIds;
-    std::string m_directory;
-    bool m_recursive = true;
-    ItemCountChangedCallback m_itemCountChangedCallback = nullptr;
-    FileFoundCallback m_fileFoundCallback = nullptr;
-    std::jthread m_scanThread;
-    std::atomic<bool> m_stopFlag{false};
+        mutable std::mutex m_mutex;
+        std::vector<std::filesystem::path> m_files;
+        std::vector<NfPhoto> m_photos;
+        std::string m_path;
+        bool m_recursive = true;
+        PhotosLoadedCallback m_photosLoadedCallback;
+        std::jthread m_scanThread;
+        std::atomic<bool> m_stopFlag{false};
 };
 
 #endif // NF_PATH_LOADER_H

@@ -1,5 +1,5 @@
 /**
- * File name: NfPhotoProvider.h
+ * File name: NfPhotoLoader.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,46 +21,42 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_THUMBNAIL_PROVIDER_H
-#define NF_THUMBNAIL_PROVIDER_H
+#ifndef NF_PHOTO_LOADER_H
+#define NF_PHOTO_LOADER_H
 
 #include "Neofluxon.h"
+#incldue "NfGuiImage.h"
+#incldue "NfGuiThumbail.h"
+#include "NfPhoto.h"
 
 namespace NfCore {
 
 class NfCache;
 class NfPathLoader;
 
-class NfPhotoProvider {
+class NfPhotoLoader {
 public:
-        using ItemNumberChangedCallback = std::function<void()>;
-        using ThumbnailReadyCallback = std::function<void(size_t index)>;
-        NfPhotoProvider();
-        ~NfPhotoProvider();
+        using PhotosLoadedCallback = std::function<void(std::vector<NfPhoto>)>;
+        using ThumbnailsLoadedCallback = std::function<void(std::vector<NfGuiThumbail>)>;
+        NfPhotoLoader();
+        ~NfPhotoLoader();
 
-        void requestThumbnail(const NfPhotoInfo &info);
+        void setPhotosLoadedCallback(PhotosLoadedCallback callback);
+        void setThumbnailsLoadedCallback(ThumbnailsLoadedCallback callback);
 
-        // Browsers callbacks
-        void setItemNumberChangedCallback(ItemNumberChangedCallback callback);
-        void setThumbnailReadyCallback(ThumbnailReadyCallback callback);
+        void requestThumbnail(const NfPhoto &info, std::unique_ptr<NfGuiImage> image);
 
         void setPath(const std::filesystem::path &path);
-        std::filesystem::path getPath() const;
-        void setCache(NfCache *cache);
-        NfCache* getCache() const;
-        NfThumbnail getThumbnailAt(size_t index) const;
-        size_t numberOfThumbnails() const;
+        std::filesystem::path& getPath() const;
 
  protected:
 
  private:
-        ItemsNumberChangedCallback m_itemNumberChangedCallback;
-        ThumbnailReadyCallback m_thumbnailReadyCallback;
-
-        std::unique_ptr<NfPathLoader> m_pathLoader;
-        NfCache* m_cache;
+        PhotosLoadedCallback m_photosLoadedCallback;
+        ThumbnailsLoadedCallback m_thumbnailsLoadedCallback;
+        std::filesystem::path m_path;
 };
 
 } // namespace NfCore
 
-#endif // NF_THUMBNAIL_PROVIDER_H
+#endif // NF_PHOTO_LOADER_H
