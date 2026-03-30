@@ -1,5 +1,5 @@
 /**
- * File name: NfPathLoader.h
+ * File name: NfPhotoScanner.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,35 +21,32 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_PATH_LOADER_H
-#define NF_PATH_LOADER_H
+#ifndef NF_PHOTO_SCANNER_H
+#define NF_PHOTO_SCANNER_H
 
-#incude "Neofluxon.h"
+#include "NfPhoto.h"
 
-class NfPhotoPathLoader {
+class NfPhotoScanner {
 public:
-        using PhotosLoadedCallback = std::function<void(std::vector<Photos>)>;
+        NfPhotoScanner();
+        ~NfPhotoScanner() = default;
 
-        PathLoader();
-        ~PathLoader();
-
-        void setPhotosLoadedCallback(PhotosLoadedCallback callback);
         void setPath(const std::string& path, bool recursive = true);
         std::filesystem::path getPath(const std::string& path) const;
+        std::vector<NfPhoto> takePhotos();
 
-srotected:
-        void startScan();
-        void scanDirectory(const std::string& path, bool recursive, std::stop_token stopToken);
+protected:
+        void loadPhotosThread(std::stop_token stopToken);
 
 private:
         mutable std::mutex m_mutex;
-        std::vector<std::filesystem::path> m_files;
-        std::vector<NfPhoto> m_photos;
         std::string m_path;
-        bool m_recursive = true;
-        PhotosLoadedCallback m_photosLoadedCallback;
+        bool m_recursive;
+        std::vector<NfPhotos> m_loadedPhotos;
+
         std::jthread m_scanThread;
-        std::atomic<bool> m_stopFlag{false};
+        std::atomic<bool> m_startScan;
+        std::condition_variable m_conditionVariable;
 };
 
-#endif // NF_PATH_LOADER_H
+#endif // NF_PHOTO_SCANNER_H
