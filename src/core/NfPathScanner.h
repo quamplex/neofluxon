@@ -1,5 +1,5 @@
 /**
- * File name: NfPhotoScanner.h
+ * File name: NfPathScanner.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -26,10 +26,10 @@
 
 #include "NfPhoto.h"
 
-class NfPhotoScanner {
+class NfPathScanner {
 public:
-        NfPhotoScanner();
-        ~NfPhotoScanner() = default;
+        NfPathScanner();
+        ~NfPathScanner() = default;
 
         void setPath(const std::string& path, bool recursive = true);
         std::filesystem::path getPath(const std::string& path) const;

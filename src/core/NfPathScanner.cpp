@@ -1,5 +1,5 @@
 /**
- * File name: NfPhotoScanner.cpp
+ * File name: NfPathScanner.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,16 +21,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfPhotoScanner.h"
+#include "NfPathScanner.h"
 
-NfPhotoScanner::NfPhotoScanner()
+NfPathScanner::NfPathScanner()
         : m_recursive{false}
         , m_startScan{false}
 {
         m_scanThread = std::jthread(&PathLoader::scanDirectory, this);
 }
 
-void NfPhotoScanner::setPath(const std::string& path, bool recursive)
+void NfPathScanner::setPath(const std::string& path, bool recursive)
 {
         {
                 std::lock_guard lock(m_mutex);
@@ -42,7 +42,7 @@ void NfPhotoScanner::setPath(const std::string& path, bool recursive)
         m_conditionVariable.notify_one();
 }
 
-void NfPhotoScanner::loadPhotosThread(std::stop_token stopToken)
+void NfPathScanner::loadPhotosThread(std::stop_token stopToken)
 {
         namespace fs = std::filesystem;
 
@@ -102,7 +102,7 @@ void NfPhotoScanner::loadPhotosThread(std::stop_token stopToken)
         }
 }
 
-void NfPhotoScanner::processPathEntry(const std::filesystem::path& path)
+void NfPathScanner::processPathEntry(const std::filesystem::path& path)
 {
         namespace fs = std::filesystem;
 
@@ -128,7 +128,7 @@ void NfPhotoScanner::processPathEntry(const std::filesystem::path& path)
         }
 }
 
-std::vector<NfPhoto> NfPhotoScanner::takePhotos()
+std::vector<NfPhoto> NfPathScanner::takePhotos()
 {
         std::lock_guard lock(m_mutex);
         return std::move(m_loadedPhotos);
