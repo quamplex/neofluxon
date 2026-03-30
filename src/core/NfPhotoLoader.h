@@ -41,13 +41,13 @@ public:
         NfPhotoLoader();
         ~NfPhotoLoader();
 
-        void setPhotosLoadedCallback(PhotosLoadedCallback callback);
-        void setThumbnailsLoadedCallback(ThumbnailsLoadedCallback callback);
+        void setPath(const std::filesystem::path &path);
+        std::filesystem::path& getPath() const;
 
         void requestThumbnail(const NfPhoto &info, std::unique_ptr<NfGuiImage> image);
 
-        void setPath(const std::filesystem::path &path);
-        std::filesystem::path& getPath() const;
+        std::vector<NfPhoto> takePhotos();
+        std::vector<NfThumbnail> takeThumbnails();
 
  protected:
 

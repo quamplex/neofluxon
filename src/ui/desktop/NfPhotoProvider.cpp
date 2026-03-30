@@ -23,39 +23,23 @@
 
 #include "NfPhotoProvider.h"
 #include "NfPhotoLoader.h"
+#include "NfGuiCache.h"
+#include "NfGuiThumbnail.h"
+
+#include <QTimer>
 
 namespace NfDesktop {
 
 NfPhotoProvider::NfPhotoProvider(NfPhotoLoader& photoLoader,
                                  NfGuiCache &cache,
                                  QObject* parent)
-        : QtObject(parent)
+        : QObject(parent)
         , m_photoLoader{photoLoader}
         , m_cache{cache}
 {
-        // Callback for new photos
-        m_photoLoader->setPhotosLoadedCallback([this](std::vector<NfPhoto> newPhotos) {
-                QMetaObject::invokeMethod(this, [this, newPhotos = std::move(newPhotos)]() mutable
-                {
-                        emit photosLoaded(std::move(newPhotos));
-                },
-                Qt::QueuedConnection);
-        });
-
-        // Thumbnails loaded callback
-        m_photoProvider->setThumbnailsLoadedCallback([this](std::vector<NfGuiThumbail> thumbnails) {
-                QMetaObject::invokeMethod(this, [this, thumbnails = std::move(thumbnails)]() mutable {
-                        std::vector<NfPhotoId> ids;
-                        ids.reserve(thumbnails.size());
-
-                        for (auto& thumbnail : thumbnails) {
-                                m_cache->add(thumbnail.id(), thumbnail.releaseImage());
-                                ids.push_back(thumbnail.id());
-                        }
-
-                        emit thumbnailsLoaded(ids);
-                }, Qt::QueuedConnection);
-        });
+        auto timer = new QTimer(this);
+        QObject::connect(timer, &QTimer::timeout, this, &NfPhotoProvider::onTimeout);
+        timer->start(100);
 }
 
 void NfPhotoProvider::setPath(const std::filesystem::path& path)
@@ -69,9 +53,9 @@ const std::filesystem::path& NfPhotoProvider::getPath() const
         return m_path;
 }
 
-QPixmap& NfBrowserModel::getThumbnail(const std::unique_ptr<NfPhoto> &photo) const
+const QPixmap& NfPhotoProvider::getThumbnail(const NfPhoto &photo) const
 {
-        auto const *cacheImage = m_cache.getThumbail(photo->id());
+        auto const *cacheImage = m_cache.getThumbnail(photo.id());
         if (cacheImage) {
                 auto const *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
                 if (thumbnail)
@@ -81,6 +65,37 @@ QPixmap& NfBrowserModel::getThumbnail(const std::unique_ptr<NfPhoto> &photo) con
         m_photoLoader.requestThumbnail(photo, std::make_unique<NfQtPixmap>());
 
         return m_thumbnailPlaceholder;
+}
+
+void NfPhotoProvider::onTimeout()
+{
+        processNewPhotos();
+        processThumbnails();
+}
+
+void NfPhotoProvider::processNewPhotos()
+{
+        auto newPhotos = m_photoLoader.takePhotos();
+        if (!newPhotos.empty())
+                emit photosLoaded(newPhotos);
+}
+
+void NfPhotoProvider::processThumbnails()
+{
+        auto thumbnails = m_photoLoader.takeThumbnails();
+        if (thumbnails.empty())
+                return;
+
+        std::vector<NfPhotoId> photoIds;
+        photoIds.reserve(thumbnails.size());
+
+        for(auto &thumb : thumbnails) {
+                m_cache.add(thumb.id(), thumb.releaseImage());
+                photoIds.push_back(thumb.id());
+        }
+
+        if (!photoIds.empty())
+                emit thumbnailsLoaded(photoIds);
 }
 
 } // namespace NfDesktop

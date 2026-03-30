@@ -1,5 +1,5 @@
 /**
- * File name: NfPhotoLoader.cpp
+ * File name: NfGuiThumbnail.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,34 +21,30 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfPhotoLoader.h"
-#include "NfPathScanner.h"
+#include "NfGuiThumbnail.h"
+#include "NfGuiImage.h"
 
-namespace NfCore {
+namespace NfDesktop {
 
-NfPhotoLoader::NfPhotoLoader()
-        , m_photoLoader{std::make_unique<NfPathScanner>()}
+NfGuiThumbnail::NfGuiThumbnail(const NfPhotoId &id, std::unique_ptr<NfGuiImage> img)
+        : m_photoId{id}
+        , m_image{std::move(img)}
 {
 }
 
-NfPhotoLoader::~NfPhotoLoader()
+const NfPhotoId& NfGuiThumbnail::id() const
 {
+        return m_photoId;
 }
 
-void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
-                                     std::unique_ptr<NfGuiImage> imageContainer)
+NfGuiImage* NfGuiThumbnail::getImage() const
 {
+        return m_image.get();
 }
 
-void NfPhotoLoader::setPath(const std::filesystem::path &path)
+std::unique_ptr<NfGuiImage> NfGuiThumbnail::releaseImage()
 {
-        m_path = path;
-        m_pathScanner->setPath(path);
+        return std::move(m_image);
 }
 
-std::filesystem::path& NfPhotoLoader::getPath() const
-{
-        return m_path;
-}
-
-} // namespace NfCore
+} // namespace NfDesktop

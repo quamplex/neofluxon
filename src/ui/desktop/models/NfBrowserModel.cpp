@@ -33,19 +33,15 @@ NfBrowserModel::NfBrowserModel(NfPhotoProvider &photoProvider, QObject* parent)
         : QAbstractListModel(parent)
         , m_photoProvider{photoProvider}
 {
-        QtObject::connect(m_thumbnailProvider,
+        QtObject::connect(m_photoProvider,
                           &NfPhotoProvider::photosLoaded,
                           this,
                           &NfBrowserModel::onPhotosLoaded);
-        QtObject::connect(m_thumbnailProvider,
+        QtObject::connect(m_photoProvider,
                           &NfPhotoProvider::thumbnailsLoaded,
                           this,
                           &NfBrowserModel::onThumbnailsLoaded);
  }
-
-void NfBrowserModel::~NfBrowserModel()
-{
-}
 
 void NfBrowserModel::setPath(const std::filesystem::path &path)
 {
@@ -103,7 +99,7 @@ void NfBrowserModel::onPhotosLoaded(std::vector<NfPhoto> newPhotos)
         endInsertRows();
 }
 
-void NfBrowserModel::onThumbnailsLoaded(const std::vector<NfPhotoId> ids)
+void NfBrowserModel::onThumbnailsLoaded(std::vector<NfPhotoId> ids)
 {
         std::ranges::for_each(ids, [this](auto& id) {
                 if (auto it = m_itemsMap.find(thumb.id()); it != m_itemsMap.end()) {

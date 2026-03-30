@@ -29,31 +29,41 @@
 #include <QObject>
 #include <QPixmap>
 
+#include <filesystem>
+#include <vector>
+
 namespace NfDesktop {
 
 class NfPhotoLoader;
 class NfGuiCache;
 
-class NfPhotoProvider : public Object
+class NfPhotoProvider : public QObject
 {
         Q_OBJECT
 
 public:
-        explicit NfPhotoProvider(NfPhotoLoader& photoProvider,
+        explicit NfPhotoProvider(NfPhotoLoader& photoLoader,
                                  NfGuiCache& cache,
                                  QObject* parent = nullptr);
-        ~NfPhotoProvider();
+        ~NfPhotoProvider() = default;
 
         void setPath(const std::filesystem::path& path);
         const std::filesystem::path& getPath() const;
-        QPixmap& getThumbnail(const NfPhotoId &id) const;
 
-signal:
-        void photosLoaded(std::vector<NfPhoto> photos);
-        void phumbnailsLoaded(std::vector<NfPhotoId> ids);
+        QPixmap& getThumbnail(const NfPhoto &photo) const;
+
+signals:
+        void photosLoaded(const std::vector<NfPhoto>& photos);
+        void thumbnailsLoaded(const std::vector<NfPhotoId>& ids);
+
+private slots:
+        void onTimeout();
 
 private:
-        NfPhotoProvider& m_photoProvider;
+        void processNewPhotos();
+        void processThumbnails();
+
+        NfPhotoLoader& m_photoLoader;
         NfGuiCache& m_cache;
         std::filesystem::path m_path;
         QPixmap m_thumbnailPlaceholder;
@@ -62,3 +72,4 @@ private:
 } // namespace NfDesktop
 
 #endif // NF_PHOTO_PROVIDER_H
+

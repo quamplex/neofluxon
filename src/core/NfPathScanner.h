@@ -26,13 +26,22 @@
 
 #include "NfPhoto.h"
 
+#include <string>
+#include <vector>
+#include <atomic>
+#include <jthread>
+#include <mutex>
+#include <filesystem>
+#include <stop_token>
+#include <condition_variable>
+
 class NfPathScanner {
 public:
         NfPathScanner();
         ~NfPathScanner() = default;
 
-        void setPath(const std::string& path, bool recursive = true);
-        std::filesystem::path getPath(const std::string& path) const;
+        void setPath(const std::filesystem::path& path, bool recursive = true);
+        std::filesystem::path getPath(const std::filesystem::path& path) const;
         std::vector<NfPhoto> takePhotos();
 
 protected:

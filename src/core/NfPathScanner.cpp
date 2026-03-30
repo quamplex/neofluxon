@@ -54,8 +54,8 @@ void NfPathScanner::loadPhotosThread(std::stop_token stopToken)
                         std::unique_lock lock(m_mutex);
 
                         m_conditionVariable.wait(lock, [&]() {
-                                return stopToken.stop_requested() ||
-                                        m_startScan.load(std::memory_order_relaxed);
+                                return stopToken.stop_requested()
+                                        || m_startScan.load(std::memory_order_relaxed);
                         });
 
                         if (stopToken.stop_requested()) {
@@ -118,7 +118,6 @@ void NfPathScanner::processPathEntry(const std::filesystem::path& path)
                         return;
 
                 NfPhoto photo(path);
-
                 {
                         std::lock_guard lock(m_mutex);
                         m_loadedPhotos.push_back(std::move(photo));

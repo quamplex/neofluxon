@@ -39,7 +39,7 @@ class NfBrowserModel : public QAbstractListModel
 public:
         explicit NfBrowserModel(NfPhotoProvider &photoProvider,
                                 QObject* parent = nullptr);
-        ~NfBrowserModel();
+        ~NfBrowserModel() = default;
 
         void setPath(const std::filesystem::path& path);
         const std::filesystem::path& getPath() const;

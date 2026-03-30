@@ -1,5 +1,5 @@
 /**
- * File name: NfPhotoLoader.cpp
+ * File name: NfGuiThumbnail.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,34 +21,35 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfPhotoLoader.h"
-#include "NfPathScanner.h"
+#ifndef NF_GUI_THUMBNAIL_H
+#define NF_GUI_THUMBNAIL_H
 
-namespace NfCore {
+#include "PhotoId.h"
+#include <memory>
 
-NfPhotoLoader::NfPhotoLoader()
-        , m_photoLoader{std::make_unique<NfPathScanner>()}
-{
-}
+namespace NfDesktop {
 
-NfPhotoLoader::~NfPhotoLoader()
-{
-}
+class NfGuiImage;
 
-void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
-                                     std::unique_ptr<NfGuiImage> imageContainer)
-{
-}
+class NfGuiThumbnail {
+public:
 
-void NfPhotoLoader::setPath(const std::filesystem::path &path)
-{
-        m_path = path;
-        m_pathScanner->setPath(path);
-}
+    explicit NfGuiThumbnail(const NfPhotoId &id, std::unique_ptr<NfGuiImage> img);
+    NfGuiThumbnail(NfGuiThumbnail&&) noexcept = default;
+    NfGuiThumbnail& operator=(NfGuiThumbnail&&) noexcept = default;
+    NfGuiThumbnail(const NfGuiThumbnail&) = delete;
+    NfGuiThumbnail& operator=(const NfGuiThumbnail&) = delete;
 
-std::filesystem::path& NfPhotoLoader::getPath() const
-{
-        return m_path;
-}
+    const NfPhotoId& id() const;
+    NfGuiImage* getImage() const;
 
-} // namespace NfCore
+    [[nodiscard]] std::unique_ptr<NfGuiImage> releaseImage();
+
+private:
+    NfPhotoId m_photoId;
+    std::unique_ptr<NfGuiImage> m_image;
+};
+
+} // namespace NfDesktop
+
+#endif // NF_GUI_THUMBNAIL_H
