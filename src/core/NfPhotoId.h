@@ -24,22 +24,28 @@
 #ifndef NF_PHOTO_ID_H
 #define NF_PHOTO_ID_H
 
-#include "PhotoHash.h"
+#include <filesystem>
+#include <cstdint>
+
+namespace NfCore {
 
 class NfPhotoId {
 public:
-    explicit NfPhotoId(const PhotoHash& hash = {});
-    explicit NfPhotoId(const std::filsystem::path& photoPath);
+        explicit NfPhotoId(const std::filesystem::path& filePath);
 
-    bool operator==(const NfPhotoId& other) const;
-    bool operator!=(const NfPhotoId& other) const;
-    explicit operator bool() const { return isValid(); }
+        bool operator==(const NfPhotoId& other) const;
+        bool operator!=(const NfPhotoId& other) const;
 
-    bool isValid();
-    const NfPhotoHash& getHash() const;
+        explicit operator bool() const { return isValid(); }
+        bool isValid() const;
+
+        uint64_t value() const { return m_idHash; }
+        static uint64_t computeHash(const std::filesystem::path& filePath);
 
 private:
-    NfPhotoHash m_hash;
+        uint64_t m_idHash;
 };
+
+} // namespace NfCore
 
 #endif // NF_PHOTO_ID_H

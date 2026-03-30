@@ -34,7 +34,7 @@ void NfPathScanner::setPath(const std::string& path, bool recursive)
 {
         {
                 std::lock_guard lock(m_mutex);
-                m_directory = path;
+                m_path = path;
                 m_recursive = recursive;
                 m_startScan.store(true, std::memory_order_relaxed);
         }
@@ -65,7 +65,7 @@ void NfPathScanner::loadPhotosThread(std::stop_token stopToken)
 
                         m_loadedPhotos.clear();
 
-                        directory = m_directory;
+                        directory = m_path;
                         recursive = m_recursive;
                         m_startScan.store(false, std::memory_order_relaxed);
                 }

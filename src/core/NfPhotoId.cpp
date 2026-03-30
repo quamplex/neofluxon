@@ -23,27 +23,66 @@
 
 #include "NfPhotoId.h"
 
-NfPhotoId::NfPhotoId(const PhotoHash& hash)
-        : m_hash{hash}
-{
-}
+#include <string>
+#include <chrono>
 
-NfPhotoId::NfPhotoId(const std::filsystem::path& photoPath)
-        : m_hash{imagePath, NfPhotoHash::HashType::HashSHA256}
+namesapce NfCore {
+
+namespace {
+uint64_t fnv1a_64(const std::string& data)
+{
+        const uint64_t FNV_offset = 14695981039346656037ULL;
+        const uint64_t FNV_prime  = 1099511628211ULL;
+
+        uint64_t hash = FNV_offset;
+        for (unsigned char c : data) {
+                hash ^= c;
+                hash *= FNV_prime;
+        }
+
+        return hash;
+}
+} // snamespace
+
+NfPhotoId::NfPhotoId(const std::filesystem::path& filePath)
+        : m_idHash{computeHash(filePath)}
 {
 }
 
 bool NfPhotoId::operator==(const NfPhotoId& other) const
 {
-        return m_hash == other.m_hash;
+        return m_idHash == other.m_idHash;
 }
 
 bool NfPhotoId::operator!=(const NfPhotoId& other) const
 {
-        return m_hash != other.m_hash;
+        return !(*this == other);
 }
 
 bool NfPhotoId::isValid() const
 {
-        return m_hash.type() == PhotoHash::HashType::HashSHA256 && m_hash.isValid();
+        return m_idHash != 0;
 }
+
+uint64_t NfPhotoId::computeHash(const std::filesystem::path& filePath)
+{
+        try {
+                if (!std::filesystem::exists(filePath))
+                        return 0;
+
+                auto size = std::filesystem::file_size(filePath);
+                auto ftime = std::filesystem::last_write_time(filePath);
+                auto time = decltype(ftime)::clock::to_time_t(ftime);
+
+                std::string key = filePath.string() + "|" +
+                        std::to_string(size) + "|" +
+                        std::to_string(time);
+
+                return fnv1a_64(key);
+        }
+        catch (...) {
+                return 0;
+        }
+}
+
+} // NfCore
