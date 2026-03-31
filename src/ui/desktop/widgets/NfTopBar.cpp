@@ -27,7 +27,7 @@
 #include <QLabel>
 #include <QPixmap>
 
-namespace Desktop {
+namespace NfDesktop {
 
 NfTopBar::NfTopBar(QWidget *parent)
 	: NfStyledWidget(parent)
@@ -43,4 +43,4 @@ NfTopBar::NfTopBar(QWidget *parent)
 
 }
 
-} // namespace Desktop
+} // namespace NfDesktop

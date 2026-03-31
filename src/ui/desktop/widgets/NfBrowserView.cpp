@@ -27,7 +27,7 @@
 #include <QResizeEvent>
 #include <QMouseEvent>
 
-namespace Desktop {
+namespace NfDesktop {
 
 NfBrowserView::NfBrowserView(QWidget* parent)
         : QListView(parent)
@@ -115,4 +115,4 @@ void NfBrowserView::mouseDoubleClickEvent(QMouseEvent* event)
         QListView::mouseDoubleClickEvent(event);
 }
 
-} // namespace Desktop
+} // namespace NfDesktop

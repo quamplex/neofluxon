@@ -26,7 +26,7 @@
 
 #include "NfStyledWidget.h"
 
-namespace Desktop {
+namespace NfDesktop {
 
 class NfPanel : public NfStyledWidget {
         Q_OBJECT
@@ -54,6 +54,6 @@ private:
         PanelPosition m_panelPosition;  // Qt naming convention: m_ prefix
 };
 
-} // namespace Desktop
+} // namespace NfDesktop
 
 #endif // NF_PANEL_H

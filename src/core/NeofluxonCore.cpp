@@ -1,5 +1,5 @@
 /**
- * File name: NfMemoryCache.h
+ * File name: NeofluxonCore.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,28 +21,26 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_MEMORY_CHACHE_H
-#define NF_MEMORY_CHACHE_H
-
-#include "NfThumbnail.h"
-#include "NfPreview.h"
+#include "NeofluxonCore.h"
+#include "NfPhotoLoader.h"
+#include "NfGuiCache.h"
 
 namespace NfCore {
 
-class NfPhotoId;
+NeofluxonCore::NeofluxonCore()
+        : m_photoLoader{std::make_unique<NfPhotoLoader>()}
+        , m_guiCache{std::make_unique<NfGuiCache>()}
+{
+}
 
-class NfMemoryCache {
-public:
-    NfMemoryCache() = default;
-    ~NfMemoryCache() = default;
-    NfThumbnail getThumbnail(const NfPhotoId& id);
-    NfPreview getPreview(const NfPhotoId& id);
-    void insertThumbnail(const NfThumbnail& thumbnail, NfPhotoId& id);
-    void insertPreview(const NfPreview& preview, NfPhotoId& id);
+NfPhotoLoader& NeofluxonCore::photoLoader() const
+{
+    return *m_photoLoader;
+}
 
-private:
-};
+NfGuiCache& NeofluxonCore::guiCache() const
+{
+    return *m_guiCache;
+}
 
-} // namespace NfMemoryCache
-
-#endif // NF_MEMORY_CHACHE_H
+} // namespace NfCore

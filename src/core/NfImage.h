@@ -47,6 +47,7 @@ class NfImage
         std::unique_ptr<NfImageData> m_data;
 };
 
+} namespace // NfCore
+
 #endif // NF_IMAGE_H
 
-} namespace // NfCore

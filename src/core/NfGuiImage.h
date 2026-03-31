@@ -3,7 +3,9 @@
 
 #include <cstddef>
 
-struct NfImageData;
+namespace NfCore {
+
+class NfImageData;
 
 /**
  * @brief Abstract GUI image representation.
@@ -23,5 +25,7 @@ public:
     /// Returns memory size in bytes (used by cache).
     virtual std::size_t size() const = 0;
 };
+
+} // namespace NfCore
 
 #endif // NF_GUI_IMAGE_H

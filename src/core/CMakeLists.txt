@@ -6,12 +6,14 @@ file(GLOB CORE_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/*.h
 )
 
-add_library(${PROJECT_NAME}::CoreLibrary STATIC
+add_library(NfCore STATIC
     ${CORE_SOURCES}
     ${CORE_HEADERS}
 )
 
-target_include_directories(${PROJECT_NAME}::CoreLibrary PUBLIC
+add_library(${PROJECT_NAME}::CoreLibrary ALIAS NfCore)
+
+target_include_directories(NfCore PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${PROJECT_NAME}::GlobalHeaders
+#    ${PROJECT_NAME}::GlobalHeaders
 )

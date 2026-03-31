@@ -25,7 +25,7 @@
 
 #include <QStyle>
 
-namespace Desktop {
+namespace NfDesktop {
 
 NfPanel::NfPanel(QWidget *parent, PanelPosition position)
         : NfStyledWidget(parent)
@@ -61,4 +61,4 @@ void NfPanel::updateAppearance()
         }
 }
 
-} // namespace Desktop
+} // namespace NfDesktop

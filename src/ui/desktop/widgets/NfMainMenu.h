@@ -28,7 +28,7 @@
 
 class QPushButton;
 
-namespace Desktop {
+namespace NfDesktop {
 
 class NfMainMenu : public NfStyledWidget
 {
@@ -49,6 +49,6 @@ private:
         QPushButton* settingsButton;
 };
 
- } // namespace Desktop
+ } // namespace NfDesktop
 
 #endif // NF_MAIN_MENU_H

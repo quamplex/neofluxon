@@ -26,7 +26,7 @@
 
 #include "NfPanel.h"
 
-namespace Desktop {
+namespace NfDesktop {
 
 class NfLeftPanel : public NfPanel {
         Q_OBJECT
@@ -36,6 +36,6 @@ public:
         virtual ~NfLeftPanel() = default;
 };
 
-} // namespace Desktop
+} // namespace NfDesktop
 
 #endif // NF_LEFT_PANEL_H

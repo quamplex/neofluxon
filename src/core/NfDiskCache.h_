@@ -1,5 +1,5 @@
 /**
- * File name: NfCache.h
+ * File name: NfDiskCache.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,41 +21,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_CHACHE_H
-#define NF_CHACHE_H
+#ifndef NF_DISK_CHACHE_H
+#define NF_DISK_CHACHE_H
 
-#include "NfThumbnail.h"
-#include "NfPreview.h"
-#include "NfMemoryCache.h"
-#include "NfDiskCache.h"
+//#include "NfThumbnail.h"
+//#include "NfPreview.h"
 
 namespace NfCore {
 
-using NfCacheKey = std::size_t;
+class NfPhotoId;
 
-class NfCacheObject;
-class NfImageData;
-
-// Framework-specific conversion callback.
-
-// The cache class
-class NfCache {
+class NfDiskCache {
 public:
-    using ConversionCallback = std::function<void>(NfImageData*)>;
-
-    NfCache() = default;
-    ~NfCache() = default;
-
-    void setConversionCallback(ConversionCallback cb);
-    void insert(const NfCacheKey &key, std::unique_ptr<NfCacheObject> obj);
-    NfCacheObject* getObject(NfImageData* data) const;
-    void clear();
+    NfDiskCache() = default;
+    ~NfDiskCache() = default;
+        //NfThumbnail getThumbnail(const NfPhotoId& id);
+        //NfPreview getPreview(const NfPhotoId& id);
+        //void insertThumbnail(const NfThumbnail& thumbnail, NfPhotoId& id);
+        //void insertPreview(const NfPreview& preview, NfPhotoId& id);
 
 private:
-    std::unordered_map<NfCacheKey, std::unique_ptr<NfCacheObject>> m_cacheMap;
-    ConversionCallback conversionCallback;
 };
 
 } // namespace NfCore
 
-#endif // NF_CHACHE_H
+#endif // NF_DISK_CHACHE_H

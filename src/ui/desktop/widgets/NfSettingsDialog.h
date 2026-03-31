@@ -34,7 +34,7 @@
 #include <QTabWidget>
 #include <QWidget>
 
-namespace Desktop {
+namespace NfDesktop {
 
 class NfSettingsDialog : public QDialog
 {
@@ -82,6 +82,6 @@ class NfSettingsDialog : public QDialog
         QPushButton* m_btnCancel;
 };
 
-} // namespace Desktop
+} // namespace NfDesktop
 
 #endif // NF_SETTINGS_DIALOG_H

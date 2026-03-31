@@ -24,10 +24,11 @@
 #ifndef NF_GUI_THUMBNAIL_H
 #define NF_GUI_THUMBNAIL_H
 
-#include "PhotoId.h"
+#include "NfPhotoId.h"
+
 #include <memory>
 
-namespace NfDesktop {
+namespace NfCore {
 
 class NfGuiImage;
 
@@ -50,6 +51,6 @@ private:
     std::unique_ptr<NfGuiImage> m_image;
 };
 
-} // namespace NfDesktop
+} // namespace NfCore
 
 #endif // NF_GUI_THUMBNAIL_H

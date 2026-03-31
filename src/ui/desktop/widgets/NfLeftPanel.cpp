@@ -27,7 +27,7 @@
 
 #include <QVBoxLayout>
 
-namespace Desktop {
+namespace NfDesktop {
 
 NfLeftPanel::NfLeftPanel(QWidget *parent)
         : NfPanel(parent, NfPanel::PanelPosition::AlignLeft)
@@ -55,4 +55,4 @@ NfLeftPanel::NfLeftPanel(QWidget *parent)
         setLayout(panelLayout);
 }
 
-} // namespace Desktop
+} // namespace NfDesktop

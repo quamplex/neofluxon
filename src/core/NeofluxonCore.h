@@ -1,5 +1,5 @@
 /**
- * File name: NfDiskCache.h
+ * File name: NeofluxonCore.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,28 +21,33 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_DISK_CHACHE_H
-#define NF_DISK_CHACHE_H
+#ifndef NEOFLUXON_CORE_H
+#define NEOFLUXON_CORE_H
 
-#include "NfThumbnail.h"
-#include "NfPreview.h"
+#include <memory>
 
 namespace NfCore {
 
-class NfPhotoId;
+class NfPhotoLoader;
+class NfGuiCache;
 
-class NfDiskCache {
+class NeofluxonCore {
 public:
-    NfDiskCache() = default;
-    ~NfDiskCache() = default;
-    NfThumbnail getThumbnail(const NfPhotoId& id);
-    NfPreview getPreview(const NfPhotoId& id);
-    void insertThumbnail(const NfThumbnail& thumbnail, NfPhotoId& id);
-    void insertPreview(const NfPreview& preview, NfPhotoId& id);
+    NeofluxonCore();
+    ~NeofluxonCore() = default;
+    NeofluxonCore(const NeofluxonCore&) = delete;
+    NeofluxonCore& operator=(const NeofluxonCore&) = delete;
+    NeofluxonCore(NeofluxonCore&&) noexcept = default;
+    NeofluxonCore& operator=(NeofluxonCore&&) noexcept = default;
+
+    NfPhotoLoader& photoLoader() const;
+    NfGuiCache& guiCache() const;
 
 private:
+    std::unique_ptr<NfPhotoLoader> m_photoLoader;
+    std::unique_ptr<NfGuiCache> m_guiCache;
 };
 
-} // namespace NfDiskCache
+} // namespace NfCore
 
-#endif // NF_DISK_CHACHE_H
+#endif // NEOFLUXON_CORE_H

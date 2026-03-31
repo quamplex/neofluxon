@@ -28,7 +28,7 @@
 #include <QFormLayout>
 #include <QFileDialog>
 
-namespace Desktop {
+namespace NfDesktop {
 
 NfSettingsDialog::NfSettingsDialog(QWidget* parent)
         : QDialog(parent)
@@ -127,4 +127,4 @@ void NfSettingsDialog::setupConnections()
         connect(m_btnCancel, &QPushButton::clicked, this, &QDialog::reject);
 }
 
-} // namespace Desktop
+} // namespace NfDesktop

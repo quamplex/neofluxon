@@ -24,6 +24,8 @@
 #include "NfQtPixmap.h"
 #include "NfImageData.h"
 
+namespace NfDesktop {
+
 void NfQtPixmap::setImageData(const NfImageData& imageData)
 {
         if (imageData.empty() || imageData.width() <= 0 || imageData.height() <= 0) {
@@ -73,3 +75,5 @@ std::size_t NfQtPixmap::size() const
                 static_cast<std::size_t>(m_pixmapImage.height()) *
                 static_cast<std::size_t>(m_pixmapImage.depth()) / 8;
 }
+
+} // namespace NfDesktop

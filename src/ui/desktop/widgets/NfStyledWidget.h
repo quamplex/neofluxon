@@ -26,7 +26,7 @@
 
 #include <QFrame>
 
-namespace Desktop {
+namespace NfDesktop {
 
 class NfStyledWidget : public QFrame {
         Q_OBJECT
@@ -36,6 +36,6 @@ public:
         virtual ~NfStyledWidget() = default;
 };
 
-} // namespace Desktop
+} // namespace NfDesktop
 
 #endif // NF_STYLED_WIDGET_H

@@ -30,7 +30,7 @@ class QWheelEvent;
 class QResizeEvent;
 class QMouseEvent;
 
-namespace Desktop {
+namespace NfDesktop {
 
 class NfBrowserView : public QListView
 {
@@ -69,6 +69,6 @@ private:
     int m_thumbnailSize;
 };
 
-} // namespace Desktop
+} // namespace NfDesktop
 
 #endif // NF_BROWSER_VIEW_H

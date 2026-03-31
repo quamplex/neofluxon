@@ -28,14 +28,16 @@
 #include "NfStyledWidget.h"
 #include "NfBrowserModel.h"
 #include "NfBrowserView.h"
+#include "NeofluxonCore.h"
 
 #include <QFrame>
 #include <QWidget>
 #include <QGraphicsDropShadowEffect>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QApplication>
 
-namespace Desktop {
+namespace NfDesktop {
 
 LqfMainWindow::LqfMainWindow()
         : QMainWindow()
@@ -64,10 +66,10 @@ LqfMainWindow::LqfMainWindow()
         auto leftPanel = new NfLeftPanel(this);
         hLayout->addWidget(leftPanel);
 
-        // Central widget – any background you like.
-        auto model = new NfBrowserModel(this);
-        model->setPhotoCount(100000);
+        auto& photoProvider = QApplication::instance()->coreApp()->photoProvider();
+        auto model = new NfBrowserModel(this, photoProvider);
 
+        // Central widget – any background you like.
         auto *centralWidget = new NfBrowserView(this);
         centralWidget->setObjectName("NfCentralWidget");
         centralWidget->setModel(model);
@@ -96,4 +98,4 @@ LqfMainWindow::~LqfMainWindow()
 {
 }
 
-} // namespace Desktop
+} // namespace NfDesktop

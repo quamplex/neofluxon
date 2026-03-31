@@ -24,36 +24,35 @@
 #ifndef NF_PHOTO_LOADER_H
 #define NF_PHOTO_LOADER_H
 
-#include "Neofluxon.h"
-#incldue "NfGuiImage.h"
-#incldue "NfGuiThumbail.h"
 #include "NfPhoto.h"
+#include "NfGuiThumbnail.h"
+
+#include <filesystem>
+#include <vector>
+#include <memory>
 
 namespace NfCore {
 
-class NfCache;
-class NfPathLoader;
+class NfPathScanner;
+class NfGuiImage;
 
 class NfPhotoLoader {
 public:
-        using PhotosLoadedCallback = std::function<void(std::vector<NfPhoto>)>;
-        using ThumbnailsLoadedCallback = std::function<void(std::vector<NfGuiThumbail>)>;
         NfPhotoLoader();
         ~NfPhotoLoader();
 
         void setPath(const std::filesystem::path &path);
         std::filesystem::path& getPath() const;
 
-        void requestThumbnail(const NfPhoto &info, std::unique_ptr<NfGuiImage> image);
+        void requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfGuiImage> image);
 
         std::vector<NfPhoto> takePhotos();
-        std::vector<NfThumbnail> takeThumbnails();
+        std::vector<NfGuiThumbnail> takeThumbnails();
 
  protected:
 
  private:
-        PhotosLoadedCallback m_photosLoadedCallback;
-        ThumbnailsLoadedCallback m_thumbnailsLoadedCallback;
+        std::unique_ptr<NfPathScanner> m_pathScanner;
         std::filesystem::path m_path;
 };
 

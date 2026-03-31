@@ -22,6 +22,7 @@
  */
 
 #include "LqfApplication.h"
+#include "NefluxonCore.h"
 
 #include <QProcessEnvironment>
 
@@ -30,10 +31,11 @@
 #include <QDir>
 #include <QDirIterator>
 
-namespace Desktop {
+namespace NfDesktop {
 
 LqfApplication::LqfApplication(int &argc, char **argv, int falgs)
         : QApplication(argc, argv, falgs)
+        , m_coreApp{std::make_unique<NeofluxonCore>()}
 {
 QDirIterator it(":", QDirIterator::Subdirectories);
 while (it.hasNext()) {
@@ -62,4 +64,4 @@ QString LqfApplication::applicationName()
         return "LiquidFlow";;
 }
 
-} // namespace Desktop
+} // namespace NfDesktop

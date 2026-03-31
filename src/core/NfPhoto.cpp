@@ -23,6 +23,8 @@
 
 #include "NfPhoto.h"
 
+namespace NfCore {
+
 NfPhoto::NfPhoto(const std::filesystem::path &filePath)
         : m_filePath{path}
         , m_photoId{path}
@@ -38,3 +40,5 @@ const std::filesystem::path& NfPhoto::path() const
 {
         return m_filePath;
 }
+
+} // namespace NfCore

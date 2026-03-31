@@ -24,11 +24,6 @@
 #ifndef NF_IMAGE_DATA_H
 #define NF_IMAGE_DATA_H
 
-#include "Nefluxon.h"
-
-#ifndef NF_IMAGE_DATA_H
-#define NF_IMAGE_DATA_H
-
 #include <cstddef>
 #include <vector>
 

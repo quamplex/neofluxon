@@ -26,7 +26,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-namespace Desktop {
+namespace NfDesktop {
 
 NfMainMenu::NfMainMenu(QWidget* parent)
         : NfStyledWidget(parent)
@@ -65,4 +65,4 @@ NfMainMenu::NfMainMenu(QWidget* parent)
         setLayout(menuLayout);
 }
 
-} // namespace Desktop
+} // namespace NfDesktop

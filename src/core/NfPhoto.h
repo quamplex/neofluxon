@@ -24,9 +24,11 @@
 #ifndef NF_PHOTO_H
 #define NF_PHOTO_H
 
-#include "PhotoId.h"
+#include "NfPhotoId.h"
 
 #include <filesystem>
+
+namespace NfCore {
 
 class NfPhoto {
  public:
@@ -37,6 +39,8 @@ class NfPhoto {
  private:
         std::filesystem::path m_filePath;
         NfPhotoId m_photoId;
-}
+};
+
+} // namespace NfCore
 
 #endif // NF_PHOTO_H

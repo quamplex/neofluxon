@@ -23,7 +23,7 @@
 
 #include "NfStyledWidget.h"
 
-namespace Desktop {
+namespace NfDesktop {
 
 NfStyledWidget::NfStyledWidget(QWidget *parent)
         : QFrame(parent)
@@ -31,4 +31,4 @@ NfStyledWidget::NfStyledWidget(QWidget *parent)
         setAttribute(Qt::WA_StyledBackground, true);
 }
 
-} // namespace Desktop
+} // namespace NfDesktop

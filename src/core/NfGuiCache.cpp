@@ -22,15 +22,21 @@
  */
 
 #include "NfGuiCache.h"
+//#include "NfDiskCache.h"
+#include "NfGuiImage.h"
 
-NfGuiCache::NfGuiCache(IDiskCache* diskCache, std::size_t maxSizeBytes)
-        : m_diskCache{diskCache}
-        , m_maxSizeBytes{maxSizeBytes}
+namespace NfCore {
+
+NfGuiCache::NfGuiCache(/*NfDiskCache* diskCache, */std::size_t maxSizeBytes)
+//        : m_diskCache{diskCache}
+        : m_maxSizeBytes{maxSizeBytes}
         , m_currentSizeBytes{0}
 {
 }
 
-void NfGuiCache::add(NfPhotoId id, std::unique_ptr<NfGuiImage> image)
+NfGuiCache::~NfGuiCache() = default;
+
+void NfGuiCache::add(const NfPhotoId &id, std::unique_ptr<NfGuiImage> image)
 {
         if (!image)
                 return;
@@ -43,11 +49,12 @@ void NfGuiCache::add(NfPhotoId id, std::unique_ptr<NfGuiImage> image)
 
         // Check if already exists - update and move to front
         if (auto it = m_memoryCache.find(id); it != m_memoryCache.end()) {
-                std::size_t oldSizeBytes = it->second->size();
-                it->second = std::move(image);
+                auto& cacheImage = it->second.second;
+                std::size_t oldSizeBytes = cacheImage->size();
+                cacheImage = std::move(image);
                 m_currentSizeBytes -= oldSizeBytes;
                 m_currentSizeBytes += imageSizeBytes;
-                refreshAccess(id);
+                refreshAccess(it->second.first);
                 return;
         }
 
@@ -55,9 +62,9 @@ void NfGuiCache::add(NfPhotoId id, std::unique_ptr<NfGuiImage> image)
         if (m_currentSizeBytes + imageSizeBytes > m_maxSizeBytes)
                 evictUntilFits(imageSizeBytes);
 
-        m_memoryCache.emplace(std::move(id), std::move(image));
-        m_currentSizeBytes += imageSizeBytes;
         m_lruOrder.push_front(id);
+        m_memoryCache.emplace(id, std::make_pair(m_lruOrder.begin(), std::move(image)));
+        m_currentSizeBytes += imageSizeBytes;
 }
 
 std::optional<NfGuiImage*> NfGuiCache::get(const NfPhotoId& id)
@@ -66,8 +73,9 @@ std::optional<NfGuiImage*> NfGuiCache::get(const NfPhotoId& id)
         if (it == m_memoryCache.end())
                 return std::nullopt;
 
-        refreshAccess(id);
-        return &it->second;
+        refreshAccess(it->second.first);
+
+        return it->second.second.get();
 }
 
 bool NfGuiCache::remove(const NfPhotoId& id)
@@ -76,9 +84,9 @@ bool NfGuiCache::remove(const NfPhotoId& id)
         if (it == m_memoryCache.end())
                 return false;
 
-        m_currentSizeBytes -= it->second.size();
+        m_currentSizeBytes -= it->second.second->size();
+        removeFromLRU(it->second.first);
         m_memoryCache.erase(it);
-        removeFromLRU(id);
 
         return true;
 }
@@ -107,15 +115,14 @@ void NfGuiCache::setMaxSizeBytes(std::size_t maxSizeBytes)
                 evictUntilFits(0);
 }
 
-void NfGuiCache::refreshAccess(const NfPhotoId& id)
+void NfGuiCache::refreshAccess(std::list<NfPhotoId>::iterator it)
 {
-        m_lruOrder.remove(id);
-        m_lruOrder.push_front(id);
+        m_lruOrder.splice(m_lruOrder.begin(), m_lruOrder, it);
 }
 
-void NfGuiCache::removeFromLRU(const NfPhotoId& id)
+void NfGuiCache::removeFromLRU(std::list<NfPhotoId>::iterator it)
 {
-        m_lruOrder.remove(id);
+        m_lruOrder.erase(it);
 }
 
 void NfGuiCache::evictUntilFits(std::size_t requiredSize)
@@ -126,11 +133,11 @@ void NfGuiCache::evictUntilFits(std::size_t requiredSize)
 
                 auto it = m_memoryCache.find(oldestId);
                 if (it != m_memoryCache.end()) {
-                        std::size_t evictedSize = it->second->size();
+                        std::size_t evictedSize = it->second.second->size();
 
                         // Save to disk if available, otherwise discard
-                        if (m_diskCache)
-                                m_diskCache->add(oldestId, std::move(it->second));
+                        //if (m_diskCache)
+                        //        m_diskCache->add(oldestId, std::move(it->second));
 
                         m_memoryCache.erase(it);
                         m_currentSizeBytes -= evictedSize;
@@ -139,3 +146,5 @@ void NfGuiCache::evictUntilFits(std::size_t requiredSize)
                 m_lruOrder.pop_back();
         }
 }
+
+} // namespace NfCore

@@ -27,16 +27,11 @@
 namespace NfCore {
 
 NfPhotoLoader::NfPhotoLoader()
-        , m_photoLoader{std::make_unique<NfPathScanner>()}
+        , m_pathScanner{std::make_unique<NfPathScanner>()}
 {
 }
 
 NfPhotoLoader::~NfPhotoLoader()
-{
-}
-
-void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
-                                     std::unique_ptr<NfGuiImage> imageContainer)
 {
 }
 
@@ -49,6 +44,20 @@ void NfPhotoLoader::setPath(const std::filesystem::path &path)
 std::filesystem::path& NfPhotoLoader::getPath() const
 {
         return m_path;
+}
+
+void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
+                                     std::unique_ptr<NfGuiImage> imageContainer)
+{
+}
+
+std::vector<NfPhoto> NfPhotoLoader::takePhotos()
+{
+        return m_pathScanner->takePhotos();
+}
+
+std::vector<NfThumbnail> NfPhotoLoader::takeThumbnails()
+{
 }
 
 } // namespace NfCore

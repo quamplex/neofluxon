@@ -26,7 +26,7 @@
 
 #include <QMainWindow>
 
-namespace Desktop {
+namespace NfDesktop {
 
 class LqfMainWindow : public QMainWindow
 {
@@ -37,6 +37,6 @@ public:
         ~LqfMainWindow();
 };
 
-} // namespace Desktop
+} // namespace NfDesktop
 
 #endif // MAINWINDOW_H

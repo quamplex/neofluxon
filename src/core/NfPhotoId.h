@@ -48,4 +48,13 @@ private:
 
 } // namespace NfCore
 
+namespace std {
+    template <>
+    struct hash<NfCore::NfPhotoId> {
+        size_t operator()(const NfCore::NfPhotoId& id) const noexcept {
+            return static_cast<size_t>(id.value());
+        }
+    };
+}
+
 #endif // NF_PHOTO_ID_H

@@ -1,16 +1,18 @@
 #ifndef NF_GUI_CACHE_H
 #define NF_GUI_CACHE_H
 
+#include "NfPhotoId.h"
+
 #include <memory>
 #include <optional>
-#include <deque>
+#include <list>
 #include <unordered_map>
 #include <cstddef>
 
-#include "NfPhotoId.h"
+namespace NfCore {
 
+//class NfDiskCache;
 class NfGuiImage;
-class NfDiskCache;
 
 /**
  * @brief GUI image cache with LRU eviction and optional disk overflow.
@@ -26,8 +28,9 @@ class NfGuiCache {
 public:
     static constexpr std::size_t DEFAULT_MAX_SIZE_BYTES = 250ULL * 1024 * 1024;
 
-    explicit NfGuiCache(NfDiskCache* diskCache,
+    explicit NfGuiCache(/*NfDiskCache* diskCache = nullptr,*/
                         std::size_t maxSizeBytes = DEFAULT_MAX_SIZE_BYTES);
+    ~NfGuiCache();
 
     NfGuiCache(const NfGuiCache&) = delete;
     NfGuiCache& operator=(const NfGuiCache&) = delete;
@@ -37,7 +40,7 @@ public:
 
     /// Adds or replaces an image. Updates LRU order.
     /// Image is rejected if it exceeds max cache size.
-    void add(NfPhotoId id, std::unique_ptr<NfGuiImage> image);
+    void add(const NfPhotoId &id, std::unique_ptr<NfGuiImage> image);
 
     // Returns image if present and marks it as recently used.
     /// @warning Returned pointer may become invalid after any cache modification.
@@ -57,21 +60,25 @@ public:
 
 private:
     /// Marks item as recently used.
-    void refreshAccess(const NfPhotoId& id);
+    void refreshAccess(std::list<NfPhotoId>::iterator it);
 
     /// Removes id from LRU list.
-    void removeFromLRU(const NfPhotoId& id);
+    void removeFromLRU(std::list<NfPhotoId>::iterator it);
 
     /// Evicts least-recently-used items until required space is available.
     void evictUntilFits(std::size_t requiredSize);
 
 private:
-    NfDiskCache* m_diskCache;
+    //    NfDiskCache* m_diskCache;
     std::size_t m_maxSizeBytes;
     std::size_t m_currentSizeBytes;
-
-    std::unordered_map<NfPhotoId, std::unique_ptr<NfGuiImage>> m_memoryCache;
-    std::deque<NfPhotoId> m_lruOrder; // front = most recent
+    std::unordered_map<
+        NfPhotoId,
+        std::pair<std::list<NfPhotoId>::iterator,
+        std::unique_ptr<NfGuiImage>>> m_memoryCache;
+    std::list<NfPhotoId> m_lruOrder; // front = most recent
 };
+
+} // namespace NfCore
 
 #endif // NF_GUI_CACHE_H

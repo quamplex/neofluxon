@@ -28,7 +28,7 @@
 #include <QSemaphore>
 #include <QSize>
 
-namespace Desktop {
+namespace NfDesktop {
 
 class LqfApplication: public QApplication
 {
@@ -40,6 +40,6 @@ public:
 private:
 };
 
-} // namespace Dekstop
+} // namespace NfDesktop
 
 #endif // LQF_APPLICATION_H

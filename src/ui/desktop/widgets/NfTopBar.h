@@ -26,7 +26,7 @@
 
 #include "NfStyledWidget.h"
 
-namespace Desktop {
+namespace NfDesktop {
 
 class NfTopBar : public NfStyledWidget {
         Q_OBJECT
@@ -36,6 +36,6 @@ public:
         virtual ~NfTopBar() = default;
 };
 
-} // namespace Desktop
+} // namespace NfDesktop
 
 #endif // NF_TOPBAR_H

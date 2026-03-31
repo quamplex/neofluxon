@@ -27,7 +27,7 @@
 
 using namespace NfCore;
 
-namespace Desktop {
+namespace NfDesktop {
 
 NfBrowserModel::NfBrowserModel(NfPhotoProvider &photoProvider, QObject* parent)
         : QAbstractListModel(parent)
@@ -110,4 +110,4 @@ void NfBrowserModel::onThumbnailsLoaded(std::vector<NfPhotoId> ids)
         });
 }
 
-} // namespace Desktop
+} // namespace NfDesktop

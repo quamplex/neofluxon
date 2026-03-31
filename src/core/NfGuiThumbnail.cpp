@@ -1,5 +1,5 @@
 /**
- * File name: NfDiskCache.cpp
+ * File name: NfGuiThumbnail.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,35 +21,30 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfDiskCache.h"
-#include "NfPhotoId.h"
+#include "NfGuiThumbnail.h"
+#include "NfGuiImage.h"
 
 namespace NfCore {
 
-NfDiskCache::NfDiskCache(size_t cacheSize)
+NfGuiThumbnail::NfGuiThumbnail(const NfPhotoId &id, std::unique_ptr<NfGuiImage> img)
+        : m_photoId{id}
+        , m_image{std::move(img)}
 {
 }
 
-NfDiskCache::~NfDiskCache()
+const NfPhotoId& NfGuiThumbnail::id() const
 {
+        return m_photoId;
 }
 
-NfThumbnail NfDiskCache::getThumbnail(const PhotoId& id)
+NfGuiImage* NfGuiThumbnail::getImage() const
 {
-        return {};
+        return m_image.get();
 }
 
-NfPreview NfDiskCache::getPreview(const NfPhotoId& id)
+std::unique_ptr<NfGuiImage> NfGuiThumbnail::releaseImage()
 {
-        return {};
+        return std::move(m_image);
 }
 
-void NfDiskCache::insertThumbnail(const NfThumbnail& thumbnail, NfPhotoId& id)
-{
-}
-
-void NfDiskCache::insertPreview(const NfPreview& preview, NfPhotoId& id)
-{
-}
-
-} // namespace NfDiskCache
+} // namespace NfCore

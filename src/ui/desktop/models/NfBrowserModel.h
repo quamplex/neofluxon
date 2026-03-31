@@ -28,7 +28,7 @@
 
 #include <QAbstractListModel>
 
-namespace Desktop {
+namespace NfDesktop {
 
 class NfPhotoProvider;
 
@@ -58,6 +58,6 @@ private:
         std::filesystem::path m_path;
 };
 
-} // namespace Desktop
+} // namespace NfDesktop
 
 #endif // NF_BROWSER_MODEL_H

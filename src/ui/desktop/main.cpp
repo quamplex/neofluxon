@@ -27,7 +27,7 @@
 
 #include <QFile>
 
-using namespace Desktop;
+using namespace NfDesktop;
 
 class NfQtPixmap : NfImageObject {
 public:
@@ -47,14 +47,9 @@ private:
 
 int main(int argc, char **argv)
 {
-        NfCore coreApp;
-        coreApp.setConversionCallback([](const NfImage* image) -> std::unique_ptr<NfCacheObject> {
-                        return std::make_unique<NfQtPixmapObject>(image);
-                });
-
         LqfApplication app(argc, argv);
 
-        LqfMainWindow mainWin;
+        LqfMainWindow mainWin();
         mainWin.show();
 
 
