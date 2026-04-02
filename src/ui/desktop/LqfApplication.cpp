@@ -22,20 +22,23 @@
  */
 
 #include "LqfApplication.h"
-#include "NefluxonCore.h"
+#include "core/NeofluxonCore.h"
+#include "NfPhotoProvider.h"
 
 #include <QProcessEnvironment>
-
 #include <QDebug>
 #include <QFile>
 #include <QDir>
 #include <QDirIterator>
+
+using namespace NfCore;
 
 namespace NfDesktop {
 
 LqfApplication::LqfApplication(int &argc, char **argv, int falgs)
         : QApplication(argc, argv, falgs)
         , m_coreApp{std::make_unique<NeofluxonCore>()}
+        , m_photoProvider{new NfPhotoProvider(m_coreApp->photoLoader(), m_coreApp->guiCache())}
 {
 QDirIterator it(":", QDirIterator::Subdirectories);
 while (it.hasNext()) {
@@ -54,6 +57,10 @@ while (it.hasNext()) {
         }
 }
 
+LqfApplication::~LqfApplication()
+{
+}
+
 LqfApplication* LqfApplication::getAppInstance()
 {
         return static_cast<LqfApplication*>(QApplication::instance());
@@ -62,6 +69,11 @@ LqfApplication* LqfApplication::getAppInstance()
 QString LqfApplication::applicationName()
 {
         return "LiquidFlow";;
+}
+
+NfPhotoProvider& LqfApplication::photoProvider() const
+{
+        return *m_photoProvider;
 }
 
 } // namespace NfDesktop

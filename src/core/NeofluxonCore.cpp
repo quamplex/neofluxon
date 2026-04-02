@@ -33,6 +33,10 @@ NeofluxonCore::NeofluxonCore()
 {
 }
 
+NeofluxonCore::~NeofluxonCore()
+{
+}
+
 NfPhotoLoader& NeofluxonCore::photoLoader() const
 {
     return *m_photoLoader;

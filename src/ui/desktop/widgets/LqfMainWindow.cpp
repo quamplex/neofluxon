@@ -28,7 +28,7 @@
 #include "NfStyledWidget.h"
 #include "NfBrowserModel.h"
 #include "NfBrowserView.h"
-#include "NeofluxonCore.h"
+#include "LqfApplication.h"
 
 #include <QFrame>
 #include <QWidget>
@@ -66,8 +66,8 @@ LqfMainWindow::LqfMainWindow()
         auto leftPanel = new NfLeftPanel(this);
         hLayout->addWidget(leftPanel);
 
-        auto& photoProvider = QApplication::instance()->coreApp()->photoProvider();
-        auto model = new NfBrowserModel(this, photoProvider);
+        auto& photoProvider = static_cast<LqfApplication*>(QApplication::instance())->photoProvider();
+        auto model = new NfBrowserModel(photoProvider, this);
 
         // Central widget – any background you like.
         auto *centralWidget = new NfBrowserView(this);

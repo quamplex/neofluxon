@@ -44,7 +44,7 @@ public:
 
     // Returns image if present and marks it as recently used.
     /// @warning Returned pointer may become invalid after any cache modification.
-    [[nodiscard]] std::optional<NfGuiImage*> get(const NfPhotoId& id);
+    [[nodiscard]] NfGuiImage* get(const NfPhotoId& id);
 
     /// Removes image if present.
     [[nodiscard]] bool remove(const NfPhotoId& id);

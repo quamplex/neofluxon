@@ -32,6 +32,14 @@ namespace NfCore {
 class NfImageData
 {
 public:
+
+    enum class ImageFormat : int {
+            Format_Invalid,
+            Format_RGB888,
+            Format_RGBA8888,
+            Format_ARGB32_Premultiplied
+    };
+
     NfImageData();
     NfImageData(size_t size);
     NfImageData(int w, int h, int c);
@@ -52,6 +60,7 @@ public:
     int height() const;
     void setChannels(int c);
     int channels() const;
+    ImageFormat format() const;
 
 private:
     std::vector<unsigned char> m_data;

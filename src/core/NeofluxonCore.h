@@ -34,7 +34,7 @@ class NfGuiCache;
 class NeofluxonCore {
 public:
     NeofluxonCore();
-    ~NeofluxonCore() = default;
+    ~NeofluxonCore();
     NeofluxonCore(const NeofluxonCore&) = delete;
     NeofluxonCore& operator=(const NeofluxonCore&) = delete;
     NeofluxonCore(NeofluxonCore&&) noexcept = default;

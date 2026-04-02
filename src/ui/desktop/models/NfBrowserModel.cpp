@@ -23,7 +23,6 @@
 
 #include "NfBrowserModel.h"
 #include "NfPhotoProvider.h"
-#include "NfPhoto.h"
 
 using namespace NfCore;
 
@@ -33,29 +32,29 @@ NfBrowserModel::NfBrowserModel(NfPhotoProvider &photoProvider, QObject* parent)
         : QAbstractListModel(parent)
         , m_photoProvider{photoProvider}
 {
-        QtObject::connect(m_photoProvider,
-                          &NfPhotoProvider::photosLoaded,
-                          this,
+        /*        QObject::connect(m_photoProvider,
+                         &NfPhotoProvider::photosLoaded,
+                         this,
                           &NfBrowserModel::onPhotosLoaded);
-        QtObject::connect(m_photoProvider,
-                          &NfPhotoProvider::thumbnailsLoaded,
-                          this,
-                          &NfBrowserModel::onThumbnailsLoaded);
+        QObject::connect(m_photoProvider,
+                         &NfPhotoProvider::thumbnailsLoaded,
+                         this,
+                         &NfBrowserModel::onThumbnailsLoaded);*/
  }
 
 void NfBrowserModel::setPath(const std::filesystem::path &path)
 {
         beginResetModel();
-        m_photoIds.clear();
+        m_photos.clear();
         m_itemsMap.clear();
         endResetModel();
 
-        m_photoProvider->setPath(m_path);
+        m_photoProvider.setPath(path);
 }
 
-const std::filesystem::path& int NfBrowserModel::getPath() const
+const std::filesystem::path& NfBrowserModel::getPath() const
 {
-        return m_path;
+        return m_photoProvider.getPath();
 }
 
 int NfBrowserModel::rowCount(const QModelIndex& parent) const
@@ -70,7 +69,7 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
 
         switch (role) {
         case Qt::DecorationRole:
-                return m_photoProvider->getThumbnail(m_photos[index.row()]);
+                return m_photoProvider.getThumbnail(m_photos[index.row()]);
         case Qt::DisplayRole:
                 return QString("Photo %1").arg(index.row() + 1);
         default:
@@ -78,7 +77,7 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
         }
 }
 
-void NfBrowserModel::onPhotosLoaded(std::vector<NfPhoto> newPhotos)
+void NfBrowserModel::onPhotosLoaded(const std::vector<NfPhoto> &newPhotos)
 {
         const int firstRow = static_cast<int>(m_photos.size());
         const int count    = static_cast<int>(newPhotos.size());
@@ -99,12 +98,12 @@ void NfBrowserModel::onPhotosLoaded(std::vector<NfPhoto> newPhotos)
         endInsertRows();
 }
 
-void NfBrowserModel::onThumbnailsLoaded(std::vector<NfPhotoId> ids)
+void NfBrowserModel::onThumbnailsLoaded(const std::vector<NfPhotoId> &ids)
 {
         std::ranges::for_each(ids, [this](auto& id) {
-                if (auto it = m_itemsMap.find(thumb.id()); it != m_itemsMap.end()) {
+                if (auto it = m_itemsMap.find(id); it != m_itemsMap.end()) {
                         const auto& idx = it->second;
-                        if (idx.isValid() && isIndexVisible(idx))
+                        if (idx.isValid()/* && isIndexVisible(idx)*/)
                                 emit dataChanged(idx, idx, {Qt::DecorationRole});
                 }
         });

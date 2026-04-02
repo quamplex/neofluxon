@@ -24,9 +24,13 @@
 #ifndef NF_QTPIXMAP_H
 #define NF_QTPIXMAP_H
 
-#include "NfGuiImage.h"
+#include "core/NfGuiImage.h"
 
 #include <QPixmap>
+
+using namespace NfCore;
+
+namespace NfDesktop {
 
 class NfQtPixmap : public NfGuiImage {
 public:
@@ -40,5 +44,7 @@ public:
 private:
     QPixmap m_pixmapImage;
 };
+
+} // namespace NfDesktop
 
 #endif // NF_QTPIXMAP_H

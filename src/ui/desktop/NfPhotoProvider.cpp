@@ -22,11 +22,15 @@
  */
 
 #include "NfPhotoProvider.h"
-#include "NfPhotoLoader.h"
-#include "NfGuiCache.h"
-#include "NfGuiThumbnail.h"
+#include "core/NfPhotoLoader.h"
+#include "core/NfGuiCache.h"
+#include "core/NfPhotoId.h"
+#include "core/NfGuiThumbnail.h"
+#include "NfQtPixmap.h"
 
 #include <QTimer>
+
+using namespace NfCore;
 
 namespace NfDesktop {
 
@@ -55,9 +59,9 @@ const std::filesystem::path& NfPhotoProvider::getPath() const
 
 const QPixmap& NfPhotoProvider::getThumbnail(const NfPhoto &photo) const
 {
-        auto const *cacheImage = m_cache.getThumbnail(photo.id());
+        const NfGuiImage* cacheImage = m_cache.get(photo.id());
         if (cacheImage) {
-                auto const *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
+                const auto *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
                 if (thumbnail)
                         return thumbnail->pixmap();
         }

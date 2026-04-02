@@ -24,9 +24,12 @@
 #ifndef NF_BROWSER_MODEL_H
 #define NF_BROWSER_MODEL_H
 
-#include "NfPhoto.h"
+#include "core/NfPhoto.h"
+#include "core/NfPhotoId.h"
 
 #include <QAbstractListModel>
+
+using namespace NfCore;
 
 namespace NfDesktop {
 
@@ -48,8 +51,8 @@ public:
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
 protected slots:
-        void onPhotosLoaded(std::vector<NfPhoto> newPhotos);
-        void onThumbnailsLoaded(std::vector<NfPhotoId> ids);
+        void onPhotosLoaded(const std::vector<NfPhoto> &newPhotos);
+        void onThumbnailsLoaded(const std::vector<NfPhotoId> &ids);
 
 private:
         NfPhotoProvider& m_photoProvider;

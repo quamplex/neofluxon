@@ -22,7 +22,9 @@
  */
 
 #include "NfQtPixmap.h"
-#include "NfImageData.h"
+#include "core/NfImageData.h"
+
+using namespace NfCore;
 
 namespace NfDesktop {
 

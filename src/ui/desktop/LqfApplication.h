@@ -28,16 +28,28 @@
 #include <QSemaphore>
 #include <QSize>
 
+namespace NfCore {
+        class NeofluxonCore;
+}
+
+using namespace NfCore;
+
 namespace NfDesktop {
+
+class NfPhotoProvider;
 
 class LqfApplication: public QApplication
 {
 public:
         LqfApplication(int &argc, char **argv, int falgs = ApplicationFlags);
+        ~LqfApplication();
         static LqfApplication* getAppInstance();
         static QString applicationName();
+        NfPhotoProvider& photoProvider() const;
 
 private:
+        std::unique_ptr<NeofluxonCore> m_coreApp;
+        NfPhotoProvider* m_photoProvider;
 };
 
 } // namespace NfDesktop

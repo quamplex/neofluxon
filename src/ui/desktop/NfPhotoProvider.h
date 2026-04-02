@@ -24,7 +24,8 @@
 #ifndef NF_PHOTO_PROVIDER_H
 #define NF_PHOTO_PROVIDER_H
 
-#include "NfPhoto.h"
+#include "core/NfPhoto.h"
+#include "core/NfPhotoId.h"
 
 #include <QObject>
 #include <QPixmap>
@@ -32,10 +33,14 @@
 #include <filesystem>
 #include <vector>
 
-namespace NfDesktop {
-
+namespace NfCore {
 class NfPhotoLoader;
 class NfGuiCache;
+}
+
+using namespace NfCore;
+
+namespace NfDesktop {
 
 class NfPhotoProvider : public QObject
 {
@@ -50,7 +55,7 @@ public:
         void setPath(const std::filesystem::path& path);
         const std::filesystem::path& getPath() const;
 
-        QPixmap& getThumbnail(const NfPhoto &photo) const;
+        const QPixmap& getThumbnail(const NfPhoto &photo) const;
 
 signals:
         void photosLoaded(const std::vector<NfPhoto>& photos);

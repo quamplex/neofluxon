@@ -1,7 +1,3 @@
-# src/ui/desktop/CMakeLists.txt
-
-set(CMAKE_AUTORCC ON)
-
 # Collect sources and headers
 file(GLOB_RECURSE DESKTOP_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp

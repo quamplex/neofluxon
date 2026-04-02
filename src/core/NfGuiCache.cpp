@@ -67,11 +67,11 @@ void NfGuiCache::add(const NfPhotoId &id, std::unique_ptr<NfGuiImage> image)
         m_currentSizeBytes += imageSizeBytes;
 }
 
-std::optional<NfGuiImage*> NfGuiCache::get(const NfPhotoId& id)
+NfGuiImage* NfGuiCache::get(const NfPhotoId& id)
 {
         auto it = m_memoryCache.find(id);
         if (it == m_memoryCache.end())
-                return std::nullopt;
+                return nullptr;
 
         refreshAccess(it->second.first);
 

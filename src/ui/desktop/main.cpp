@@ -21,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfCore.h"
 #include "LqfMainWindow.h"
 #include "LqfApplication.h"
 
@@ -29,29 +28,12 @@
 
 using namespace NfDesktop;
 
-class NfQtPixmap : NfImageObject {
-public:
-        QtPixmapChaceObject(const NfImage* image) {
-                QImage img(image->data(),
-                           image->width(),
-                           image->height(),
-                           image->stride(),
-                           QImage::Format_RGBA8888);
-                m_pixmap = QPixmap::fromImage(img.copy());
-        }
-
-private:
-        m_pixmap;
-};
-
-
 int main(int argc, char **argv)
 {
         LqfApplication app(argc, argv);
 
-        LqfMainWindow mainWin();
+        LqfMainWindow mainWin;
         mainWin.show();
-
 
         return app.exec();
 }

@@ -115,4 +115,9 @@ int NfImageData::channels() const
         return m_channels;
 }
 
+NfImageData::ImageFormat NfImageData::format() const
+{
+        return ImageFormat::Format_ARGB32_Premultiplied;
+};
+
 } // namespace NfCore

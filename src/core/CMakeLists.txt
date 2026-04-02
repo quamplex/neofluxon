@@ -14,6 +14,5 @@ add_library(NfCore STATIC
 add_library(${PROJECT_NAME}::CoreLibrary ALIAS NfCore)
 
 target_include_directories(NfCore PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-#    ${PROJECT_NAME}::GlobalHeaders
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
