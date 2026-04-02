@@ -26,7 +26,7 @@
 #include <string>
 #include <chrono>
 
-namesapce NfCore {
+namespace NfCore {
 
 namespace {
 uint64_t fnv1a_64(const std::string& data)
@@ -72,7 +72,9 @@ uint64_t NfPhotoId::computeHash(const std::filesystem::path& filePath)
 
                 auto size = std::filesystem::file_size(filePath);
                 auto ftime = std::filesystem::last_write_time(filePath);
-                auto time = decltype(ftime)::clock::to_time_t(ftime);
+                auto sctp = std::chrono::system_clock::now() +
+                        (ftime - decltype(ftime)::clock::now());
+                auto time = std::chrono::system_clock::to_time_t(sctp);
 
                 std::string key = filePath.string() + "|" +
                         std::to_string(size) + "|" +

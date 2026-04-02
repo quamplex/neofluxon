@@ -27,6 +27,8 @@
 #include <cstddef>
 #include <vector>
 
+namespace NfCore {
+
 class NfImageData
 {
 public:
@@ -43,12 +45,12 @@ public:
     void resize(size_t newSize);
     size_t size() const;
     void clear();
-    bool empty() const
-    int setWidth(int w);
+    bool empty() const;
+    void setWidth(int w);
     int width() const;
-    int setHeight(int h);
+    void setHeight(int h);
     int height() const;
-    int setChannels(int c);
+    void setChannels(int c);
     int channels() const;
 
 private:
@@ -57,5 +59,7 @@ private:
     int m_height;
     int m_channels;
 };
+
+} // namespace NfCore
 
 #endif // NF_IMAGE_DATA_H

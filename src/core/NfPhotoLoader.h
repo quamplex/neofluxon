@@ -42,7 +42,7 @@ public:
         ~NfPhotoLoader();
 
         void setPath(const std::filesystem::path &path);
-        std::filesystem::path& getPath() const;
+        const std::filesystem::path& getPath() const;
 
         void requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfGuiImage> image);
 

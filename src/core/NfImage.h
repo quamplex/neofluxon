@@ -24,9 +24,12 @@
 #ifndef NF_IMAGE_H
 #define NF_IMAGE_H
 
-#include "NfImageData.h"
+#include <memory>
+#include <string_view>
 
 namespace NfCore {
+
+class NfImageData;
 
 class NfImage
 {
@@ -47,7 +50,7 @@ class NfImage
         std::unique_ptr<NfImageData> m_data;
 };
 
-} namespace // NfCore
+} // namespace NfCore
 
 #endif // NF_IMAGE_H
 

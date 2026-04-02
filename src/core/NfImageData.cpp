@@ -26,15 +26,14 @@
 namespace NfCore {
 
 NfImageData::NfImageData()
-        : m_data{}
-        , m_width{0}
+        : m_width{0}
         , m_height{0}
         , m_channels{0}
 {
 }
 
 NfImageData::NfImageData(size_t size)
-        : m_data{size}
+        : m_data(size)
         , m_width{0}
         , m_height{0}
         , m_channels{0}
@@ -42,7 +41,7 @@ NfImageData::NfImageData(size_t size)
 }
 
 NfImageData::NfImageData(int w, int h, int c)
-        : m_data{static_cast<size_t>(w) * static_cast<size_t>(h) * static_cast<size_t>(c)}
+        : m_data(static_cast<size_t>(w) * static_cast<size_t>(h) * static_cast<size_t>(c))
         , m_width{w}
         , m_height{h}
         , m_channels{c}
@@ -86,9 +85,9 @@ bool NfImageData::empty() const
         return m_data.empty();
 }
 
-int NfImageData::setWidth(int w)
+void NfImageData::setWidth(int w)
 {
-        m_width = h;
+        m_width = w;
 }
 
 int NfImageData::width() const
@@ -96,19 +95,19 @@ int NfImageData::width() const
         return m_width;
 }
 
-int NfImageData::setHeight(int h)
+void NfImageData::setHeight(int h)
 {
         m_height = h;
 }
 
 int NfImageData::height() const
 {
-        return m_height = h;
+        return m_height;
 }
 
-int NfImageData::setChannels(int c)
+void NfImageData::setChannels(int c)
 {
-        m_channels = c;
+        m_channels;
 }
 
 int NfImageData::channels() const

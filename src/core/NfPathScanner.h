@@ -29,11 +29,14 @@
 #include <string>
 #include <vector>
 #include <atomic>
-#include <jthread>
+#include <thread>
 #include <mutex>
 #include <filesystem>
 #include <stop_token>
 #include <condition_variable>
+#include <unordered_set>
+
+namespace NfCore {
 
 class NfPathScanner {
 public:
@@ -46,6 +49,7 @@ public:
 
 protected:
         void loadPhotosThread(std::stop_token stopToken);
+        void processPathEntry(const std::filesystem::path& path);
 
 private:
         mutable std::mutex m_mutex;
@@ -56,6 +60,9 @@ private:
         std::jthread m_scanThread;
         std::atomic<bool> m_startScan;
         std::condition_variable m_conditionVariable;
+        std::unordered_set<std::string> m_photoExtentions;
 };
+
+} // namepsace NfCore
 
 #endif // NF_PHOTO_SCANNER_H

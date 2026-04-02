@@ -23,14 +23,18 @@
 
 #include "NfPathScanner.h"
 
+namespace NfCore {
+
 NfPathScanner::NfPathScanner()
         : m_recursive{false}
         , m_startScan{false}
 {
-        m_scanThread = std::jthread(&PathLoader::scanDirectory, this);
+        m_scanThread = std::jthread([this](std::stop_token token) {
+                loadPhotosThread(token);
+        });
 }
 
-void NfPathScanner::setPath(const std::string& path, bool recursive)
+void NfPathScanner::setPath(const std::filesystem::path& path, bool recursive)
 {
         {
                 std::lock_guard lock(m_mutex);
@@ -132,3 +136,5 @@ std::vector<NfPhoto> NfPathScanner::takePhotos()
         std::lock_guard lock(m_mutex);
         return std::move(m_loadedPhotos);
 }
+
+} // namespace NfCore
