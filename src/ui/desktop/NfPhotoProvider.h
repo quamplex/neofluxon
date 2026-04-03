@@ -40,6 +40,11 @@ class NfGuiCache;
 
 using namespace NfCore;
 
+Q_DECLARE_METATYPE(NfPhoto)
+Q_DECLARE_METATYPE(NfPhotoId)
+Q_DECLARE_METATYPE(std::vector<NfPhoto>)
+Q_DECLARE_METATYPE(std::vector<NfPhotoId>)
+
 namespace NfDesktop {
 
 class NfPhotoProvider : public QObject

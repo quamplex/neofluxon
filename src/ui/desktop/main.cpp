@@ -25,6 +25,10 @@
 #include "core/NeofluxonCore.h"
 #include "LqfApplication.h"
 #include "core/NfLogger.h"
+#include "core/NfPhotoId.h"
+#include "core/NfPhoto.h"
+
+#include <vector>
 
 using namespace NfCore;
 using namespace NfDesktop;
@@ -34,6 +38,11 @@ int main(int argc, char **argv)
         auto coreApp = std::make_unique<NeofluxonCore>();
 
         LqfApplication app(coreApp.get(), argc, argv);
+
+        qRegisterMetaType<NfPhoto>("NfPhoto");
+        qRegisterMetaType<NfPhotoId>("NfPhotoId");
+        qRegisterMetaType<std::vector<NfPhoto>>("std::vector<NfPhoto>");
+        qRegisterMetaType<std::vector<NfPhotoId>>("std::vector<NfPhotoId>");
 
         LqfMainWindow mainWin;
         mainWin.show();

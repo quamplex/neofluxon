@@ -119,7 +119,7 @@ class NfLogger {
 
 #define NF_LOG_DEBUG(msg) \
     NfCore::NfLogger::log(NfCore::NfLogger::LogLevel::Debug, \
-        ([context = __PRETTY_FUNCTION__]() { \
+           ([&, context = __PRETTY_FUNCTION__]() {        \
             std::ostringstream oss; \
             oss << "[" << NEOFLUXON_NAME << "] " \
                 << "[" << std::this_thread::get_id() << "] " \

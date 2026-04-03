@@ -32,14 +32,14 @@ NfBrowserModel::NfBrowserModel(NfPhotoProvider &photoProvider, QObject* parent)
         : QAbstractListModel(parent)
         , m_photoProvider{photoProvider}
 {
-        /*        QObject::connect(m_photoProvider,
+        QObject::connect(&m_photoProvider,
                          &NfPhotoProvider::photosLoaded,
                          this,
-                          &NfBrowserModel::onPhotosLoaded);
-        QObject::connect(m_photoProvider,
+                         &NfBrowserModel::onPhotosLoaded);
+        QObject::connect(&m_photoProvider,
                          &NfPhotoProvider::thumbnailsLoaded,
                          this,
-                         &NfBrowserModel::onThumbnailsLoaded);*/
+                         &NfBrowserModel::onThumbnailsLoaded);
  }
 
 void NfBrowserModel::setPath(const std::filesystem::path &path)

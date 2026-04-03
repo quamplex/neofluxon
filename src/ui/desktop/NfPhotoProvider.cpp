@@ -41,6 +41,7 @@ NfPhotoProvider::NfPhotoProvider(NfPhotoLoader& photoLoader,
         : QObject(parent)
         , m_photoLoader{photoLoader}
         , m_cache{cache}
+        , m_thumbnailPlaceholder{":/thumb_w160.jpg"}
 {
         auto timer = new QTimer(this);
         QObject::connect(timer, &QTimer::timeout, this, &NfPhotoProvider::onTimeout);
@@ -86,8 +87,10 @@ void NfPhotoProvider::onTimeout()
 void NfPhotoProvider::processNewPhotos()
 {
         auto newPhotos = m_photoLoader.takePhotos();
-        if (!newPhotos.empty())
+        if (!newPhotos.empty()) {
+                NF_LOG_DEBUG("NEW PHOTOS: " << newPhotos.size());
                 emit photosLoaded(newPhotos);
+        }
 }
 
 void NfPhotoProvider::processThumbnails()

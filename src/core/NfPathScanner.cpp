@@ -53,6 +53,8 @@ void NfPathScanner::setPath(const std::filesystem::path& path, bool recursive)
         }
 
         m_conditionVariable.notify_one();
+
+        NF_LOG_DEBUG("path: " << path);
 }
 
 void NfPathScanner::loadPhotosThread(std::stop_token stopToken)
@@ -101,6 +103,9 @@ void NfPathScanner::loadPhotosThread(std::stop_token stopToken)
                                         processPathEntry(it->path());
                                 }
                         } else {
+
+                                NF_LOG_DEBUG("iterate dir: " << directory);
+
                                 fs::directory_iterator it(directory), end;
 
                                 for (; it != end; ++it) {
@@ -123,6 +128,8 @@ void NfPathScanner::loadPhotosThread(std::stop_token stopToken)
 
 void NfPathScanner::processPathEntry(const std::filesystem::path& path)
 {
+        //NF_LOG_DEBUG("path: " << path);
+
         namespace fs = std::filesystem;
 
         try {
@@ -133,12 +140,13 @@ void NfPathScanner::processPathEntry(const std::filesystem::path& path)
                 std::transform(ext.begin(), ext.end(), ext.begin(),
                                [](unsigned char c) { return std::tolower(c); });
 
-                if (!m_photoExtentions.contains(ext))
-                        return;
+                //if (!m_photoExtentions.contains(ext))
+                //        return;
 
                 NfPhoto photo(path);
                 {
                         std::lock_guard lock(m_mutex);
+                        NF_LOG_DEBUG("NEW PHOTO: " << photo.path());
                         m_loadedPhotos.push_back(std::move(photo));
                 }
         }
