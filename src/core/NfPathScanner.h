@@ -41,7 +41,7 @@ namespace NfCore {
 class NfPathScanner {
 public:
         NfPathScanner();
-        ~NfPathScanner() = default;
+        ~NfPathScanner();
 
         void setPath(const std::filesystem::path& path, bool recursive = true);
         std::filesystem::path getPath(const std::filesystem::path& path) const;
@@ -59,7 +59,7 @@ private:
 
         std::jthread m_scanThread;
         std::atomic<bool> m_startScan;
-        std::condition_variable m_conditionVariable;
+        std::condition_variable_any m_conditionVariable;
         std::unordered_set<std::string> m_photoExtentions;
 };
 

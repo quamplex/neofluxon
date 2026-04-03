@@ -50,7 +50,7 @@ public:
         explicit NfPhotoProvider(NfPhotoLoader& photoLoader,
                                  NfGuiCache& cache,
                                  QObject* parent = nullptr);
-        ~NfPhotoProvider() = default;
+        ~NfPhotoProvider();
 
         void setPath(const std::filesystem::path& path);
         const std::filesystem::path& getPath() const;

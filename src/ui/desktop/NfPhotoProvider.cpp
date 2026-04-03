@@ -26,6 +26,7 @@
 #include "core/NfGuiCache.h"
 #include "core/NfPhotoId.h"
 #include "core/NfGuiThumbnail.h"
+#include "core/NfLogger.h"
 #include "NfQtPixmap.h"
 
 #include <QTimer>
@@ -44,6 +45,11 @@ NfPhotoProvider::NfPhotoProvider(NfPhotoLoader& photoLoader,
         auto timer = new QTimer(this);
         QObject::connect(timer, &QTimer::timeout, this, &NfPhotoProvider::onTimeout);
         timer->start(100);
+}
+
+NfPhotoProvider::~NfPhotoProvider()
+{
+        NF_LOG_DEBUG("called");
 }
 
 void NfPhotoProvider::setPath(const std::filesystem::path& path)

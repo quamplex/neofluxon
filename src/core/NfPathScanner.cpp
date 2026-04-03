@@ -22,6 +22,7 @@
  */
 
 #include "NfPathScanner.h"
+#include "NfLogger.h"
 
 namespace NfCore {
 
@@ -32,6 +33,14 @@ NfPathScanner::NfPathScanner()
         m_scanThread = std::jthread([this](std::stop_token token) {
                 loadPhotosThread(token);
         });
+}
+
+NfPathScanner::~NfPathScanner()
+{
+        NF_LOG_DEBUG("called");
+
+        m_conditionVariable.notify_one();
+        m_scanThread.request_stop();
 }
 
 void NfPathScanner::setPath(const std::filesystem::path& path, bool recursive)
@@ -50,6 +59,8 @@ void NfPathScanner::loadPhotosThread(std::stop_token stopToken)
 {
         namespace fs = std::filesystem;
 
+        NF_LOG_DEBUG("start thread");
+
         while (!stopToken.stop_requested()) {
                 std::string directory;
                 bool recursive;
@@ -57,14 +68,16 @@ void NfPathScanner::loadPhotosThread(std::stop_token stopToken)
                 {
                         std::unique_lock lock(m_mutex);
 
-                        m_conditionVariable.wait(lock, [&]() {
-                                return stopToken.stop_requested()
-                                        || m_startScan.load(std::memory_order_relaxed);
+                        NF_LOG_DEBUG("wait...");
+                        m_conditionVariable.wait(lock, stopToken, [&]() {
+                                return m_startScan.load(std::memory_order_relaxed);
                         });
+
+                        NF_LOG_DEBUG("thread wakeup...");
 
                         if (stopToken.stop_requested()) {
                                 m_loadedPhotos.clear();
-                                return;
+                                break;
                         }
 
                         m_loadedPhotos.clear();
@@ -104,6 +117,8 @@ void NfPathScanner::loadPhotosThread(std::stop_token stopToken)
                 catch (const std::filesystem::filesystem_error&) {
                 }
         }
+
+        NF_LOG_DEBUG("exit thread");
 }
 
 void NfPathScanner::processPathEntry(const std::filesystem::path& path)

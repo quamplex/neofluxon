@@ -22,18 +22,23 @@
  */
 
 #include "LqfMainWindow.h"
+#include "core/NeofluxonCore.h"
 #include "LqfApplication.h"
+#include "core/NfLogger.h"
 
-#include <QFile>
-
+using namespace NfCore;
 using namespace NfDesktop;
 
 int main(int argc, char **argv)
 {
-        LqfApplication app(argc, argv);
+        auto coreApp = std::make_unique<NeofluxonCore>();
+
+        LqfApplication app(coreApp.get(), argc, argv);
 
         LqfMainWindow mainWin;
         mainWin.show();
+
+        NF_LOG_DEBUG("here");
 
         return app.exec();
 }

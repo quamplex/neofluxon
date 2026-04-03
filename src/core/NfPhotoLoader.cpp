@@ -24,6 +24,7 @@
 #include "NfPhotoLoader.h"
 #include "NfPathScanner.h"
 #include "NfGuiImage.h"
+#include "NfLogger.h"
 
 namespace NfCore {
 
@@ -34,6 +35,7 @@ NfPhotoLoader::NfPhotoLoader()
 
 NfPhotoLoader::~NfPhotoLoader()
 {
+        NF_LOG_DEBUG("called");
 }
 
 void NfPhotoLoader::setPath(const std::filesystem::path &path)

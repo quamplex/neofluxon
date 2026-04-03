@@ -24,6 +24,7 @@
 #include "NeofluxonCore.h"
 #include "NfPhotoLoader.h"
 #include "NfGuiCache.h"
+#include "NfLogger.h"
 
 namespace NfCore {
 
@@ -31,10 +32,14 @@ NeofluxonCore::NeofluxonCore()
         : m_photoLoader{std::make_unique<NfPhotoLoader>()}
         , m_guiCache{std::make_unique<NfGuiCache>()}
 {
+        NF_LOG_DEBUG("called");
 }
 
 NeofluxonCore::~NeofluxonCore()
 {
+        m_guiCache.reset();
+        m_photoLoader.reset();
+        NF_LOG_DEBUG("called");
 }
 
 NfPhotoLoader& NeofluxonCore::photoLoader() const

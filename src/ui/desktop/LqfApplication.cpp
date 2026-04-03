@@ -24,6 +24,7 @@
 #include "LqfApplication.h"
 #include "core/NeofluxonCore.h"
 #include "NfPhotoProvider.h"
+#include "core/NfLogger.h"
 
 #include <QProcessEnvironment>
 #include <QDebug>
@@ -35,19 +36,13 @@ using namespace NfCore;
 
 namespace NfDesktop {
 
-LqfApplication::LqfApplication(int &argc, char **argv, int falgs)
+        LqfApplication::LqfApplication(NeofluxonCore* coreApp,
+                                       int &argc,
+                                       char **argv,
+                                       int falgs)
         : QApplication(argc, argv, falgs)
-        , m_coreApp{std::make_unique<NeofluxonCore>()}
-        , m_photoProvider{new NfPhotoProvider(m_coreApp->photoLoader(), m_coreApp->guiCache())}
+        , m_photoProvider{new NfPhotoProvider(coreApp->photoLoader(), coreApp->guiCache(), this)}
 {
-QDirIterator it(":", QDirIterator::Subdirectories);
-while (it.hasNext()) {
-    qDebug() << "Found resource:" << it.next();
-}
-
-        qDebug() << QDir(":/").entryList();
-        qDebug() << QFile(":/style-cool-teal-desktop.qcss").exists();
-
         QFile styleFile(":/style-cool-teal-desktop.qcss");  // matches the prefix "/" + file name
         if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 QString style = QString::fromUtf8(styleFile.readAll());
@@ -59,6 +54,7 @@ while (it.hasNext()) {
 
 LqfApplication::~LqfApplication()
 {
+        NF_LOG_DEBUG("called");
 }
 
 LqfApplication* LqfApplication::getAppInstance()
