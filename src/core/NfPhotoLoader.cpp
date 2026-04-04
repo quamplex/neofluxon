@@ -50,18 +50,15 @@ const std::filesystem::path& NfPhotoLoader::getPath() const
 }
 
 void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
-                                     std::unique_ptr<NfGuiImage> imageContainer)
+                                     std::unique_ptr<NfImage> imageContainer)
 {
         auto task = std::make_unique<NfThumbnailTask>(photo, std::move(imageContainer));
 
-        task->setResult([&](std::unique_ptr<NfTask> resultTask) {
-                auto* thumbnailTask = dynamic_cast<NfThumbnailTask*>(resultTask.get());
+        task->setResult([&](std::unique_ptr<NfTask> result) {
+                auto* thumbnailTask = dynamic_cast<NfThumbnailTask*>(result.get());
                 if (thumbnailTask) {
-                        auto image = thumbnailTask->takeImage();
-                        {
-                                std::scoped_lock lock(m_thumbnailsQueueMutex);
-                                m_thumbnailsQueue.push_back(std::move(image));
-                        }
+                        std::scoped_lock lock(m_thumbnailsQueueMutex);
+                        m_thumbnailsQueue.push_back(std::move(thumbnailTask->takeThumbnail()));
                 }
         });
 

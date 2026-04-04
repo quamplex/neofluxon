@@ -24,7 +24,7 @@
 #ifndef NF_QTPIXMAP_H
 #define NF_QTPIXMAP_H
 
-#include "core/NfGuiImage.h"
+#include "core/NfImage.h"
 
 #include <QPixmap>
 
@@ -32,12 +32,12 @@ using namespace NfCore;
 
 namespace NfDesktop {
 
-class NfQtPixmap : public NfGuiImage {
+class NfQtPixmap : public NfImage {
 public:
     NfQtPixmap() = default;
     ~NfQtPixmap() override = default;
 
-    void setImageData(const NfImageData& imageData) override;
+    void setData(const NfImageData& imageData) override;
     const QPixmap& pixmap() const;
     std::size_t size() const override;
 

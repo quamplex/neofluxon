@@ -23,7 +23,7 @@
 
 
 #include "NfThumbnailTask.h"
-#include "NfRawImageDecoder.h"
+#include "NfImageDecoder.h"
 
 #include <stdexcept>
 #include <iostream>
@@ -37,12 +37,12 @@ NfThumbnailTask::NfThumbnailTask(const NfPhoto& photo,
 
 TaskStatus NfThumbnailTask::execute()
 {
-        NfRawImageDecoder imageDecoder(m_photo);
-        m_imageContainer->setImageData(NfRawImageDecoder(m_photo)->thumbnailImageData());
+        NfImageDecoder decoder(m_photo);
+        m_imageContainer->setData(decoder->thumbnailImageData());
         return TaskStatus::Success;
 }
 
-std::unique_ptr<NfGuiImage> NfThumbnailTask::takeImage()
+std::unique_ptr<NfThumbanil> NfThumbnailTask::takeThumbnail()
 {
-        return std::move(m_imageContainer);
+        return std::make_unique<NfThumbail>(m_photo, m_imageContainer);
 }

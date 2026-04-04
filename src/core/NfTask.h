@@ -26,31 +26,30 @@
 
 #include <memory>
 #include <functional>
-#include <string>
 
 namespace NfCore {
 
 class NfTask {
 public:
 
-     enum class TaskStatus {
-                     TaskSuccess,
-                     TaskFailed,
-                     TaskCancelled
-     };
+        enum class TaskStatus {
+                TaskSuccess,
+                TaskFailed,
+                TaskCancelled
+        };
 
-     using TaskResultHandler = std::function<void(std::unique_ptr<NfTask>, TaskStatus)>;
-     virtual ~NfTask() = default;
-     virtual TaskStatus execute() = 0;
-     void setResult(TaskResultHandler handler);
-     void notifyCompletion(TaskStatus status = TaskStatus::Success);
-     [[nodiscard]] bool hasResultHandler() const;
+        using TaskResultHandler = std::function<void(std::unique_ptr<NfTask>, TaskStatus)>;
+        virtual ~NfTask() = default;
+        virtual TaskStatus execute() = 0;
+        void setResult(TaskResultHandler handler);
+        void notifyCompletion(TaskStatus status = TaskStatus::Success);
+        [[nodiscard]] bool hasResultHandler() const;
 
 protected:
-    NfTask() = default;
+        NfTask() = default;
 
 private:
-    TaskResultHandler m_onComplete;
+        TaskResultHandler m_onComplete;
 };
 
 } // namespace NfCore

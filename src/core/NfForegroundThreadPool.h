@@ -1,7 +1,30 @@
+/**
+ * File name: NfForegroundThreadPool.h
+ * Project: Neofluxon (a photography workflow software)
+ *
+ * Copyright (C) 2026 Iurie Nistor
+ *
+ * This file is part of Neofluxon.
+ *
+ * Neofluxon is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 #ifndef NF_FOREGROUND_THREAD_POOL_H
 #define NF_FOREGROUND_THREAD_POOL_H
 
-#include <queue>
+#include <stack>
 #include <mutex>
 #include <condition_variable>
 #include <thread>
@@ -11,86 +34,28 @@
 #include <memory>
 #include <cstddef>
 
-// Forward declaration
-class NfTask;
-
 namespace NfCore {
 
-/**
- * @brief Thread pool optimized for foreground tasks with priority support.
- * 
- * Uses std::jthread (C++20) for automatic join-on-destruction and stop tokens.
- * Manages NfTask objects via unique_ptr.
- */
+class NfTask;
+
 class NfForegroundThreadPool {
 public:
-    explicit NfForegroundThreadPool(size_t threadCount = 0);
-    ~NfForegroundThreadPool();
+        explicit NfForegroundThreadPool(size_t threadCount = 0);
+        ~NfForegroundThreadPool();
+        NfForegroundThreadPool(const NfForegroundThreadPool&) = delete;
+        NfForegroundThreadPool& operator=(const NfForegroundThreadPool&) = delete;
+        NfForegroundThreadPool(NfForegroundThreadPool&&) = delete;
+        NfForegroundThreadPool& operator=(NfForegroundThreadPool&&) = delete;
 
-    // Non-copyable, non-movable
-    NfForegroundThreadPool(const NfForegroundThreadPool&) = delete;
-    NfForegroundThreadPool& operator=(const NfForegroundThreadPool&) = delete;
-    NfForegroundThreadPool(NfForegroundThreadPool&&) = delete;
-    NfForegroundThreadPool& operator=(NfForegroundThreadPool&&) = delete;
-
-    /**
-     * @brief Submit a task to the pool.
-     * 
-     * @param task Unique pointer to the task. Ownership is transferred to the pool.
-     * @param priority Higher numbers = higher priority (default 0).
-     */
-    void submit(std::unique_ptr<NfTask> task, int priority = 0);
-
-    /**
-     * @brief Wait for all currently queued and active tasks to complete.
-     * 
-     * Blocks the calling thread until m_pendingTasks and m_activeTasks reach zero.
-     */
-    void waitForAllTasks();
-
-    /**
-     * @brief Gracefully shut down the pool.
-     * 
-     * Stops accepting new tasks and waits for all workers to finish.
-     */
-    void shutdown();
-
-    /**
-     * @brief Get the number of pending tasks.
-     */
-    size_t getPendingCount() const { return m_pendingTasks.load(); }
-
-    /**
-     * @brief Get the number of currently executing tasks.
-     */
-    size_t getActiveCount() const { return m_activeTasks.load(); }
+        void submit(std::unique_ptr<NfTask> task);
 
 private:
-    struct Job {
-        std::unique_ptr<NfTask> task;
-        int priority;
+        void threadLoop(std::stop_token stoken);
 
-        // Priority queue orders by highest priority first
-        bool operator<(const Job& other) const {
-            return priority < other.priority;
-        }
-    };
-
-    void workerLoop(std::stop_token stoken);
-
-    // State
-    std::atomic<bool> m_stopped{false};
-    std::atomic<size_t> m_activeTasks{0};
-    std::atomic<size_t> m_pendingTasks{0};
-
-    // Workers
-    std::vector<std::jthread> m_workers;
-
-    // Synchronization
-    mutable std::mutex m_queueMutex;
-    std::priority_queue<Job> m_tasks;
-    std::condition_variable_any m_condVar;
-    std::condition_variable_any m_completionCond;
+        std::vector<std::jthread> m_poolThreads;
+        mutable std::mutex m_queueMutex;
+        std::condition_variable_any m_condVariable;
+        std::stack<std::unique_ptr<NfTask>> m_taskQueue;
 };
 
 } // namespace NfCore

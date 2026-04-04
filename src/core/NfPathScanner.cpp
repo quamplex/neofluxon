@@ -39,8 +39,8 @@ NfPathScanner::~NfPathScanner()
 {
         NF_LOG_DEBUG("called");
 
-        m_conditionVariable.notify_one();
         m_scanThread.request_stop();
+        m_conditionVariable.notify_one();
 }
 
 void NfPathScanner::setPath(const std::filesystem::path& path, bool recursive)
@@ -77,12 +77,10 @@ void NfPathScanner::loadPhotosThread(std::stop_token stopToken)
 
                         NF_LOG_DEBUG("thread wakeup...");
 
-                        if (stopToken.stop_requested()) {
-                                m_loadedPhotos.clear();
-                                break;
-                        }
-
                         m_loadedPhotos.clear();
+
+                        if (stopToken.stop_requested())
+                                break;
 
                         directory = m_path;
                         recursive = m_recursive;

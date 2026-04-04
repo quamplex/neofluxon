@@ -15,15 +15,11 @@ class NfImageData;
  *
  * Implementations define how image data is stored (e.g. QPixmap in Qt).
  */
-class NfGuiImage {
+class NfGuiImage : public NfImage {
 public:
-    virtual ~NfGuiImage() = default;
-
-    /// Sets image data from core representation.
-    virtual void setImageData(const NfImageData& data) = 0;
-
-    /// Returns memory size in bytes (used by cache).
-    virtual std::size_t size() const = 0;
+        virtual ~NfGuiImage() = default;
+        virtual void setImageData(const NfImageData& data) override;
+        virtual std::size_t size() const = 0;
 };
 
 } // namespace NfCore

@@ -54,6 +54,8 @@ public:
  private:
         std::unique_ptr<NfPathScanner> m_pathScanner;
         std::filesystem::path m_path;
+        std::mutex m_thumbnailsQueueMutex;
+        std::vector<NfGuiThumbnail> m_thumbnailsQueue;
 };
 
 } // namespace NfCore

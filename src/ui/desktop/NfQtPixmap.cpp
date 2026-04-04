@@ -28,7 +28,7 @@ using namespace NfCore;
 
 namespace NfDesktop {
 
-void NfQtPixmap::setImageData(const NfImageData& imageData)
+void NfQtPixmap::setData(const NfImageData& imageData)
 {
         if (imageData.empty() || imageData.width() <= 0 || imageData.height() <= 0) {
                 m_pixmapImage = QPixmap();

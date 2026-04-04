@@ -16,20 +16,12 @@ public:
 
         TaskStatus execute() override;
 
-        [[nodiscard]] std::unique_ptr<NfImage> takeImage();
+        std::unique_ptr<NfThumbail> takeThumbnail() const;
 
-    /**
-     * @brief Gets the source photo data.
-     */
-    [[nodiscard]] const NfPhoto& getPhoto() const { return m_photo; }
-
-    /**
-     * @brief Gets the last error message if execution failed.
-     */
-    [[nodiscard]] std::string getErrorMessage() const { return m_errorMessage; }
+        [[nodiscard]] std::string getErrorMessage() const { return m_errorMessage; }
 
 private:
-    NfPhoto m_photo;
-    std::unique_ptr<NfGuiImage> m_imageContainer;
-    std::string m_errorMessage;
+        NfPhoto m_photo;
+        std::unique_ptr<NfImage> m_imageContainer;
+        std::string m_errorMessage;
 };
