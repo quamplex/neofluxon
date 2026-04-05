@@ -23,7 +23,7 @@
 
 #include "NfGuiCache.h"
 //#include "NfDiskCache.h"
-#include "NfGuiImage.h"
+#include "NfImage.h"
 
 namespace NfCore {
 

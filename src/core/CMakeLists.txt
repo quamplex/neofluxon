@@ -16,3 +16,7 @@ add_library(${PROJECT_NAME}::CoreLibrary ALIAS NfCore)
 target_include_directories(NfCore PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
+
+target_link_libraries(NfCore PRIVATE
+        raw
+)

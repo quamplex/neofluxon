@@ -66,7 +66,7 @@ const std::filesystem::path& NfPhotoProvider::getPath() const
 
 const QPixmap& NfPhotoProvider::getThumbnail(const NfPhoto &photo) const
 {
-        const NfGuiImage* cacheImage = m_cache.get(photo.id());
+        const NfImage* cacheImage = m_cache.get(photo.id());
         if (cacheImage) {
                 const auto *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
                 if (thumbnail)

@@ -33,40 +33,40 @@ class NfImageData
 {
 public:
 
-    enum class ImageFormat : int {
-            Format_Invalid,
-            Format_RGB888,
-            Format_RGBA8888,
-            Format_ARGB32_Premultiplied
-    };
+        enum class ImageFormat : int {
+                Format_Invalid,
+                Format_RGB888,
+                Format_RGBA8888,
+                Format_ARGB32_Premultiplied
+        };
 
-    NfImageData();
-    NfImageData(size_t size);
-    NfImageData(int w, int h, int c);
-    NfImageData(const NfImageData&) = default;
-    NfImageData(NfImageData&&) noexcept = default;
-    NfImageData& operator=(const NfImageData&) = default;
-    NfImageData& operator=(NfImageData&&) noexcept = default;
-    void setData(const void* ptr, size_t len);
-    const unsigned char* data() const;
-    unsigned char* data();
-    void resize(size_t newSize);
-    size_t size() const;
-    void clear();
-    bool empty() const;
-    void setWidth(int w);
-    int width() const;
-    void setHeight(int h);
-    int height() const;
-    void setChannels(int c);
-    int channels() const;
-    ImageFormat format() const;
+        NfImageData();
+        NfImageData(size_t size);
+        NfImageData(int w, int h, int c);
+        NfImageData(const NfImageData&) = default;
+        NfImageData(NfImageData&&) noexcept = default;
+        NfImageData& operator=(const NfImageData&) = default;
+        NfImageData& operator=(NfImageData&&) noexcept = default;
+        void setData(const unsigned char* ptr, size_t len);
+        const unsigned char* data() const;
+        unsigned char* data();
+        void resize(size_t newSize);
+        size_t size() const;
+        void clear();
+        bool empty() const;
+        void setWidth(int w);
+        int width() const;
+        void setHeight(int h);
+        int height() const;
+        void setChannels(int c);
+        int channels() const;
+        ImageFormat format() const;
 
 private:
-    std::vector<unsigned char> m_data;
-    int m_width;
-    int m_height;
-    int m_channels;
+        std::vector<unsigned char> m_data;
+        int m_width;
+        int m_height;
+        int m_channels;
 };
 
 } // namespace NfCore

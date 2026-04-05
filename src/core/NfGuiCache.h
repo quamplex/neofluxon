@@ -12,7 +12,7 @@
 namespace NfCore {
 
 //class NfDiskCache;
-class NfGuiImage;
+class NfImage;
 
 /**
  * @brief GUI image cache with LRU eviction and optional disk overflow.
@@ -75,7 +75,7 @@ private:
     std::unordered_map<
         NfPhotoId,
         std::pair<std::list<NfPhotoId>::iterator,
-        std::unique_ptr<NfGuiImage>>> m_memoryCache;
+        std::unique_ptr<NfImage>>> m_memoryCache;
     std::list<NfPhotoId> m_lruOrder; // front = most recent
 };
 

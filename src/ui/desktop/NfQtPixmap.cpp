@@ -61,6 +61,8 @@ void NfQtPixmap::setData(const NfImageData& imageData)
 
         // Deep copy to detach from NfImageData memory
         m_pixmapImage = QPixmap::fromImage(img.copy());
+
+        NfImage::setData(imageData);
 }
 
 const QPixmap& NfQtPixmap::pixmap() const
