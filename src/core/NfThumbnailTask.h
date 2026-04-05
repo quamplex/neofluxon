@@ -1,5 +1,5 @@
 /**
- * File name: NfGuiThumbnail.cpp
+ * File name: NfThumbnailTask.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,30 +21,37 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfGuiThumbnail.h"
-#include "NfGuiImage.h"
+#ifndef NF_THUMBNAIL_H
+#define NF_THUMBNAIL_H
+
+#include "NfTask.h"
+#include "NfPhoto.h"
+
+#include <memory>
+#include <string>
 
 namespace NfCore {
 
-NfGuiThumbnail::NfGuiThumbnail(const NfPhotoId &id, std::unique_ptr<NfGuiImage> img)
-        : m_photoId{id}
-        , m_image{std::move(img)}
-{
-}
+class NfImage;
+class NfThumbnail;
 
-const NfPhotoId& NfGuiThumbnail::id() const
-{
-        return m_photoId;
-}
+class NfThumbnailTask : public NfTask {
+public:
+        NfThumbnailTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
+        ~NfThumbnailTask();
 
-NfGuiImage* NfGuiThumbnail::getImage() const
-{
-        return m_image.get();
-}
+        TaskStatus execute() override;
 
-std::unique_ptr<NfGuiImage> NfGuiThumbnail::releaseImage()
-{
-        return std::move(m_image);
-}
+        std::unique_ptr<NfThumbnail> takeThumbnail();
+
+        [[nodiscard]] std::string getErrorMessage() const { return m_errorMessage; }
+
+private:
+        NfPhoto m_photo;
+        std::unique_ptr<NfImage> m_imageContainer;
+        std::string m_errorMessage;
+};
 
 } // namespace NfCore
+
+#endif // NF_THUMBNAIL_H

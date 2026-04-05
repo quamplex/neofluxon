@@ -49,6 +49,10 @@ NfImageData::NfImageData(int w, int h, int c)
 {
 }
 
+NfImageData::~NfImageData()
+{
+}
+
 void NfImageData::setData(const unsigned char* ptr, size_t len)
 {
         m_data.assign(ptr, ptr + len);

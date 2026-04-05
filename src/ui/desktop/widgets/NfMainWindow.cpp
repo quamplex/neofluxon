@@ -1,5 +1,5 @@
 /**
- * File name: MainWindow.h
+ * File name: NfMainWindow.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,14 +21,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "LqfMainWindow.h"
+#include "NfMainWindow.h"
 #include "NfTopBar.h"
 #include "NfPanel.h"
 #include "NfLeftPanel.h"
 #include "NfStyledWidget.h"
 #include "NfBrowserModel.h"
 #include "NfBrowserView.h"
-#include "LqfApplication.h"
+#include "NfApplication.h"
 
 #include <QFrame>
 #include <QWidget>
@@ -39,7 +39,7 @@
 
 namespace NfDesktop {
 
-LqfMainWindow::LqfMainWindow()
+NfMainWindow::NfMainWindow()
         : QMainWindow()
 {
         setWindowTitle("Neofluxon");
@@ -66,7 +66,7 @@ LqfMainWindow::LqfMainWindow()
         auto leftPanel = new NfLeftPanel(this);
         hLayout->addWidget(leftPanel);
 
-        auto& photoProvider = static_cast<LqfApplication*>(QApplication::instance())->photoProvider();
+        auto& photoProvider = static_cast<NfApplication*>(QApplication::instance())->photoProvider();
         auto model = new NfBrowserModel(photoProvider, this);
 
         // Central widget – any background you like.
@@ -94,7 +94,7 @@ LqfMainWindow::LqfMainWindow()
         setCentralWidget(container);
 }
 
-LqfMainWindow::~LqfMainWindow()
+NfMainWindow::~NfMainWindow()
 {
 }
 

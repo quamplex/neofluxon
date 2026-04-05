@@ -27,7 +27,7 @@
 
 namespace NfCore {
 
-NfForegroundThreadPool::ForegroundThreadPool(size_t threadCount)
+NfForegroundThreadPool::NfForegroundThreadPool(size_t threadCount)
 {
         if (threadCount < 1) {
                 threadCount = std::thread::hardware_concurrency();
@@ -36,15 +36,15 @@ NfForegroundThreadPool::ForegroundThreadPool(size_t threadCount)
         }
 
         for (size_t i = 0; i < threadCount; i++) {
-                m_threads.emplace_back([this](std::stop_token stoken) {
+                m_poolThreads.emplace_back([this](std::stop_token stoken) {
                         threadLoop(stoken);
                 });
         }
 }
 
-NfForegroundThreadPool::~ForegroundThreadPool()
+NfForegroundThreadPool::~NfForegroundThreadPool()
 {
-        for (auto& t : m_threads)
+        for (auto& t : m_poolThreads)
                 t.request_stop();
 
         m_conditionVariable.notify_all();
@@ -65,7 +65,7 @@ void NfForegroundThreadPool::threadLoop(std::stop_token stoken)
         while (true) {
                 std::unique_ptr<NfTask> task;
 
-            {
+                {
                     std::unique_lock<std::mutex> lock(m_queueMutex);
                     m_conditionVariable.wait(lock, [this, &stoken] {
                             return !m_taskQueue.empty() || stoken.stop_requested();
@@ -76,13 +76,13 @@ void NfForegroundThreadPool::threadLoop(std::stop_token stoken)
 
                     task = std::move(m_taskQueue.top());
                     m_taskQueue.pop();
-            }
+                }
 
-            if (task) {
-                    auto status = task->execute();
-                    task->notifyCompletion(status);
-                    m_completionCondition.notify_all();
-            }
+                if (task) {
+                        auto status = task->execute();
+                        NF_LOG_DEBUG("status: " << (int)status);
+                        task->notifyCompletion(status);
+                }
         }
 }
 

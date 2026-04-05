@@ -28,16 +28,16 @@ using namespace NfCore;
 
 namespace NfDesktop {
 
-void NfQtPixmap::setData(const NfImageData& imageData)
+void NfQtPixmap::setData(std::unique_ptr<NfImageData> data)
 {
-        if (imageData.empty() || imageData.width() <= 0 || imageData.height() <= 0) {
-                m_pixmapImage = QPixmap();
-                return;
-        }
+        //if (data->empty() || data->width() <= 0 || data->height() <= 0) {
+        //        m_pixmapImage = QPixmap();
+        //        return;
+        //}
 
-        QImage::Format fmt = QImage::Format_Invalid;
+        /*QImage::Format fmt = QImage::Format_Invalid;
 
-        switch (imageData.format()) {
+        switch (data->format()) {
         case NfImageData::ImageFormat::Format_RGB888:
                 fmt = QImage::Format_RGB888;
                 break;
@@ -50,19 +50,20 @@ void NfQtPixmap::setData(const NfImageData& imageData)
         default:
                 m_pixmapImage = QPixmap();
                 return;
-        }
+                }*/
 
-        const int bytesPerLine = imageData.width() * imageData.channels();
-        QImage img(imageData.data(),
-                   imageData.width(),
-                   imageData.height(),
-                   bytesPerLine,
-                   fmt);
+        //const int bytesPerLine = data->width() * data->channels();
+        QImage img;
+        img.loadFromData(data->data(), data->size());
+        //data->width(),
+        //           data->height(),
+        //           bytesPerLine,
+        //           fmt);
 
         // Deep copy to detach from NfImageData memory
         m_pixmapImage = QPixmap::fromImage(img.copy());
 
-        NfImage::setData(imageData);
+        NfImage::setData(std::move(data));
 }
 
 const QPixmap& NfQtPixmap::pixmap() const

@@ -1,5 +1,5 @@
 /**
- * File name: LgfApplication.h
+ * File name: NfApplication.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,8 +21,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef LQF_APPLICATION_H
-#define LQF_APPLICATION_H
+#ifndef NF_APPLICATION_H
+#define NF_APPLICATION_H
 
 #include <QApplication>
 #include <QSemaphore>
@@ -38,15 +38,15 @@ namespace NfDesktop {
 
 class NfPhotoProvider;
 
-class LqfApplication: public QApplication
+class NfApplication: public QApplication
 {
 public:
-        LqfApplication(NeofluxonCore* coreApp,
+        NfApplication(NeofluxonCore* coreApp,
                        int &argc,
                        char **argv,
                        int falgs = ApplicationFlags);
-        ~LqfApplication();
-        static LqfApplication* getAppInstance();
+        ~NfApplication();
+        static NfApplication* getAppInstance();
         static QString applicationName();
         NfPhotoProvider& photoProvider() const;
 
@@ -56,4 +56,4 @@ private:
 
 } // namespace NfDesktop
 
-#endif // LQF_APPLICATION_H
+#endif // NF_APPLICATION_H

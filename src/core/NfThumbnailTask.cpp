@@ -1,5 +1,5 @@
 /**
- * File name: NfImage.cpp
+ * File name: NfThumbnailTask.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,66 +21,40 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfImage.h"
+#include "NfThumbnailTask.h"
+#include "NfImageDecoder.h"
 #include "NfImageData.h"
+#include "NfImage.h"
+#include "NfThumbnail.h"
+
+#include <stdexcept>
+#include <iostream>
 
 namespace NfCore {
 
-NfImage::NfImage()
-        : m_data(std::make_unique<NfImageData>())
+NfThumbnailTask::NfThumbnailTask(const NfPhoto& photo,
+                                 std::unique_ptr<NfImage> imageContainer)
+        : m_photo{photo}
+        , m_imageContainer{std::move(imageContainer)}
 {
 }
 
-NfImage::NfImage(std::unique_ptr<NfImageData> data)
-        : m_data{std::move(data)}
+NfThumbnailTask::~NfThumbnailTask() = default;
+
+NfThumbnailTask::TaskStatus NfThumbnailTask::execute()
 {
+        NfImageDecoder decoder(m_photo);
+        auto image = decoder.thumbnailImageData();
+        if (!image)
+                return TaskStatus::Failed;
+
+        m_imageContainer->setData(decoder.thumbnailImageData());
+        return TaskStatus::Success;
 }
 
-NfImage::~NfImage() = default;
-
-void NfImage::setData(std::unique_ptr<NfImageData> data)
+std::unique_ptr<NfThumbnail> NfThumbnailTask::takeThumbnail()
 {
-        m_data = std::move(data);
-}
-
-NfImageData* NfImage::getData()
-{
-    return m_data.get();
-}
-
-const NfImageData* NfImage::getData() const
-{
-    return m_data.get();
-}
-
-int NfImage::width() const
-{
-    return m_data ? m_data->width() : 0;
-}
-
-int NfImage::height() const
-{
-    return m_data ? m_data->height() : 0;
-}
-
-int NfImage::channels() const
-{
-        return m_data ? m_data->channels() : 0;
-}
-
-std::string_view NfImage::format() const
-{
-        return "Unknown";
-}
-
-bool NfImage::isValid() const
-{
-        return !m_data->empty();
-}
-
-size_t NfImage::size() const
-{
-        return m_data->size();
+        return std::make_unique<NfThumbnail>(m_photo.id(), std::move(m_imageContainer));
 }
 
 } // namespace NfCore

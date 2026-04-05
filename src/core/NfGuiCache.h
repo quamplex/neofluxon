@@ -26,6 +26,7 @@ class NfImage;
  */
 class NfGuiCache {
 public:
+    // Default cache size 250 MB
     static constexpr std::size_t DEFAULT_MAX_SIZE_BYTES = 250ULL * 1024 * 1024;
 
     explicit NfGuiCache(/*NfDiskCache* diskCache = nullptr,*/
@@ -40,11 +41,11 @@ public:
 
     /// Adds or replaces an image. Updates LRU order.
     /// Image is rejected if it exceeds max cache size.
-    void add(const NfPhotoId &id, std::unique_ptr<NfGuiImage> image);
+    void add(const NfPhotoId &id, std::unique_ptr<NfImage> image);
 
     // Returns image if present and marks it as recently used.
     /// @warning Returned pointer may become invalid after any cache modification.
-    [[nodiscard]] NfGuiImage* get(const NfPhotoId& id);
+    [[nodiscard]] NfImage* get(const NfPhotoId& id);
 
     /// Removes image if present.
     [[nodiscard]] bool remove(const NfPhotoId& id);

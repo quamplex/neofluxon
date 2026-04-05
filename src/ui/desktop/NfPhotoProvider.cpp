@@ -25,7 +25,7 @@
 #include "core/NfPhotoLoader.h"
 #include "core/NfGuiCache.h"
 #include "core/NfPhotoId.h"
-#include "core/NfGuiThumbnail.h"
+#include "core/NfThumbnail.h"
 #include "core/NfLogger.h"
 #include "NfQtPixmap.h"
 

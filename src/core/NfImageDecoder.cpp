@@ -21,10 +21,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_IMAGE_DECODER_H
-#define NF_IMAGE_DECODER_H
-
-#include "NfPhoto.h"
+#include "NfImageDecoder.h"
+#include "NfImageData.h"
+#include "NfImage.h"
+#include "NfLogger.h"
 
 #include "libraw/libraw.h"
 
@@ -35,12 +35,19 @@ NfImageDecoder::NfImageDecoder(const NfPhoto &photo)
 {
 }
 
-std::unique<NfImageData> NfImageDecoder::thumbnailImageData() const
+NfImageDecoder::~NfImageDecoder() = default;
+
+std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData() const
 {
         auto rawProcessor = std::make_unique<LibRaw>();
+        if (rawProcessor->open_file(m_photo.path().string().c_str()) != LIBRAW_SUCCESS) {
+                NF_LOG_DEBUG("can't open file : " << m_photo.path());
+                return nullptr;
+        }
 
         auto &thumbList = rawProcessor->imgdata.thumbs_list;
         int count = thumbList.thumbcount;
+        NF_LOG_DEBUG("thumbList.thumbcount: " << count);
 
         if (count == 0)
                 return nullptr;
@@ -49,17 +56,19 @@ std::unique<NfImageData> NfImageDecoder::thumbnailImageData() const
         if (rawProcessor->unpack_thumb_ex(0) != LIBRAW_SUCCESS)
                 return nullptr;
 
+        NF_LOG_DEBUG("thumbnail unpack: OK");
+
         auto &t = rawProcessor->imgdata.thumbnail;
 
         if (t.tformat != LIBRAW_THUMBNAIL_JPEG || t.tlength == 0)
                 return nullptr;
 
         auto imageData = std::make_unique<NfImageData>();
-        imageData.setData(reinterpret_cast<const unsigned char*>(t.thumb), t.tlength);
+        imageData->setData(reinterpret_cast<const unsigned char*>(t.thumb), t.tlength);
+        NF_LOG_DEBUG("setData len: " << t.tlength);
 
         return imageData;
 }
 
 } // namespace NfCore
 
-#endif // NF_IMAGE_DECODER_H

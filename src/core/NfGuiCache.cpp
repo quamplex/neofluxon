@@ -36,12 +36,12 @@ NfGuiCache::NfGuiCache(/*NfDiskCache* diskCache, */std::size_t maxSizeBytes)
 
 NfGuiCache::~NfGuiCache() = default;
 
-void NfGuiCache::add(const NfPhotoId &id, std::unique_ptr<NfGuiImage> image)
+void NfGuiCache::add(const NfPhotoId &id, std::unique_ptr<NfImage> image)
 {
         if (!image)
                 return;
 
-        std::size_t imageSizeBytes = image->size();
+        auto imageSizeBytes = image->size();
 
         // Reject oversized images that can never fit
         if (imageSizeBytes > m_maxSizeBytes)
@@ -67,7 +67,7 @@ void NfGuiCache::add(const NfPhotoId &id, std::unique_ptr<NfGuiImage> image)
         m_currentSizeBytes += imageSizeBytes;
 }
 
-NfGuiImage* NfGuiCache::get(const NfPhotoId& id)
+NfImage* NfGuiCache::get(const NfPhotoId& id)
 {
         auto it = m_memoryCache.find(id);
         if (it == m_memoryCache.end())

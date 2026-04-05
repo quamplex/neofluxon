@@ -1,5 +1,5 @@
 /**
- * File name: NfGuiThumbnail.h
+ * File name: NfGuiThumbnail.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,36 +21,30 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_GUI_THUMBNAIL_H
-#define NF_GUI_THUMBNAIL_H
-
-#include "NfPhotoId.h"
-
-#include <memory>
+#include "NfThumbnail.h"
+#include "NfImage.h"
 
 namespace NfCore {
 
-class NfGuiImage;
+NfThumbnail::NfThumbnail(const NfPhotoId &id, std::unique_ptr<NfImage> img)
+        : m_photoId{id}
+        , m_image{std::move(img)}
+{
+}
 
-class NfGuiThumbnail {
-public:
+const NfPhotoId& NfThumbnail::id() const
+{
+        return m_photoId;
+}
 
-    explicit NfGuiThumbnail(const NfPhotoId &id, std::unique_ptr<NfGuiImage> img);
-    NfGuiThumbnail(NfGuiThumbnail&&) noexcept = default;
-    NfGuiThumbnail& operator=(NfGuiThumbnail&&) noexcept = default;
-    NfGuiThumbnail(const NfGuiThumbnail&) = delete;
-    NfGuiThumbnail& operator=(const NfGuiThumbnail&) = delete;
+NfImage* NfThumbnail::getImage() const
+{
+        return m_image.get();
+}
 
-    const NfPhotoId& id() const;
-    NfGuiImage* getImage() const;
-
-    [[nodiscard]] std::unique_ptr<NfGuiImage> releaseImage();
-
-private:
-    NfPhotoId m_photoId;
-    std::unique_ptr<NfGuiImage> m_image;
-};
+std::unique_ptr<NfImage> NfThumbnail::releaseImage()
+{
+        return std::move(m_image);
+}
 
 } // namespace NfCore
-
-#endif // NF_GUI_THUMBNAIL_H

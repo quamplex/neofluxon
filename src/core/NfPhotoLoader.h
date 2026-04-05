@@ -25,7 +25,8 @@
 #define NF_PHOTO_LOADER_H
 
 #include "NfPhoto.h"
-#include "NfGuiThumbnail.h"
+#include "NfThumbnail.h"
+#include "NfForegroundThreadPool.h"
 
 #include <filesystem>
 #include <vector>
@@ -34,7 +35,7 @@
 namespace NfCore {
 
 class NfPathScanner;
-class NfGuiImage;
+class NfImage;
 
 class NfPhotoLoader {
 public:
@@ -44,18 +45,19 @@ public:
         void setPath(const std::filesystem::path &path);
         const std::filesystem::path& getPath() const;
 
-        void requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfGuiImage> image);
+        void requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfImage> image);
 
         std::vector<NfPhoto> takePhotos();
-        std::vector<NfGuiThumbnail> takeThumbnails();
+        std::vector<NfThumbnail> takeThumbnails();
 
  protected:
 
  private:
         std::unique_ptr<NfPathScanner> m_pathScanner;
+        NfForegroundThreadPool m_threadPool;
         std::filesystem::path m_path;
         std::mutex m_thumbnailsQueueMutex;
-        std::vector<NfGuiThumbnail> m_thumbnailsQueue;
+        std::vector<NfThumbnail> m_thumbnailsQueue;
 };
 
 } // namespace NfCore

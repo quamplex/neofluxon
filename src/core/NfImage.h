@@ -36,7 +36,7 @@ class NfImage
  public:
         NfImage();
         explicit NfImage(std::unique_ptr<NfImageData> data);
-        virtual ~NfImage() = default;
+        virtual ~NfImage();
         virtual void setData(std::unique_ptr<NfImageData> data);
         virtual NfImageData* getData();
         virtual const NfImageData* getData() const;
@@ -45,6 +45,7 @@ class NfImage
         int channels() const;
         std::string_view format() const;
         bool isValid() const;
+        virtual size_t size() const;
 
  protected:
         std::unique_ptr<NfImageData> m_data;

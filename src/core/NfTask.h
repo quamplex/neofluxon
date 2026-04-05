@@ -33,12 +33,12 @@ class NfTask {
 public:
 
         enum class TaskStatus {
-                TaskSuccess,
-                TaskFailed,
-                TaskCancelled
+                Success,
+                Failed,
+                Cancelled
         };
 
-        using TaskResultHandler = std::function<void(std::unique_ptr<NfTask>, TaskStatus)>;
+        using TaskResultHandler = std::function<void(NfTask*, TaskStatus)>;
         virtual ~NfTask() = default;
         virtual TaskStatus execute() = 0;
         void setResult(TaskResultHandler handler);

@@ -43,6 +43,7 @@ public:
         NfImageData();
         NfImageData(size_t size);
         NfImageData(int w, int h, int c);
+        ~NfImageData();
         NfImageData(const NfImageData&) = default;
         NfImageData(NfImageData&&) noexcept = default;
         NfImageData& operator=(const NfImageData&) = default;

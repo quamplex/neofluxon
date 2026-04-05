@@ -29,6 +29,7 @@ namespace NfCore {
 NfPathScanner::NfPathScanner()
         : m_recursive{false}
         , m_startScan{false}
+        , m_photoExtentions{".cr3"}
 {
         m_scanThread = std::jthread([this](std::stop_token token) {
                 loadPhotosThread(token);
@@ -138,8 +139,8 @@ void NfPathScanner::processPathEntry(const std::filesystem::path& path)
                 std::transform(ext.begin(), ext.end(), ext.begin(),
                                [](unsigned char c) { return std::tolower(c); });
 
-                //if (!m_photoExtentions.contains(ext))
-                //        return;
+                if (!m_photoExtentions.contains(ext))
+                        return;
 
                 NfPhoto photo(path);
                 {

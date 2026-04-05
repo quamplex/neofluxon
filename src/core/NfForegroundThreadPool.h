@@ -54,7 +54,7 @@ private:
 
         std::vector<std::jthread> m_poolThreads;
         mutable std::mutex m_queueMutex;
-        std::condition_variable_any m_condVariable;
+        std::condition_variable_any m_conditionVariable;
         std::stack<std::unique_ptr<NfTask>> m_taskQueue;
 };
 

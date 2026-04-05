@@ -28,16 +28,21 @@
 
 #include <QPixmap>
 
+namespace NfCore {
+        class NfImageData;
+}
+
 using namespace NfCore;
 
 namespace NfDesktop {
+
 
 class NfQtPixmap : public NfImage {
 public:
     NfQtPixmap() = default;
     ~NfQtPixmap() override = default;
 
-    void setData(const NfImageData& imageData) override;
+    void setData(std::unique_ptr<NfImageData> data) override;
     const QPixmap& pixmap() const;
     std::size_t size() const override;
 

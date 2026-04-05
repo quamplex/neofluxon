@@ -24,17 +24,23 @@
 #ifndef NF_IMAGE_DECODER_H
 #define NF_IMAGE_DECODER_H
 
+#include "NfPhoto.h"
+
 #include <memory>
 
 namespace NfCore {
 
 class NfPhoto;
+class NfImageData;
 
 class NfImageDecoder {
  public:
         NfImageDecoder(const NfPhoto &photo);
-        ~NfImageDecoder() = default;
-        std::unique<NfImageData> thumbnailImageData() const;
+        ~NfImageDecoder();
+        std::unique_ptr<NfImageData> thumbnailImageData() const;
+
+private:
+        NfPhoto m_photo;
 };
 
 } // namespace NfCore

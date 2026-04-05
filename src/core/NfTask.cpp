@@ -35,7 +35,7 @@ void NfTask::notifyCompletion(NfTask::TaskStatus status)
         if (!m_onComplete)
                 return;
 
-        m_onComplete(std::unique_ptr<NfTask>(this), status);
+        m_onComplete(this, status);
 }
 
 bool NfTask::hasResultHandler() const

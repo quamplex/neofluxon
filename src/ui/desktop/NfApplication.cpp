@@ -1,5 +1,5 @@
 /**
- * File name: LqfApplication.cpp
+ * File name: NfApplication.cpp
  * Project: LiquidFlow (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "LqfApplication.h"
+#include "NfApplication.h"
 #include "core/NeofluxonCore.h"
 #include "NfPhotoProvider.h"
 #include "core/NfLogger.h"
@@ -36,7 +36,7 @@ using namespace NfCore;
 
 namespace NfDesktop {
 
-        LqfApplication::LqfApplication(NeofluxonCore* coreApp,
+        NfApplication::NfApplication(NeofluxonCore* coreApp,
                                        int &argc,
                                        char **argv,
                                        int falgs)
@@ -52,22 +52,22 @@ namespace NfDesktop {
         }
 }
 
-LqfApplication::~LqfApplication()
+NfApplication::~NfApplication()
 {
         NF_LOG_DEBUG("called");
 }
 
-LqfApplication* LqfApplication::getAppInstance()
+NfApplication* NfApplication::getAppInstance()
 {
-        return static_cast<LqfApplication*>(QApplication::instance());
+        return static_cast<NfApplication*>(QApplication::instance());
 }
 
-QString LqfApplication::applicationName()
+QString NfApplication::applicationName()
 {
         return "LiquidFlow";;
 }
 
-NfPhotoProvider& LqfApplication::photoProvider() const
+NfPhotoProvider& NfApplication::photoProvider() const
 {
         return *m_photoProvider;
 }

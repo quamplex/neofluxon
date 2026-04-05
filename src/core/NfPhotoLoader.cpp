@@ -23,7 +23,8 @@
 
 #include "NfPhotoLoader.h"
 #include "NfPathScanner.h"
-#include "NfGuiImage.h"
+#include "NfImage.h"
+#include "NfThumbnailTask.h"
 #include "NfLogger.h"
 
 namespace NfCore {
@@ -54,15 +55,19 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
 {
         auto task = std::make_unique<NfThumbnailTask>(photo, std::move(imageContainer));
 
-        task->setResult([&](std::unique_ptr<NfTask> result) {
-                auto* thumbnailTask = dynamic_cast<NfThumbnailTask*>(result.get());
+        task->setResult([&](NfTask* result, NfTask::TaskStatus status) {
+                if (status != NfTask::TaskStatus::Success)
+                        return;
+
+                auto* thumbnailTask = dynamic_cast<NfThumbnailTask*>(result);
                 if (thumbnailTask) {
                         std::scoped_lock lock(m_thumbnailsQueueMutex);
-                        m_thumbnailsQueue.push_back(std::move(thumbnailTask->takeThumbnail()));
+                        auto thumbnail = thumbnailTask->takeThumbnail();
+                        m_thumbnailsQueue.push_back(std::move(*thumbnail));
                 }
         });
 
-        m_threadPool->submit(std::move(task));
+        m_threadPool.submit(std::move(task));
 }
 
 std::vector<NfPhoto> NfPhotoLoader::takePhotos()
@@ -70,9 +75,10 @@ std::vector<NfPhoto> NfPhotoLoader::takePhotos()
         return m_pathScanner->takePhotos();
 }
 
-std::vector<NfGuiThumbnail> NfPhotoLoader::takeThumbnails()
+std::vector<NfThumbnail> NfPhotoLoader::takeThumbnails()
 {
-        return {};
+        std::scoped_lock lock(m_thumbnailsQueueMutex);
+        return std::move(m_thumbnailsQueue);
 }
 
 } // namespace NfCore

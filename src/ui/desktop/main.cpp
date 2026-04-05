@@ -21,9 +21,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "LqfMainWindow.h"
+#include "NfMainWindow.h"
 #include "core/NeofluxonCore.h"
-#include "LqfApplication.h"
+#include "NfApplication.h"
 #include "core/NfLogger.h"
 #include "core/NfPhotoId.h"
 #include "core/NfPhoto.h"
@@ -37,14 +37,14 @@ int main(int argc, char **argv)
 {
         auto coreApp = std::make_unique<NeofluxonCore>();
 
-        LqfApplication app(coreApp.get(), argc, argv);
+        NfApplication app(coreApp.get(), argc, argv);
 
         qRegisterMetaType<NfPhoto>("NfPhoto");
         qRegisterMetaType<NfPhotoId>("NfPhotoId");
         qRegisterMetaType<std::vector<NfPhoto>>("std::vector<NfPhoto>");
         qRegisterMetaType<std::vector<NfPhotoId>>("std::vector<NfPhotoId>");
 
-        LqfMainWindow mainWin;
+        NfMainWindow mainWin;
         mainWin.show();
 
         NF_LOG_DEBUG("here");

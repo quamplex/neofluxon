@@ -1,5 +1,5 @@
 /**
- * File name: NfThumbnailTask.cpp
+ * File name: NfMainWindow.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,28 +21,22 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+#ifndef LQF_MAINWINDOW_H
+#define LQF_MAINWINDOW_H
 
-#include "NfThumbnailTask.h"
-#include "NfImageDecoder.h"
+#include <QMainWindow>
 
-#include <stdexcept>
-#include <iostream>
+namespace NfDesktop {
 
-NfThumbnailTask::NfThumbnailTask(const NfPhoto& photo,
-                                 std::unique_ptr<NfImage> imageContainer)
-        : m_photo(photo)
-        , m_imageContainer{std::move()}
+class NfMainWindow : public QMainWindow
 {
-}
+        Q_OBJECT
 
-TaskStatus NfThumbnailTask::execute()
-{
-        NfImageDecoder decoder(m_photo);
-        m_imageContainer->setData(decoder->thumbnailImageData());
-        return TaskStatus::Success;
-}
+public:
+        NfMainWindow();
+        ~NfMainWindow();
+};
 
-std::unique_ptr<NfThumbanil> NfThumbnailTask::takeThumbnail()
-{
-        return std::make_unique<NfThumbail>(m_photo, m_imageContainer);
-}
+} // namespace NfDesktop
+
+#endif // MAINWINDOW_H

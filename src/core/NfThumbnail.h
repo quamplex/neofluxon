@@ -1,5 +1,5 @@
 /**
- * File name: MainWindow.h
+ * File name: NfGuiThumbnail.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,22 +21,35 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef LQF_MAINWINDOW_H
-#define LQF_MAINWINDOW_H
+#ifndef NF_GUI_THUMBNAIL_H
+#define NF_GUI_THUMBNAIL_H
 
-#include <QMainWindow>
+#include "NfPhotoId.h"
 
-namespace NfDesktop {
+#include <memory>
 
-class LqfMainWindow : public QMainWindow
-{
-        Q_OBJECT
+namespace NfCore {
 
+class NfImage;
+
+class NfThumbnail {
 public:
-        LqfMainWindow();
-        ~LqfMainWindow();
+        explicit NfThumbnail(const NfPhotoId &id, std::unique_ptr<NfImage> img);
+        NfThumbnail(NfThumbnail&&) noexcept = default;
+        NfThumbnail& operator=(NfThumbnail&&) noexcept = default;
+        NfThumbnail(const NfThumbnail&) = delete;
+        NfThumbnail& operator=(const NfThumbnail&) = delete;
+
+        const NfPhotoId& id() const;
+        NfImage* getImage() const;
+
+        [[nodiscard]] std::unique_ptr<NfImage> releaseImage();
+
+private:
+        NfPhotoId m_photoId;
+        std::unique_ptr<NfImage> m_image;
 };
 
-} // namespace NfDesktop
+} // namespace NfCore
 
-#endif // MAINWINDOW_H
+#endif // NF_GUI_THUMBNAIL_H
