@@ -29,6 +29,7 @@
 #include "NfBrowserModel.h"
 #include "NfBrowserView.h"
 #include "NfApplication.h"
+#include "NfPhotoProvider.h"
 
 #include <QFrame>
 #include <QWidget>
@@ -41,6 +42,7 @@ namespace NfDesktop {
 
 NfMainWindow::NfMainWindow()
         : QMainWindow()
+        , m_photoProvider{static_cast<NfApplication*>(QApplication::instance())->photoProvider()}
 {
         setWindowTitle("Neofluxon");
 
@@ -66,8 +68,12 @@ NfMainWindow::NfMainWindow()
         auto leftPanel = new NfLeftPanel(this);
         hLayout->addWidget(leftPanel);
 
-        auto& photoProvider = static_cast<NfApplication*>(QApplication::instance())->photoProvider();
-        auto model = new NfBrowserModel(photoProvider, this);
+        auto model = new NfBrowserModel(m_photoProvider, this);
+
+        QObject::connect(leftPanel, &NfLeftPanel::folderSelected, [this, model](const QString& path)
+        {
+                model->setPath(path.toStdString());
+        });
 
         // Central widget – any background you like.
         auto *centralWidget = new NfBrowserView(this);

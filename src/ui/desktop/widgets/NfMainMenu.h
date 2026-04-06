@@ -37,16 +37,14 @@ public:
         explicit NfMainMenu(QWidget* parent = nullptr);
 
 signals:
-        void newShootClicked();
         void shootsClicked();
+        void foldersClicked();
         void libraryClicked();
-        void settingsClicked();
 
 private:
-        QPushButton* newShootButton;
         QPushButton* shootsButton;
+        QPushButton* foldersButton;
         QPushButton* libraryButton;
-        QPushButton* settingsButton;
 };
 
  } // namespace NfDesktop

@@ -27,7 +27,7 @@
 namespace NfCore {
 
 NfPathScanner::NfPathScanner()
-        : m_recursive{false}
+        : m_recursive{true}
         , m_startScan{false}
         , m_photoExtentions{".cr3"}
 {

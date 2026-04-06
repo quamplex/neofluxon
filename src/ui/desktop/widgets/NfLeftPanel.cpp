@@ -23,36 +23,56 @@
 
 #include "NfLeftPanel.h"
 #include "NfMainMenu.h"
-#include "NfSettingsDialog.h"
+#include "NfPathBrowser.h"
 
 #include <QVBoxLayout>
+#include <QStackedWidget>
 
 namespace NfDesktop {
 
 NfLeftPanel::NfLeftPanel(QWidget *parent)
         : NfPanel(parent, NfPanel::PanelPosition::AlignLeft)
+        , m_stack{new QStackedWidget(this)}
+        , m_libraryBrowser{new QWidget(this)/*NfLibraryBrowser(this)*/}
+        , m_pathBrowser{new NfPathBrowser(this)}
 {
         auto panelLayout = new QVBoxLayout(this);
 
         auto mainMenu = new NfMainMenu(this);
         panelLayout->addWidget(mainMenu);
 
-        QObject::connect(mainMenu, &NfMainMenu::settingsClicked, [this]() {
-                // create dialog, parent is the main window
-                NfSettingsDialog dlg(this);
+        m_stack->addWidget(m_libraryBrowser);
+        m_stack->addWidget(m_pathBrowser);
 
-                // execute modal dialog
-                if (dlg.exec() == QDialog::Accepted) {
-                        // user clicked OK, retrieve settings here if needed
-                        //int diskSize = dlg.diskCacheSize();
-                        //int ramLimit = dlg.ramCacheLimit();
-                        //bool lazy = dlg.lazyLoading();
-                        // apply these settings to ThumbnailProvider or app
-                }
-        });
+        panelLayout->addWidget(m_stack);
 
-        panelLayout->addStretch();
+        //panelLayout->addStretch();
         setLayout(panelLayout);
+
+        QObject::connect(mainMenu,
+                         &NfMainMenu::libraryClicked,
+                         this,
+                         &NfLeftPanel::showLibraryBrowser);
+
+        QObject::connect(mainMenu,
+                         &NfMainMenu::foldersClicked,
+                         this,
+                         &NfLeftPanel::showPathBrowser);
+
+        QObject::connect(m_pathBrowser,
+                         &NfPathBrowser::folderSelected,
+                         this,
+                         &NfLeftPanel::folderSelected);
+}
+
+void NfLeftPanel::showLibraryBrowser()
+{
+        m_stack->setCurrentWidget(m_libraryBrowser);
+}
+
+void NfLeftPanel::showPathBrowser()
+{
+        m_stack->setCurrentWidget(m_pathBrowser);
 }
 
 } // namespace NfDesktop

@@ -21,12 +21,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef LQF_MAINWINDOW_H
-#define LQF_MAINWINDOW_H
+#ifndef NF_MAINWINDOW_H
+#define NF_MAINWINDOW_H
 
 #include <QMainWindow>
 
 namespace NfDesktop {
+
+class NfPhotoProvider;
 
 class NfMainWindow : public QMainWindow
 {
@@ -35,8 +37,11 @@ class NfMainWindow : public QMainWindow
 public:
         NfMainWindow();
         ~NfMainWindow();
+
+private:
+        NfPhotoProvider& m_photoProvider;
 };
 
 } // namespace NfDesktop
 
-#endif // MAINWINDOW_H
+#endif // NF_MAINWINDOW_H

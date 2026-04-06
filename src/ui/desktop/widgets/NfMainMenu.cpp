@@ -30,10 +30,9 @@ namespace NfDesktop {
 
 NfMainMenu::NfMainMenu(QWidget* parent)
         : NfStyledWidget(parent)
-        , newShootButton{nullptr}
         , shootsButton{nullptr}
+        , foldersButton{nullptr}
         , libraryButton{nullptr}
-        , settingsButton{nullptr}
 
 {
         setObjectName("NfMainMenu");
@@ -44,21 +43,17 @@ NfMainMenu::NfMainMenu(QWidget* parent)
         menuLayout->setContentsMargins(6, 6, 6, 6);
         menuLayout->setSpacing(2);
 
-        newShootButton = new QPushButton("📁 New Shoot", this);
-        connect(newShootButton, &QPushButton::clicked, this, &NfMainMenu::newShootClicked);
-        menuLayout->addWidget(newShootButton);
-
-        shootsButton = new QPushButton("🖼️ Shoots", this);
+        shootsButton = new QPushButton(tr("Shoots"), this);
         connect(shootsButton, &QPushButton::clicked, this, &NfMainMenu::shootsClicked);
         menuLayout->addWidget(shootsButton);
 
-        libraryButton = new QPushButton("🗂️ Library", this);
+        libraryButton = new QPushButton(tr("Library"), this);
         connect(libraryButton, &QPushButton::clicked, this, &NfMainMenu::libraryClicked);
         menuLayout->addWidget(libraryButton);
 
-        settingsButton = new QPushButton("⚙️ Settings", this);
-        connect(settingsButton, &QPushButton::clicked, this, &NfMainMenu::settingsClicked);
-        menuLayout->addWidget(settingsButton);
+        foldersButton = new QPushButton(tr("Folders"), this);
+        connect(foldersButton, &QPushButton::clicked, this, &NfMainMenu::foldersClicked);
+        menuLayout->addWidget(foldersButton);
 
         menuLayout->addStretch();
 
