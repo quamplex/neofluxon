@@ -51,6 +51,7 @@ void NfPathScanner::setPath(const std::filesystem::path& path, bool recursive)
                 m_path = path;
                 m_recursive = recursive;
                 m_startScan.store(true, std::memory_order_relaxed);
+                m_loadedPhotos.clear();
         }
 
         m_conditionVariable.notify_one();

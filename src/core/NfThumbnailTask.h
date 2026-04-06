@@ -29,6 +29,7 @@
 
 #include <memory>
 #include <string>
+#include <cstdint>
 
 namespace NfCore {
 
@@ -40,6 +41,9 @@ public:
         NfThumbnailTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
         ~NfThumbnailTask();
 
+        void setGenerationId(uint64_t generationId);
+        uint64_t generationId() const;
+
         TaskStatus execute() override;
 
         std::unique_ptr<NfThumbnail> takeThumbnail();
@@ -47,6 +51,7 @@ public:
         [[nodiscard]] std::string getErrorMessage() const { return m_errorMessage; }
 
 private:
+        uint64_t m_generationId;
         NfPhoto m_photo;
         std::unique_ptr<NfImage> m_imageContainer;
         std::string m_errorMessage;

@@ -31,6 +31,7 @@ namespace NfCore {
 
 NfPhotoLoader::NfPhotoLoader()
         : m_pathScanner{std::make_unique<NfPathScanner>()}
+        , m_generationId{0}
 {
 }
 
@@ -41,6 +42,12 @@ NfPhotoLoader::~NfPhotoLoader()
 
 void NfPhotoLoader::setPath(const std::filesystem::path &path)
 {
+        {
+                std::scoped_lock lock(m_thumbnailsQueueMutex);
+                m_thumbnailsQueue.clear();
+                m_generationId++;
+        }
+
         m_path = path;
         m_pathScanner->setPath(path);
 }
@@ -50,10 +57,13 @@ const std::filesystem::path& NfPhotoLoader::getPath() const
         return m_path;
 }
 
-void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
-                                     std::unique_ptr<NfImage> imageContainer)
+void NfPhotoLoader::requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfImage> image)
 {
-        auto task = std::make_unique<NfThumbnailTask>(photo, std::move(imageContainer));
+        auto task = std::make_unique<NfThumbnailTask>(photo, std::move(image));
+        {
+                std::scoped_lock lock(m_thumbnailsQueueMutex);
+                task->setGenerationId(m_generationId);
+        }
 
         task->setResult([&](NfTask* result, NfTask::TaskStatus status) {
                 if (status != NfTask::TaskStatus::Success)
@@ -62,6 +72,12 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
                 auto* thumbnailTask = dynamic_cast<NfThumbnailTask*>(result);
                 if (thumbnailTask) {
                         std::scoped_lock lock(m_thumbnailsQueueMutex);
+
+                        // Check if the thumbnail belongs to the current generation.
+                        // If not, ignore it.
+                        if (thumbnailTask->generationId() != m_generationId)
+                                return;
+
                         auto thumbnail = thumbnailTask->takeThumbnail();
                         m_thumbnailsQueue.push_back(std::move(*thumbnail));
                 }

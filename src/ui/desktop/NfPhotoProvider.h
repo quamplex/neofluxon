@@ -32,6 +32,7 @@
 
 #include <filesystem>
 #include <vector>
+#include <cstdint>
 
 namespace NfCore {
 class NfPhotoLoader;

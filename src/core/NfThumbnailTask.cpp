@@ -34,12 +34,23 @@ namespace NfCore {
 
 NfThumbnailTask::NfThumbnailTask(const NfPhoto& photo,
                                  std::unique_ptr<NfImage> imageContainer)
-        : m_photo{photo}
+        : m_generationId{0}
+        , m_photo{photo}
         , m_imageContainer{std::move(imageContainer)}
 {
 }
 
 NfThumbnailTask::~NfThumbnailTask() = default;
+
+void NfThumbnailTask::setGenerationId(uint64_t generationId)
+{
+        m_generationId = generationId;
+}
+
+uint64_t NfThumbnailTask::generationId() const
+{
+        return m_generationId;
+}
 
 NfThumbnailTask::TaskStatus NfThumbnailTask::execute()
 {

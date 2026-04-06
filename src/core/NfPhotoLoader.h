@@ -31,6 +31,7 @@
 #include <filesystem>
 #include <vector>
 #include <memory>
+#include <cstdint>
 
 namespace NfCore {
 
@@ -54,9 +55,10 @@ public:
 
  private:
         std::unique_ptr<NfPathScanner> m_pathScanner;
-        NfForegroundThreadPool m_threadPool;
         std::filesystem::path m_path;
+        NfForegroundThreadPool m_threadPool;
         std::mutex m_thumbnailsQueueMutex;
+        uint64_t m_generationId;
         std::vector<NfThumbnail> m_thumbnailsQueue;
 };
 
