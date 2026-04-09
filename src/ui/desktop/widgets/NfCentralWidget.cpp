@@ -22,63 +22,49 @@
  */
 
 #include "NfCentralWidget.h"
-
-#include "GridView.h"
-#include "PreviewView.h"
+#include "NfThumbnailsModeView.h"
+#include "NfPreviewModeView.h"
 
 #include <QVBoxLayout>
+
+namespace NfDesktop {
 
 NfCentralWidget::NfCentralWidget(QWidget* parent)
         : QWidget(parent)
         , m_centralStack{new QStackedWidget(this)}
+        , m_thumbnailsModeView{nullptr},
+        , m_previewModeView{nullptr}
+        , m_editModeView{nullptr}
+        , m_browserModel{new NfBrowserModel(m_photoProvider, this)}
 {
+        setObjectName("NfCentralWidget");
+
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->addWidget(m_centralStack);
 
         setLayout(layout);
-
-        setupConnections();
 }
 
-NfGridView* NfCentralWidget::gridView()
+void NfCentralWidget::showThumbnailsMode()
 {
-        if (!m_gridView) {
-                m_gridView = new GridView(this);
-                m_stack->addWidget(m_gridView);
+        setCurrentView(new NfThumbnailModeView(this, m_browserModel));
+}
 
-                connect(m_gridView, &GridView::imageActivated,
-                        this, &NfCentralWidget::showPreview);
+void NfCentralWidget::showPreviewMode()
+{
+        setCurrentView(new NfPreviewModeView(this, m_browserModel));
+}
+
+void NfCentralWidget::setCurrentView(QtWidget* view)
+{
+        auto currentView = m_centralStack->currentWidget();
+        if (currentView) {
+                m_centralStack->removeWidget(currentView);
+                delete currentView;
         }
-        return m_gridView;
+
+        m_centralStack->setCurrentWidget(view);
 }
 
-NfPreviewView* NfCentralWidget::previewView()
-{
-        if (!m_previewView) {
-                m_previewView = new PreviewView(this);
-                m_stack->addWidget(m_previewView);
-
-                connect(m_previewView, &PreviewView::exitRequested,
-                        this, &NfCentralWidget::showGrid);
-
-                connect(m_previewView, &PreviewView::requestImage,
-                        this, &NfCentralWidget::showPreview);
-        }
-        return m_previewView;
-}
-
-void NfCentralWidget::showGrid()
-{
-        auto* view = gridView();
-        m_stack->setCurrentWidget(view);
-        emit gridRequested();
-}
-
-void NfCentralWidget::showPreview(int index)
-{
-        auto* view = previewView();
-        view->setCurrentIndex(index);
-        m_stack->setCurrentWidget(view);
-        emit previewRequested(index);
-}
+} // namespace NfDesktop

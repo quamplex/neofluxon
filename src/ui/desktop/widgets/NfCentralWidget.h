@@ -27,12 +27,14 @@
 #include <QWidget>
 #include <QStackedWidget>
 
+class QStackedWidget;
+
 namespace NfDesktop {
 
-class NfGridView;
-class NfPreviewView;
-class NfEditView;
-class QStackedWidget;
+class NfThumbnailsModeView;
+class NfPreviewModeView;
+class NfEditModeView;
+class NfBrowserModel;
 
 class NfCentralWidget : public QWidget
 {
@@ -42,19 +44,17 @@ class NfCentralWidget : public QWidget
         explicit NfCentralWidget(QWidget* parent = nullptr);
 
  public slots:
-        void showGridMode();
+        void showThumbnailsMode();
         void showPreviewMode();
         void showEditMode();
 
- signals:
-        void gridModeRequested();
-        void previewModeRequested();
-        void editModeRequested();
-
  private:
+        void setCurrentView(QtWidget* view);
+
+        NfBrowserModel *m_browserModel;
         QStackedWidget* m_centralStack;
-        NfGridView* m_gridView;
-        NfPreviewView* m_previewView;
+        NfThumbnailsModeView* m_thumbnailsModeView;
+        NfPreviewView* m_previewModeView;
         NfEditView* m_editView;
 };
 

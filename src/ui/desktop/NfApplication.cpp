@@ -24,7 +24,7 @@
 #include "NfApplication.h"
 #include "core/NeofluxonCore.h"
 #include "NfPhotoProvider.h"
-#include "core/NfLogger.h"
+#include "NfUiState.h"
 
 #include <QProcessEnvironment>
 #include <QDebug>
@@ -41,20 +41,29 @@ namespace NfDesktop {
                                        char **argv,
                                        int falgs)
         : QApplication(argc, argv, falgs)
-        , m_photoProvider{new NfPhotoProvider(coreApp->photoLoader(), coreApp->guiCache(), this)}
+        , m_photoProvider{new NfPhotoProvider(coreApp->photoLoader(),
+                                              coreApp->guiCache(), this)}
+        , m_uiState{new NfUiState(this) }
 {
-        QFile styleFile(":/style-cool-teal-desktop.qcss");  // matches the prefix "/" + file name
+#ifdef NF_DEBUG
+        qDebug() << "called";
+#endif // NF_DEBUG
+
+        QFile styleFile(":/style-cool-teal-desktop.qcss");
         if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                QString style = QString::fromUtf8(styleFile.readAll());
-                setStyleSheet(style);  // applies to entire application
+                auto style = QString::fromUtf8(styleFile.readAll());
+                setStyleSheet(style);
         } else {
-                qDebug() << "Failed to open style-desktop.qcss!";
+                qWarning() << "Could not load stylesheet:" << styleFile.fileName()
+                           << "Error:" << styleFile.errorString();
         }
 }
 
 NfApplication::~NfApplication()
 {
-        NF_LOG_DEBUG("called");
+#ifdef NF_DEBUG
+        qDebug() << "called";
+#endif // NF_DEBUG
 }
 
 NfApplication* NfApplication::getAppInstance()
@@ -64,12 +73,17 @@ NfApplication* NfApplication::getAppInstance()
 
 QString NfApplication::applicationName()
 {
-        return "LiquidFlow";;
+        return "Neofluxon";
 }
 
-NfPhotoProvider& NfApplication::photoProvider() const
+NfPhotoProvider* NfApplication::photoProvider() const
 {
-        return *m_photoProvider;
+        return m_photoProvider;
+}
+
+NfUiState* NfApplication::uiState() const
+{
+        return m_uiState;
 }
 
 } // namespace NfDesktop

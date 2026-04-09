@@ -1,5 +1,5 @@
 /**
- * File name: NfApplication.h
+ * File name: NfUiState.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,42 +21,39 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_APPLICATION_H
-#define NF_APPLICATION_H
+#ifndef NF_UI_STATE_H
+#define NF_UI_STATE_H
 
-#include <QApplication>
-#include <QSemaphore>
-#include <QSize>
+#include <QObject>
 
-namespace NfCore {
-        class NeofluxonCore;
-}
+namespace NfUi {
 
-using namespace NfCore;
-
-namespace NfDesktop {
-
-class NfPhotoProvider;
-class NfUiState;
-
-class NfApplication: public QApplication
+enum class NfUiMode
 {
-public:
-        NfApplication(NeofluxonCore* coreApp,
-                       int &argc,
-                       char **argv,
-                       int falgs = ApplicationFlags);
-        ~NfApplication();
-        static NfApplication* getAppInstance();
-        static QString applicationName();
-        NfPhotoProvider* photoProvider() const;
-        NfUiState *uiState() const;
-
-private:
-        NfPhotoProvider* m_photoProvider;
-        NfUiState* m_uiState;
+        Shoots,
+        Folders,
+        Library
 };
 
-} // namespace NfDesktop
+class NfUiState : public QObject
+{
+        Q_OBJECT
 
-#endif // NF_APPLICATION_H
+public:
+        explicit NfUiState(QObject* parent = nullptr);
+
+        NfUiMode mode() const;
+
+public slots:
+        void setMode(NfUiMode mode);
+
+signals:
+        void modeChanged(NfUiMode mode);
+
+private:
+        NfUiMode m_uiMode;
+};
+
+} // namespace NfUi
+
+#endif // NF_UI_STATE_H

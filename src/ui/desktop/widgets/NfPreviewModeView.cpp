@@ -1,5 +1,5 @@
 /**
- * File name: NfApplication.h
+ * File name: NfPreviewModeView.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,42 +21,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_APPLICATION_H
-#define NF_APPLICATION_H
+#include "NfPreviewModeView.h"
 
-#include <QApplication>
-#include <QSemaphore>
-#include <QSize>
-
-namespace NfCore {
-        class NeofluxonCore;
-}
-
-using namespace NfCore;
+#include <QWheelEvent>
+#include <QResizeEvent>
+#include <QMouseEvent>
 
 namespace NfDesktop {
 
-class NfPhotoProvider;
-class NfUiState;
-
-class NfApplication: public QApplication
+NfPreviewModeView::NfPreviewModeView(QWidget* parent, NfBrowserModel *browserModel)
+        : QWidget(parent)
+        , m_browserView{new NfBrowserView(this, browserModel)}
 {
-public:
-        NfApplication(NeofluxonCore* coreApp,
-                       int &argc,
-                       char **argv,
-                       int falgs = ApplicationFlags);
-        ~NfApplication();
-        static NfApplication* getAppInstance();
-        static QString applicationName();
-        NfPhotoProvider* photoProvider() const;
-        NfUiState *uiState() const;
-
-private:
-        NfPhotoProvider* m_photoProvider;
-        NfUiState* m_uiState;
-};
+        m_browserView->setLayoutMode(NfBrowserView::FilmstripView);
+}
 
 } // namespace NfDesktop
-
-#endif // NF_APPLICATION_H

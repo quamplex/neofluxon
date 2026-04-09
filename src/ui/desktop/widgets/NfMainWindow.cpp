@@ -30,6 +30,7 @@
 #include "NfBrowserView.h"
 #include "NfApplication.h"
 #include "NfPhotoProvider.h"
+#include "NfCentralWidget.h"
 
 #include <QFrame>
 #include <QWidget>
@@ -54,7 +55,7 @@ NfMainWindow::NfMainWindow()
 
         auto *vLayout = new QVBoxLayout(container);
         vLayout->setContentsMargins(0,0,0,0);
-        vLayout->setSpacing(0);   // no extra vertical space; shadow draws into the gap
+        vLayout->setSpacing(0);
 
         auto topBar = new NfTopBar();
         topBar->setFixedHeight(48);
@@ -64,34 +65,18 @@ NfMainWindow::NfMainWindow()
         hLayout->setContentsMargins(0,0,0,0);
         hLayout->setSpacing(0);
 
-        // Left panel (shadow → centre)
         auto leftPanel = new NfLeftPanel(this);
         hLayout->addWidget(leftPanel);
 
-        auto model = new NfBrowserModel(m_photoProvider, this);
+        hLayout->addWidget(new NfCentralWidget(this));
 
-        QObject::connect(leftPanel, &NfLeftPanel::folderSelected, [this, model](const QString& path)
-        {
-                model->setPath(path.toStdString());
-        });
-
-        // Central widget – any background you like.
-        auto *centralWidget = new NfBrowserView(this);
-        centralWidget->setObjectName("NfCentralWidget");
-        centralWidget->setModel(model);
-
-        hLayout->addWidget(centralWidget);   // stretch factor 1 → fill width
-
-        // Right panel (shadow ← centre)
         auto rightPanel = new NfPanel(nullptr, NfPanel::PanelPosition::AlignRight);
         hLayout->addWidget(rightPanel);
 
-        // Wrap the horizontal layout in a dummy widget so it can be added
-        // to the vertical layout as a single item.
         QWidget *contentWrapper = new QWidget;
         contentWrapper->setAttribute(Qt::WA_TranslucentBackground);
         contentWrapper->setLayout(hLayout);
-        vLayout->addWidget(contentWrapper);   // stretch factor 1 → fill remaining height
+        vLayout->addWidget(contentWrapper);
 
         leftPanel->raise();
         rightPanel->raise();

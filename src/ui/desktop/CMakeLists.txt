@@ -1,7 +1,10 @@
-# Collect sources and headers
-file(GLOB_RECURSE DESKTOP_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/models/*.cpp
+set(GLOB_RECURSE DESKTOP_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/NfApplication.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/NfApplication.h
+  models
+  widgets
+    ${CMAKE_CURRENT_SOURCE_DIR}/models/NfBrowserModel.h
     ${CMAKE_CURRENT_SOURCE_DIR}/widgets/*.cpp
 )
 

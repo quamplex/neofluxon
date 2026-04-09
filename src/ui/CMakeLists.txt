@@ -6,4 +6,5 @@ set(UI_RESOURCES resources/resources.qrc)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
+add_subdirectory(common)
 add_subdirectory(desktop)
