@@ -32,3 +32,13 @@ It is developed in C++ and Qt. The code is split into two parts:
 the core (which is pure C++ and not dependent on Qt), and the UI part written in Qt (C++).
 
 Neofluxon is free software (GPLv3).
+
+## Dependencies
+
+- Qt6
+- LibRaw (https://www.libraw.org)
+
+### Build
+
+- CMake ≥ 3.25
+- C++23
