@@ -1,10 +1,10 @@
 /**
  * File name: NfApplication.cpp
- * Project: LiquidFlow (a photography workflow software)
+ * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
  *
- * This file is part of LiquidFlow.
+ * This file is part of Neofluxon.
  *
  * Neofluxon is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
