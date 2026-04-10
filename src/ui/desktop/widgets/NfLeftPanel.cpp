@@ -22,6 +22,7 @@
  */
 
 #include "NfLeftPanel.h"
+#include "NfUiState.h"
 #include "NfMainMenu.h"
 #include "NfPathBrowser.h"
 
@@ -30,14 +31,16 @@
 
 namespace NfDesktop {
 
-NfLeftPanel::NfLeftPanel(QWidget *parent)
+        NfLeftPanel::NfLeftPanel(QWidget *parent, NfUiState *state)
         : NfPanel(parent, NfPanel::PanelPosition::AlignLeft)
-        , m_stack{new QStackedWidget(this)}
-        , m_libraryBrowser{new QWidget(this)/*NfLibraryBrowser(this)*/}
+        , m_uiState{state}
         , m_pathBrowser{new NfPathBrowser(this)}
+        , m_libraryBrowser{new QWidget(this)/*NfLibraryBrowser(this)*/}
+        , m_stack{new QStackedWidget(this)}
 {
         auto panelLayout = new QVBoxLayout(this);
 
+        // Main menu
         auto mainMenu = new NfMainMenu(this);
         panelLayout->addWidget(mainMenu);
 
@@ -49,30 +52,41 @@ NfLeftPanel::NfLeftPanel(QWidget *parent)
         //panelLayout->addStretch();
         setLayout(panelLayout);
 
-        QObject::connect(mainMenu,
-                         &NfMainMenu::libraryClicked,
-                         this,
-                         &NfLeftPanel::showLibraryBrowser);
+        QObject::connect(mainMenu, &NfMainMenu::shootsClicked, [this]() {
+                m_uiState->setMode(NfUiMode::Shoots);
+        });
+        QObject::connect(mainMenu, &NfMainMenu::foldersClicked, [this]() {
+                m_uiState->setMode(NfUiMode::Folders);
+        });
+        QObject::connect(mainMenu, &NfMainMenu::libraryClicked, [this]() {
+                m_uiState->setMode(NfUiMode::Library);
+        });
+        QObject::connect(mainMenu, &NfMainMenu::libraryClicked, [this]() {
+                m_uiState->setMode(NfUiMode::Library);
+        });
 
-        QObject::connect(mainMenu,
-                         &NfMainMenu::foldersClicked,
-                         this,
-                         &NfLeftPanel::showPathBrowser);
-
-        QObject::connect(m_pathBrowser,
-                         &NfPathBrowser::folderSelected,
-                         this,
-                         &NfLeftPanel::folderSelected);
-}
-
-void NfLeftPanel::showLibraryBrowser()
-{
-        m_stack->setCurrentWidget(m_libraryBrowser);
+        switch (m_uiState->mode()) {
+        case NfUiMode::Shoots:
+                break;
+        case NfUiMode::Folders:
+                showPathBrowser();
+                break;
+        case NfUiMode::Library:
+                showLibraryBrowser();
+                break;
+        default:
+                break;
+        }
 }
 
 void NfLeftPanel::showPathBrowser()
 {
         m_stack->setCurrentWidget(m_pathBrowser);
+}
+
+void NfLeftPanel::showLibraryBrowser()
+{
+        m_stack->setCurrentWidget(m_libraryBrowser);
 }
 
 } // namespace NfDesktop

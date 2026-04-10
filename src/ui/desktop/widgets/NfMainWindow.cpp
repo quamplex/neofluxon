@@ -26,10 +26,6 @@
 #include "NfPanel.h"
 #include "NfLeftPanel.h"
 #include "NfStyledWidget.h"
-#include "NfBrowserModel.h"
-#include "NfBrowserView.h"
-#include "NfApplication.h"
-#include "NfPhotoProvider.h"
 #include "NfCentralWidget.h"
 
 #include <QFrame>
@@ -37,13 +33,13 @@
 #include <QGraphicsDropShadowEffect>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QApplication>
 
 namespace NfDesktop {
 
-NfMainWindow::NfMainWindow()
+        NfMainWindow::NfMainWindow(NeofluxonCore* core, NfUiState *state)
         : QMainWindow()
-        , m_photoProvider{static_cast<NfApplication*>(QApplication::instance())->photoProvider()}
+        , m_neofluxonCore{core}
+        , m_uiState{state}
 {
         setWindowTitle("Neofluxon");
 
@@ -65,10 +61,10 @@ NfMainWindow::NfMainWindow()
         hLayout->setContentsMargins(0,0,0,0);
         hLayout->setSpacing(0);
 
-        auto leftPanel = new NfLeftPanel(this);
+        auto leftPanel = new NfLeftPanel(this, uiState);
         hLayout->addWidget(leftPanel);
 
-        hLayout->addWidget(new NfCentralWidget(this));
+        hLayout->addWidget(new NfCentralWidget(this, m_uiState));
 
         auto rightPanel = new NfPanel(nullptr, NfPanel::PanelPosition::AlignRight);
         hLayout->addWidget(rightPanel);

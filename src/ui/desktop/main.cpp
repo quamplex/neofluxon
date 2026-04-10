@@ -24,6 +24,7 @@
 #include "NfMainWindow.h"
 #include "core/NeofluxonCore.h"
 #include "NfApplication.h"
+#include "NfUiState.h"
 #include "core/NfLogger.h"
 #include "core/NfPhotoId.h"
 #include "core/NfPhoto.h"
@@ -44,10 +45,10 @@ int main(int argc, char **argv)
         qRegisterMetaType<std::vector<NfPhoto>>("std::vector<NfPhoto>");
         qRegisterMetaType<std::vector<NfPhotoId>>("std::vector<NfPhotoId>");
 
-        NfMainWindow mainWin;
-        mainWin.show();
+        NfUiState uiState;
 
-        NF_LOG_DEBUG("here");
+        NfMainWindow mainWin(&uiState, coreApp.get());
+        mainWin.show();
 
         return app.exec();
 }

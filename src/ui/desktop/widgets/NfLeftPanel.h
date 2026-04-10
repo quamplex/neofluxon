@@ -31,25 +31,24 @@ class QStackedWidget;
 namespace NfDesktop {
 
 class NfPathBrowser;
+class NfUiState;
 
 class NfLeftPanel : public NfPanel {
   Q_OBJECT
 
 public:
-        explicit NfLeftPanel(QWidget *parent = nullptr);
+        explicit NfLeftPanel(QWidget *parent, NfUiState *state);
         virtual ~NfLeftPanel() = default;
-
-signals:
-        void folderSelected(const QString& path);
 
 protected slots:
         void showLibraryBrowser();
         void showPathBrowser();
 
 private:
-        QStackedWidget* m_stack;
-        QWidget* m_libraryBrowser;
+        NfUiState *state;
         NfPathBrowser* m_pathBrowser;
+        QWidget* m_libraryBrowser;
+        QStackedWidget* m_stack;
 };
 
 } // namespace NfDesktop

@@ -35,11 +35,12 @@ class NfMainWindow : public QMainWindow
         Q_OBJECT
 
 public:
-        NfMainWindow();
+        NfMainWindow(NeofluxonCore* core, NfUiState *state);
         ~NfMainWindow();
 
 private:
-        NfPhotoProvider& m_photoProvider;
+        NeofluxonCore *m_neofluxonCore;
+        NfUiState *m_uiState;
 };
 
 } // namespace NfDesktop

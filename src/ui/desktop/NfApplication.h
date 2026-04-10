@@ -49,12 +49,6 @@ public:
         ~NfApplication();
         static NfApplication* getAppInstance();
         static QString applicationName();
-        NfPhotoProvider* photoProvider() const;
-        NfUiState *uiState() const;
-
-private:
-        NfPhotoProvider* m_photoProvider;
-        NfUiState* m_uiState;
 };
 
 } // namespace NfDesktop

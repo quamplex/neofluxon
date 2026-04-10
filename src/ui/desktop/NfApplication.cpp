@@ -22,9 +22,6 @@
  */
 
 #include "NfApplication.h"
-#include "core/NeofluxonCore.h"
-#include "NfPhotoProvider.h"
-#include "NfUiState.h"
 
 #include <QProcessEnvironment>
 #include <QDebug>
@@ -41,9 +38,6 @@ namespace NfDesktop {
                                        char **argv,
                                        int falgs)
         : QApplication(argc, argv, falgs)
-        , m_photoProvider{new NfPhotoProvider(coreApp->photoLoader(),
-                                              coreApp->guiCache(), this)}
-        , m_uiState{new NfUiState(this) }
 {
 #ifdef NF_DEBUG
         qDebug() << "called";
@@ -74,16 +68,6 @@ NfApplication* NfApplication::getAppInstance()
 QString NfApplication::applicationName()
 {
         return "Neofluxon";
-}
-
-NfPhotoProvider* NfApplication::photoProvider() const
-{
-        return m_photoProvider;
-}
-
-NfUiState* NfApplication::uiState() const
-{
-        return m_uiState;
 }
 
 } // namespace NfDesktop

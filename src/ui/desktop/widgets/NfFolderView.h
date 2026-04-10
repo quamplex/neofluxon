@@ -1,5 +1,5 @@
 /**
- * File name: NfCentralWidget.h
+ * File name: NfFolderView.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,34 +21,24 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_CENTRAL_WIDGET_H
-#define NF_CENTRAL_WIDGET_H
-
-#include <QWidget>
+#ifndef NF_FOLDER_VIEW_H
+#define NF_FOLDER_VIEW_H
 
 namespace NfDesktop {
 
 class NfUiState;
 
-class NfCentralWidget : public QWidget
+class NfFolderView : public QWidget
 {
-        Q_OBJECT
+    Q_OBJECT
 
- public:
-        explicit NfCentralWidget(NfUiState* state, QWidget* parent = nullptr);
+public:
+    explicit NfFolderView(NfUiState *state, QWidget* parent = nullptr);
 
- protected slots:
-        void showShootsView();
-        void showFolderView();
-        void showLibraryView();
-        void updateView();
-
- private:
-        void setCurrentView(QtWidget* view);
-
-        QWidget* m_currentView;
+private:
+    NfUiState *m_uiState;
 };
 
 } // namespace NfDesktop
 
-#endif // NF_CENTRAL_WIDGET_H
+#endif // NF_FOLDER_VIEW_H

@@ -22,49 +22,78 @@
  */
 
 #include "NfCentralWidget.h"
-#include "NfThumbnailsModeView.h"
-#include "NfPreviewModeView.h"
+#include "NfFolderView.h"
 
 #include <QVBoxLayout>
 
 namespace NfDesktop {
 
-NfCentralWidget::NfCentralWidget(QWidget* parent)
+NfCentralWidget::NfCentralWidget(NfUiState* state, QWidget* parent)
         : QWidget(parent)
-        , m_centralStack{new QStackedWidget(this)}
-        , m_thumbnailsModeView{nullptr},
-        , m_previewModeView{nullptr}
-        , m_editModeView{nullptr}
-        , m_browserModel{new NfBrowserModel(m_photoProvider, this)}
+        , m_uiState{state}
+        , m_currentView{nullptr}
 {
         setObjectName("NfCentralWidget");
 
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(0, 0, 0, 0);
-        layout->addWidget(m_centralStack);
-
         setLayout(layout);
+
+        QObject::connect(m_uiState,
+                         &NfUiState::modeChanged,
+                         this,
+                         &NfCentralWidget::updateView&);
+
+        updateView();
 }
 
-void NfCentralWidget::showThumbnailsMode()
+void NfCentralWidget::showShootsView()
 {
-        setCurrentView(new NfThumbnailModeView(this, m_browserModel));
+        //setCurrentView(new NfShootsModeView(this, m_shootsModel));
 }
 
-void NfCentralWidget::showPreviewMode()
+void NfCentralWidget::showFolderView()
 {
-        setCurrentView(new NfPreviewModeView(this, m_browserModel));
+        setCurrentView(new NfFolderView(m_uiState, this));
+}
+
+void NfCentralWidget::showLibraryView()
+{
+        //setCurrentView(new NfLibraryView(this, m_libraryModel));
 }
 
 void NfCentralWidget::setCurrentView(QtWidget* view)
 {
-        auto currentView = m_centralStack->currentWidget();
-        if (currentView) {
-                m_centralStack->removeWidget(currentView);
-                delete currentView;
-        }
+    if (m_currentView) {
+            m_layout->removeWidget(m_currentView);
+            m_currentView->deleteLater();
+            m_currentView = nullptr;
+    }
 
-        m_centralStack->setCurrentWidget(view);
+    if (view) {
+            m_currentView = view;
+            m_layout->addWidget(m_currentView);
+            m_currentView->show();
+    }
+}
+
+void NfCentralWidget::updateView()
+{
+        switch (m_uiState->mode()) {
+        case NfUiMode::Shoots:
+                showShootsView();
+                break;
+        case NfUiMode::Folders:
+                showFolderView();
+                break;
+        case NfUiMode::Library:
+                showLibraryView();
+                break;
+        default:
+                // Show no view
+                setCurrentView(nullptr);
+                break;
+        }
 }
 
 } // namespace NfDesktop
