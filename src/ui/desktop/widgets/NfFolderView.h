@@ -26,17 +26,34 @@
 
 namespace NfDesktop {
 
-class NfUiState;
+class NfFilderModeState;
+class NfBrowserModel;
+class QVBoxLayout;
+class NfBrowserView;
+class NfPhotoPreviewView;
 
 class NfFolderView : public QWidget
 {
-    Q_OBJECT
+        Q_OBJECT
 
-public:
-    explicit NfFolderView(NfUiState *state, QWidget* parent = nullptr);
+ public:
+        explicit NfFolderView(NfFilderModeState *state,
+                              NfBrowserModel *model,
+                              QWidget* parent = nullptr);
+
+protected slots:
+        void updateView();
+
+protected:
+        void showGridView();
+        void showPreviewView();
 
 private:
-    NfUiState *m_uiState;
+        NfFilderModeState* m_state;
+        NfBrowserModel* m_model;
+        QVBoxLayout* m_mainLayout;
+        NfBrowserView* m_browserView;
+        NfPhotoPreviewView* m_photoPreviewView;
 };
 
 } // namespace NfDesktop

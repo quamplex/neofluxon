@@ -22,46 +22,78 @@
  */
 
 #include "NfFolderView.h"
+#include "NfFilderModeState.h"
 
 namespace NfDesktop {
 
 NfFolderView::NfFolderView(NfFilderModeState *state,
                            NfBrowserModel *model,
-                           QWidget* parent = nullptr)
+                           QWidget* parent)
         : QWidget(parent)
         , m_state{state}
         , m_model{model}
+        , m_mainLayout{nullptr}
+        , m_browserView{nullptr}
+        , m_photoPreviewView{nullptr}
 {
+        m_mainLayout = new QVBoxLayout(this);
+        m_mainLayout->setContentsMargins(0, 0, 0, 0);
+        m_mainLayout->setSpacing(0);
+
+        m_browserView = new NfBrowserView(this, m_model);
+
+        m_mainLayout->addWidget(m_browserView);
+
+        QObject::connect(m_state,
+                         &NfFilderModeState::viewModeChanged,
+                         this,
+                         &NfFolderView::updateView);
+
         updateView();
 }
 
 void NfFolderView::showGridView()
 {
-        m_borwserView->setLayoutMode(NfBrowserView::GridView);
+        m_browserView->setLayoutMode(NfBrowserView::GridView);
+
         if (m_photoPreviewView) {
+                m_mainLayout->removeWidget(m_photoPreviewView);
                 m_photoPreviewView->deleteLater();
                 m_photoPreviewView = nullptr;
         }
+
+        m_mainLayout->setStretch(0, 1);
 }
 
 void NfFolderView::showPreviewView()
 {
-        m_borwserView->setLayoutMode(NfBrowserView::FilmstripView);
-        if (!m_photoPreviewView)
-                m_photoPreviewView = new NfPhotoPreviewView(this, model);
+        m_browserView->setLayoutMode(NfBrowserView::FilmstripView);
+
+        if (!m_photoPreviewView) {
+                m_photoPreviewView = new NfPhotoPreviewView(this, m_model);
+
+                // Insert at the top
+                m_mainLayout->insertWidget(0, m_photoPreviewView);
+
+                // Index 0 (Preview) gets more space, Index 1 (Filmstrip) gets less
+                m_mainLayout->setStretch(0, 7);
+                m_mainLayout->setStretch(1, 3);
+        }
 }
 
-NfFolderView::updateView()
+void NfFolderView::updateView()
 {
-        auto* state = m_ui->getFolderModeState();
         switch(m_state->viewMode()) {
         case NfFilderModeState::ViewMode::Preview:
                 showPreviewView();
                 break;
         case NfFilderModeState::View::Grid:
+        default:
                 showGridView();
                 break;
         }
+}
+
 } // namespace NfDesktop
 
 #endif // NF_FOLDER_VIEW_H
