@@ -1,5 +1,5 @@
 /**
- * File name: NfFolderView.h
+ * File name: NfUiFolderModeState.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,46 +21,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_FOLDER_VIEW_H
-#define NF_FOLDER_VIEW_H
+#include "NfUiFolderModeState.h"
 
 namespace NfUi {
-class NfUiFolderModeState;
+
+NfUiFolderModeState::NfUiFolderModeState(QObject* parent)
+    : QObject(parent)
+{
 }
 
-using namespace NfUi;
-
-namespace NfDesktop {
-
-class NfBrowserModel;
-class QVBoxLayout;
-class NfBrowserView;
-class NfPhotoPreviewView;
-
-class NfFolderView : public QWidget
-{
-        Q_OBJECT
-
- public:
-        explicit NfFolderView(NfUiFolderModeState *state,
-                              NfFolderModel *model,
-                              QWidget* parent = nullptr);
-
-protected slots:
-        void updateView();
-
-protected:
-        void showGridView();
-        void showPreviewView();
-
-private:
-        NfUiFolderModeState* m_state;
-        NfBrowserModel* m_model;
-        QVBoxLayout* m_mainLayout;
-        NfBrowserView* m_browserView;
-        NfPhotoPreviewView* m_photoPreviewView;
-};
-
-} // namespace NfDesktop
-
-#endif // NF_FOLDER_VIEW_H
+} // namespace NfUi

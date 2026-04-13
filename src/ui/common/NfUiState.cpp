@@ -22,12 +22,34 @@
  */
 
 #include "NfUiState.h"
+#include "NfUiShootsModeState.h"
+#include "NfUiFolderModeState.h"
+#include "NfUiLibraryModeState.h"
 
 namespace NfUi {
 
 NfUiState::NfUiState(QObject* parent)
         : QObject(parent)
+        , m_uiMode{NfUiMode::Shoots}
+        , m_shootsModeState{new NfUiShootsModeState(this)}
+        , m_folderModeState{new NfUiFolderModeState(this)}
+        , m_libraryModeState{new NfUiLibraryModeState(this)}
 {
+}
+
+NfUiFolderModeState* NfUiState::shootsModeState() const
+{
+        return m_shootsModeState;
+}
+
+NfUiFolderModeState* NfUiState::folderModeState() const
+{
+        return m_folderModeState;
+}
+
+NfUiLibraryModeState* NfUiState::libraryModeState() const
+{
+        return m_libraryModeState;
 }
 
 NfUiMode NfUiState::mode() const

@@ -24,9 +24,11 @@
 #include "NfFolderView.h"
 #include "NfFilderModeState.h"
 
+using namespace NfUi
+
 namespace NfDesktop {
 
-NfFolderView::NfFolderView(NfFilderModeState *state,
+NfFolderView::NfFolderView(NfUiFolderModeState *state,
                            NfBrowserModel *model,
                            QWidget* parent)
         : QWidget(parent)

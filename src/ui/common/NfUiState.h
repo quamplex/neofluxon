@@ -35,12 +35,19 @@ enum class NfUiMode
         Library
 };
 
+class NfShootsModeState;
+class NfFolderModeState;
+class NfLibraryModeState;
+
 class NfUiState : public QObject
 {
         Q_OBJECT
 
 public:
         explicit NfUiState(QObject* parent = nullptr);
+        NfShootsModeState* shootsModeState() const;
+        NfFolderModeState* folderModeState() const;
+        NfLibraryModeState* libraryModeState() const;
 
         NfUiMode mode() const;
 
@@ -52,6 +59,9 @@ signals:
 
 private:
         NfUiMode m_uiMode;
+        NfShootsModeState *m_shootsModeState;
+        NfFolderModeState *m_folderModeState;
+        NfLibraryModeState *m_libraryModeState;
 };
 
 } // namespace NfUi

@@ -54,7 +54,9 @@ void NfCentralWidget::showShootsView()
 
 void NfCentralWidget::showFolderView()
 {
-        setCurrentView(new NfFolderView(m_uiState, this));
+        setCurrentView(new NfFolderView(m_uiState->folderModeState(),
+                                        m_folderModel,
+                                        this));
 }
 
 void NfCentralWidget::showLibraryView()
