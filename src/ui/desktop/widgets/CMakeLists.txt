@@ -10,6 +10,7 @@ set(WIDGETS_HEADERS
     NfSettingsDialog.h
     NfStyledWidget.h
     NfThumbnailsModeView.h
+    NfPhotoPreviewView.h
     NfTopBar.h
 )
 
@@ -25,6 +26,7 @@ set(WIDGETS_SOURCES
     NfSettingsDialog.cpp
     NfStyledWidget.cpp
     NfThumbnailsModeView.cpp
+    NfPhotoPreviewView.cpp
     NfTopBar.cpp
 )
 
