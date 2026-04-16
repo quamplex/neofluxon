@@ -33,11 +33,11 @@ namespace NfDesktop {
 
 class NfBrowserModel;
 
-class NfFolderModel : QObject
+class NfFolderModel : public QObject
 {
         Q_OBJECT
 
- public:
+public:
         explicit NfFolderModel(const NfFolderModeContext &ctx, QObject *parent = nullptr);
         ~NfFolderModel() = default;
         NfBrowserModel* browser() const;

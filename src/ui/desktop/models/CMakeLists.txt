@@ -1,10 +1,12 @@
 # --- Sources Definition ---
 set(MODEL_HEADERS
     NfBrowserModel.h
+    NfFolderModel.h
 )
 
 set(MODEL_SOURCES
     NfBrowserModel.cpp
+    NfFolderModel.cpp
 )
 
 add_library(NfDesktopModels STATIC
