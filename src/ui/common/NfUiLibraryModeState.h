@@ -25,12 +25,12 @@
 
 namespace NfUi {
 
-class NfUiLibraryState : public QObject
+class NfUiLibraryModeState : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit NfUiLibraryState(QObject* parent = nullptr);
+    explicit NfUiLibraryModeState(QObject* parent = nullptr);
 };
 
 } // namespace NfUi

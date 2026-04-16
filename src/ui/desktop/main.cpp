@@ -45,9 +45,10 @@ int main(int argc, char **argv)
         qRegisterMetaType<std::vector<NfPhoto>>("std::vector<NfPhoto>");
         qRegisterMetaType<std::vector<NfPhotoId>>("std::vector<NfPhotoId>");
 
-        NfUiState uiState;
+        NfState uiState;
+        NfContext context(coreApp.get(), &uiState);
 
-        NfMainWindow mainWin(&uiState, coreApp.get());
+        NfMainWindow mainWin(&context);
         mainWin.show();
 
         return app.exec();

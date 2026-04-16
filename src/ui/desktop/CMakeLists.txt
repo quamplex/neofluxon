@@ -1,17 +1,11 @@
-set(GLOB_RECURSE DESKTOP_SOURCES
-  ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/NfApplication.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/NfApplication.h
-  models
-  widgets
-    ${CMAKE_CURRENT_SOURCE_DIR}/models/NfBrowserModel.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/widgets/*.cpp
+set(DESKTOP_HEADERS
+   ${CMAKE_CURRENT_SOURCE_DIR}/NfApplication.h
+   ${CMAKE_CURRENT_SOURCE_DIR}/NfMainWindow.h
 )
 
-file(GLOB_RECURSE DESKTOP_HEADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/*.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/models/*.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/widgets/*.h
+set(DESKTOP_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/NfApplication.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
 # Create executable
@@ -27,13 +21,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Widgets
     Qt6::Gui
     ${PROJECT_NAME}::CoreLibrary
+    ${PROJECT_NAME}::DesktopModels
 )
 
 # Include directories for UI-only headers
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/widgets
-    ${CMAKE_CURRENT_SOURCE_DIR}/models
 )
 
 # Set output directories

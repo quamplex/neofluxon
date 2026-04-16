@@ -28,14 +28,15 @@
 
 namespace NfDesktop {
 
-class NfUiState;
+class NfContext;
+class NfFolderModel;
 
 class NfCentralWidget : public QWidget
 {
         Q_OBJECT
 
  public:
-        explicit NfCentralWidget(NfUiState* state, QWidget* parent = nullptr);
+        explicit NfCentralWidget(NfContext* ctx, QWidget* parent = nullptr);
 
  protected slots:
         void showShootsView();
@@ -44,8 +45,10 @@ class NfCentralWidget : public QWidget
         void updateView();
 
  private:
-        void setCurrentView(QtWidget* view);
+        void setCurrentView(QWidget* view);
 
+        NfContext *m_context;
+        NfFolderModel *m_folderModel;
         QWidget* m_currentView;
 };
 

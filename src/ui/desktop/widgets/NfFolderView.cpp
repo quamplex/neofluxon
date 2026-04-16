@@ -28,11 +28,11 @@ using namespace NfUi
 
 namespace NfDesktop {
 
-NfFolderView::NfFolderView(NfUiFolderModeState *state,
-                           NfBrowserModel *model,
+NfFolderView::NfFolderView(const NfFolderModeContext &ctx,
+                           NfFolderModel *model,
                            QWidget* parent)
         : QWidget(parent)
-        , m_state{state}
+        , m_context{ctx}
         , m_model{model}
         , m_mainLayout{nullptr}
         , m_browserView{nullptr}
@@ -42,11 +42,11 @@ NfFolderView::NfFolderView(NfUiFolderModeState *state,
         m_mainLayout->setContentsMargins(0, 0, 0, 0);
         m_mainLayout->setSpacing(0);
 
-        m_browserView = new NfBrowserView(this, m_model);
+        m_browserView = new NfBrowserView(this, m_model->browser());
 
         m_mainLayout->addWidget(m_browserView);
 
-        QObject::connect(m_state,
+        QObject::connect(m_context.uiState(),
                          &NfFilderModeState::viewModeChanged,
                          this,
                          &NfFolderView::updateView);
@@ -72,7 +72,7 @@ void NfFolderView::showPreviewView()
         m_browserView->setLayoutMode(NfBrowserView::FilmstripView);
 
         if (!m_photoPreviewView) {
-                m_photoPreviewView = new NfPhotoPreviewView(this, m_model);
+                m_photoPreviewView = new NfPhotoPreviewView(this, m_model->browser());
 
                 // Insert at the top
                 m_mainLayout->insertWidget(0, m_photoPreviewView);

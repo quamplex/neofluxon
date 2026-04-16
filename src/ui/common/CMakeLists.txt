@@ -1,13 +1,20 @@
 set(COMMON_HEADERS
-    NfPhotoProvider.h
+    context/NfContext.h
     NfQtPixmap.h
+    NfUiFolderModeState.h
+    NfUiLibraryModeState.h
+    NfUiShootsModeState.h
     NfUiState.h
+    NfPhotoProvider.h
 )
 
 set(COMMON_SOURCES
-    NfPhotoProvider.cpp
     NfQtPixmap.cpp
+    NfUiFolderModeState.cpp
+    NfUiLibraryModeState.cpp
+    NfUiShootsModeState.cpp
     NfUiState.cpp
+    NfPhotoProvider.cpp
 )
 
 add_library(NfCommonUi STATIC
@@ -15,7 +22,7 @@ add_library(NfCommonUi STATIC
     ${COMMON_HEADERS}
 )
 
-add_library(${PROJECT_NAME}::CommonUiLibrary ALIAS NfCommon)
+add_library(${PROJECT_NAME}::CommonUiLibrary ALIAS NfCommonUi)
 
 target_include_directories(NfCommonUi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -23,4 +30,5 @@ target_link_libraries(NfCommonUi
         PUBLIC
         Qt6::Core
         Qt6::Gui
+        ${PROJECT_NAME}::CoreLibrary
 )

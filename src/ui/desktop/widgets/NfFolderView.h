@@ -32,7 +32,7 @@ using namespace NfUi;
 
 namespace NfDesktop {
 
-class NfBrowserModel;
+class NfFolderModel;
 class QVBoxLayout;
 class NfBrowserView;
 class NfPhotoPreviewView;
@@ -42,7 +42,7 @@ class NfFolderView : public QWidget
         Q_OBJECT
 
  public:
-        explicit NfFolderView(NfUiFolderModeState *state,
+        explicit NfFolderView(NfFolderModeContext ctx,
                               NfFolderModel *model,
                               QWidget* parent = nullptr);
 

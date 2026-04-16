@@ -28,7 +28,7 @@ using namespace NfCore;
 
 namespace NfDesktop {
 
-NfBrowserModel::NfBrowserModel(NfPhotoProvider &photoProvider, QObject* parent)
+NfBrowserModel::NfBrowserModel(NfPhotoProvider *photoProvider, QObject* parent)
         : QAbstractListModel(parent)
         , m_photoProvider{photoProvider}
 {
@@ -49,12 +49,17 @@ void NfBrowserModel::setPath(const std::filesystem::path &path)
         m_itemsMap.clear();
         endResetModel();
 
-        m_photoProvider.setPath(path);
+        m_photoProvider->setPath(path);
 }
 
 const std::filesystem::path& NfBrowserModel::getPath() const
 {
-        return m_photoProvider.getPath();
+        return m_photoProvider->getPath();
+}
+
+QPixmap NfBrowserModel::currentPreview() const
+{
+        return QPixmap();
 }
 
 int NfBrowserModel::rowCount(const QModelIndex& parent) const
@@ -69,7 +74,7 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
 
         switch (role) {
         case Qt::DecorationRole:
-                return m_photoProvider.getThumbnail(m_photos[index.row()]);
+                return m_photoProvider->getThumbnail(m_photos[index.row()]);
         case Qt::DisplayRole:
                 return QString("Photo %1").arg(index.row() + 1);
         default:

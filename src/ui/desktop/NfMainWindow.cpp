@@ -27,6 +27,7 @@
 #include "NfLeftPanel.h"
 #include "NfStyledWidget.h"
 #include "NfCentralWidget.h"
+#include "core/NeofluxonCore.h"
 
 #include <QFrame>
 #include <QWidget>
@@ -36,10 +37,9 @@
 
 namespace NfDesktop {
 
-        NfMainWindow::NfMainWindow(NeofluxonCore* core, NfUiState *state)
+        NfMainWindow::NfMainWindow(NfContext *ctx)
         : QMainWindow()
-        , m_neofluxonCore{core}
-        , m_uiState{state}
+        , m_context{ctx}
 {
         setWindowTitle("Neofluxon");
 
@@ -64,7 +64,7 @@ namespace NfDesktop {
         auto leftPanel = new NfLeftPanel(this, uiState);
         hLayout->addWidget(leftPanel);
 
-        hLayout->addWidget(new NfCentralWidget(this, m_uiState));
+        hLayout->addWidget(new NfCentralWidget(m_context, this));
 
         auto rightPanel = new NfPanel(nullptr, NfPanel::PanelPosition::AlignRight);
         hLayout->addWidget(rightPanel);

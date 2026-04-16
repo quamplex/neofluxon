@@ -1,5 +1,5 @@
 /**
- * File name: NfThumbnailsView.h
+ * File name: NfContext.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,28 +21,27 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_THUMBNAILS_MODE_VIEW_H
-#define NF_THUMBNAILS_MODE_VIEW_H
+#ifndef NF_CONTEXT_H
+#define NF_CONTEXT_H
 
-#include <QWidget>
+using namespace  NfCore;
 
-namespace NfDesktop {
+namespace NfCore {
+class NefluxonCore;
+}
 
-class NfBrowserView
+namespace NfUi {
 
-class NfThumbnailsGridView : public QWidget
-{
-    Q_OBJECT
+class NfUiState;
 
-public:
-    explicit NfThumbnailsGridView(QWidget* parent = nullptr);
+struct NfContext {
+        NefluxonCore* const neofluxonCore;
+        NfUiState* const uiState;
 
-protected:
-
-private:
-    NfBrowserView *m_browserView;
+        NfContext(NefluxonCore* core, NfUiState* state)
+                : neofluxonCore{core}, m_uiState{state} {}
 };
 
-} // NfDesktop
+} // namespace NfUi
 
-#endif // NF_THUMBNAILS_MODE_VIEW_H
+#endif // NF_CONTEXT_H

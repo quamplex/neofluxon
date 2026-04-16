@@ -1,31 +1,27 @@
 set(WIDGETS_HEADERS
+    NfStyledWidget.h
     NfBrowserView.h
     NfCentralWidget.h
     NfLeftPanel.h
     NfMainMenu.h
-    NfMainWindow.h
     NfPanel.h
     NfPathBrowser.h
-    NfPreviewModeView.h
     NfSettingsDialog.h
-    NfStyledWidget.h
-    NfThumbnailsModeView.h
+    NfFolderView.h
     NfPhotoPreviewView.h
     NfTopBar.h
 )
 
 set(WIDGETS_SOURCES
+    NfStyledWidget.cpp
     NfBrowserView.cpp
     NfCentralWidget.cpp
     NfLeftPanel.cpp
     NfMainMenu.cpp
-    NfMainWindow.cpp
     NfPanel.cpp
     NfPathBrowser.cpp
-    NfPreviewModeView.cpp
     NfSettingsDialog.cpp
-    NfStyledWidget.cpp
-    NfThumbnailsModeView.cpp
+    NfFolderView.cpp
     NfPhotoPreviewView.cpp
     NfTopBar.cpp
 )

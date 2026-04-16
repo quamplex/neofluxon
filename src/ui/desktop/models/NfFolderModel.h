@@ -1,5 +1,5 @@
 /**
- * File name: NfThumbnailsView.h.cpp
+ * File name: NfBrowserModel.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,18 +21,30 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfThumbnailsView.h"
+#ifndef NF_FOLDER_MODEL_H
+#define NF_FOLDER_MODEL_H
 
-#include <QWheelEvent>
-#include <QResizeEvent>
-#include <QMouseEvent>
+#include "NfBrowserModel.h"
+#include "NfFolderModeContext.h"
+
+#include <QObject.h>
 
 namespace NfDesktop {
 
-NfThumbnailsView::NfThumbnailsView(QWidget* parent, NfBrowserModel *browserModel)
-        : QWidget(parent)
-        , m_browserView{new NfBrowserView(this, browserModel)}
+class NfBrowserModel;
+
+class NfFolderModel : QObject
 {
+        Q_OBJECT
+
+ public:
+        explicit NfFolderModel(const NfFolderModeContext &ctx, QObject *parent = nullptr);
+        ~NfFolderModel() = default;
+        NfBrowserModel* browser() const;
+
+ private:
+        NfFolderModeContext m_context;
+        NfBrowserModel *m_browserModel;
 }
 
-} // namespace NfDesktop
+#endif // NF_FOLDER_MODEL_H

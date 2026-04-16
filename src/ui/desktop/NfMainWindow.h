@@ -28,19 +28,18 @@
 
 namespace NfDesktop {
 
-class NfPhotoProvider;
+class NfContext;
 
 class NfMainWindow : public QMainWindow
 {
         Q_OBJECT
 
 public:
-        NfMainWindow(NeofluxonCore* core, NfUiState *state);
+        NfMainWindow(NfContext *ctx);
         ~NfMainWindow();
 
 private:
-        NeofluxonCore *m_neofluxonCore;
-        NfUiState *m_uiState;
+        NfContext *m_context;
 };
 
 } // namespace NfDesktop

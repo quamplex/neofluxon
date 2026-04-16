@@ -37,7 +37,7 @@ NfUiState::NfUiState(QObject* parent)
 {
 }
 
-NfUiFolderModeState* NfUiState::shootsModeState() const
+NfUiShootsModeState* NfUiState::shootsModeState() const
 {
         return m_shootsModeState;
 }

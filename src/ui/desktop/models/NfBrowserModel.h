@@ -40,22 +40,29 @@ class NfBrowserModel : public QAbstractListModel
         Q_OBJECT
 
 public:
-        explicit NfBrowserModel(NfPhotoProvider &photoProvider,
+        explicit NfBrowserModel(NfPhotoProvider *photoProvider,
                                 QObject* parent = nullptr);
         ~NfBrowserModel() = default;
 
         void setPath(const std::filesystem::path& path);
         const std::filesystem::path& getPath() const;
 
+        QPixmap currentPreview() const;
+
         int rowCount(const QModelIndex& parent = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+
+signals:
+        void modelUpdated();
+        void currentPhotoChanged(const QModelIndex& index);
+        void currentPreviewReady(const QModelIndex& index);
 
 protected slots:
         void onPhotosLoaded(const std::vector<NfPhoto> &newPhotos);
         void onThumbnailsLoaded(const std::vector<NfPhotoId> &ids);
 
 private:
-        NfPhotoProvider& m_photoProvider;
+        NfPhotoProvider *m_photoProvider;
         std::vector<NfPhoto> m_photos;
         std::unordered_map<NfPhotoId, QPersistentModelIndex> m_itemsMap;
         std::filesystem::path m_path;
