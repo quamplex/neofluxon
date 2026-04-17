@@ -35,8 +35,7 @@
 #include <cstdint>
 
 namespace NfCore {
-class NfPhotoLoader;
-class NfGuiCache;
+class NeofluxonCore;
 }
 
 using namespace NfCore;
@@ -46,15 +45,14 @@ Q_DECLARE_METATYPE(NfPhotoId)
 Q_DECLARE_METATYPE(std::vector<NfPhoto>)
 Q_DECLARE_METATYPE(std::vector<NfPhotoId>)
 
-namespace NfDesktop {
+namespace NfUi {
 
 class NfPhotoProvider : public QObject
 {
         Q_OBJECT
 
 public:
-        explicit NfPhotoProvider(NfPhotoLoader& photoLoader,
-                                 NfGuiCache& cache,
+        explicit NfPhotoProvider(NeofluxonCore *core,
                                  QObject* parent = nullptr);
         ~NfPhotoProvider();
 
@@ -74,13 +72,13 @@ private:
         void processNewPhotos();
         void processThumbnails();
 
-        NfPhotoLoader& m_photoLoader;
-        NfGuiCache& m_cache;
+        NfPhotoLoader *m_photoLoader;
+        NfGuiCache *m_cache;
         std::filesystem::path m_path;
         QPixmap m_thumbnailPlaceholder;
 };
 
-} // namespace NfDesktop
+} // namespace NfUi
 
 #endif // NF_PHOTO_PROVIDER_H
 

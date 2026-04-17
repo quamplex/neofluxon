@@ -29,18 +29,22 @@
 
 #include <QAbstractListModel>
 
+namespace NfUi {
+class NfContext;
+class NfPhotoProvider;
+}
+
 using namespace NfCore;
+using namespace NfUi;
 
 namespace NfDesktop {
-
-class NfPhotoProvider;
 
 class NfBrowserModel : public QAbstractListModel
 {
         Q_OBJECT
 
 public:
-        explicit NfBrowserModel(NfPhotoProvider *photoProvider,
+        explicit NfBrowserModel(NfContext *ctx,
                                 QObject* parent = nullptr);
         ~NfBrowserModel() = default;
 
@@ -62,6 +66,7 @@ protected slots:
         void onThumbnailsLoaded(const std::vector<NfPhotoId> &ids);
 
 private:
+        NfContext* m_context;
         NfPhotoProvider *m_photoProvider;
         std::vector<NfPhoto> m_photos;
         std::unordered_map<NfPhotoId, QPersistentModelIndex> m_itemsMap;

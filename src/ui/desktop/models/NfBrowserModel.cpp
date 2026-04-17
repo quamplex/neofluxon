@@ -22,15 +22,17 @@
  */
 
 #include "NfBrowserModel.h"
+#include "NfContext.h"
 #include "NfPhotoProvider.h"
 
-using namespace NfCore;
+using namespace NfUi;
 
 namespace NfDesktop {
 
-NfBrowserModel::NfBrowserModel(NfPhotoProvider *photoProvider, QObject* parent)
+NfBrowserModel::NfBrowserModel(NfContext *ctx, QObject* parent)
         : QAbstractListModel(parent)
-        , m_photoProvider{photoProvider}
+        , m_context{ctx}
+        , m_photoProvider{new NfPhotoProvider(m_context->core())}
 {
         QObject::connect(&m_photoProvider,
                          &NfPhotoProvider::photosLoaded,

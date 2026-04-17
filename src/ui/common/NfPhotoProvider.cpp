@@ -27,20 +27,20 @@
 #include "core/NfPhotoId.h"
 #include "core/NfThumbnail.h"
 #include "core/NfLogger.h"
+#include "core/NeofluxonCore.h"
 #include "NfQtPixmap.h"
 
 #include <QTimer>
 
 using namespace NfCore;
 
-namespace NfDesktop {
+namespace NfUi {
 
-NfPhotoProvider::NfPhotoProvider(NfPhotoLoader& photoLoader,
-                                 NfGuiCache &cache,
+NfPhotoProvider::NfPhotoProvider(NeofluxonCore *core,
                                  QObject* parent)
         : QObject(parent)
-        , m_photoLoader{photoLoader}
-        , m_cache{cache}
+        , m_photoLoader{core->photoLoader()}
+        , m_cache{core->guiCache()}
         , m_thumbnailPlaceholder{":/thumb_w160.jpg"}
 {
         auto timer = new QTimer(this);
@@ -111,4 +111,4 @@ void NfPhotoProvider::processThumbnails()
                 emit thumbnailsLoaded(photoIds);
 }
 
-} // namespace NfDesktop
+} // namespace NfUi

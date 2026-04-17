@@ -3,10 +3,10 @@
 
 namespace NfDesktop {
 
-NfFolderModel::NfFolderModel(const NfFolderModeContext &ctx, QObject *parent)
+NfFolderModel::NfFolderModel(const NfContext *ctx, QObject *parent)
         : QObject(parent)
         , m_context{ctx}
-        , m_browserModel{new NfBrowserModel(m_context.photoProvider(), this)}
+        , m_browserModel{new NfBrowserModel(m_context, this)}
 {
 }
 

@@ -1,5 +1,5 @@
 /**
- * File name: NfBrowserModel.h
+ * File name: NfFolderContext.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,31 +21,23 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_FOLDER_MODEL_H
-#define NF_FOLDER_MODEL_H
+#ifndef NF_FOLDER_CONTEXT_H
+#define NF_FOLDER_CONTEXT_H
 
-#include "NfBrowserModel.h"
-#include "NfFolderModeContext.h"
+namespace NfUi {
 
-#include <QObject.h>
-
-namespace NfDesktop {
-
-class NfBrowserModel;
 class NfContext;
+class NfUiState;
 
-class NfFolderModel : public QObject
-{
-        Q_OBJECT
-
-public:
-        explicit NfFolderModel(NfContext *ctx, QObject *parent = nullptr);
-        ~NfFolderModel() = default;
-        NfBrowserModel* browser() const;
+class NfFolderContext {
+ public:
+        explicit NfFolderContext(NfContext* ctx) : m_context{ctx} {}
+        NfUiState* uiState() const { m_context->uiState(); }
 
  private:
-        NfContext *m_context;
-        NfBrowserModel *m_browserModel;
-}
+        NfContext* m_context;
+};
 
-#endif // NF_FOLDER_MODEL_H
+} // namespace NfUi
+
+#endif // NF_FOLDER_CONTEXT_H

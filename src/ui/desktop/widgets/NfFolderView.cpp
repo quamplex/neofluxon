@@ -22,17 +22,18 @@
  */
 
 #include "NfFolderView.h"
-#include "NfFilderModeState.h"
+#include "NfUiFolderModeState.h"
 
 using namespace NfUi
 
 namespace NfDesktop {
 
-NfFolderView::NfFolderView(const NfFolderModeContext &ctx,
+NfFolderView::NfFolderView(const NfFolderContext &ctx,
                            NfFolderModel *model,
                            QWidget* parent)
         : QWidget(parent)
         , m_context{ctx}
+        , m_state{ctx->uiState()->folderModeState()}
         , m_model{model}
         , m_mainLayout{nullptr}
         , m_browserView{nullptr}
@@ -46,8 +47,8 @@ NfFolderView::NfFolderView(const NfFolderModeContext &ctx,
 
         m_mainLayout->addWidget(m_browserView);
 
-        QObject::connect(m_context.uiState(),
-                         &NfFilderModeState::viewModeChanged,
+        QObject::connect(m_state,
+                         &NfFolderModeState::viewModeChanged,
                          this,
                          &NfFolderView::updateView);
 

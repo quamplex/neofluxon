@@ -37,9 +37,12 @@ class NfUiState;
 struct NfContext {
         NefluxonCore* const neofluxonCore;
         NfUiState* const uiState;
+        NefluxonCore* core() const {return neofluxonCore; }
 
-        NfContext(NefluxonCore* core, NfUiState* state)
-                : neofluxonCore{core}, m_uiState{state} {}
+        NfContext(NefluxonCore* core,
+                  NfUiState* state)
+                : neofluxonCore{core}
+                , uiState{state}
 };
 
 } // namespace NfUi

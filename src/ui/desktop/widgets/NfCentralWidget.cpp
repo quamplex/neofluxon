@@ -34,7 +34,7 @@ namespace NfDesktop {
         : QWidget(parent)
         , m_context{ctx}
         , m_currentView{nullptr}
-        , m_folderModel{new NfFolderModel(NfFolderModeContext(m_context), this)}
+        , m_folderModel{new NfFolderModel(m_context), this)}
 {
         setObjectName("NfCentralWidget");
 
