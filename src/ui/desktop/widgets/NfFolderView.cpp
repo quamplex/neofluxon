@@ -25,6 +25,7 @@
 #include "NfUiState.h"
 #include "NfUiFolderModeState.h"
 #include "NfFolderModel.h"
+#include "NfBrowserModel.h"
 #include "NfBrowserView.h"
 #include "NfPhotoPreviewView.h"
 
@@ -51,7 +52,6 @@ NfFolderView::NfFolderView(const NfFolderContext &ctx,
 
         m_browserView = new NfBrowserView(this);
         m_browserView->setModel(m_model->browser());
-
         m_mainLayout->addWidget(m_browserView);
 
         QObject::connect(m_state,
@@ -81,6 +81,8 @@ void NfFolderView::showPreviewView()
 
         if (!m_photoPreviewView) {
                 m_photoPreviewView = new NfPhotoPreviewView(m_model->browser(), this);
+                QObject::connect(m_browserView, &QListView::clicked,
+                                 m_photoPreviewView, (const QModelIndex& index)
 
                 // Insert at the top
                 m_mainLayout->insertWidget(0, m_photoPreviewView);

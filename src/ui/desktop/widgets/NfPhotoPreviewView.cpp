@@ -63,6 +63,16 @@ NfBrowserModel* NfPhotoPreviewView::model() const
         return m_model;
 }
 
+void NfPhotoPreviewView::setPhotoIndex(const QModelIndex& index)
+{
+        if (!m_model) {
+                m_photoPreview->clear();
+                return;
+        }
+
+        m_photoPreview->setPixmap(m_model->data(index, Qt::DisplayRole));
+}
+
 void NfPhotoPreviewView::connectModel()
 {
         if (!m_model)
@@ -89,7 +99,7 @@ void NfPhotoPreviewView::updateView()
                 return;
         }
 
-        m_photoPreview->setPixmap(m_model->currentPreview());
+        m_photoPreview->setPixmap();
 }
 
 } // namespace NfDesktop

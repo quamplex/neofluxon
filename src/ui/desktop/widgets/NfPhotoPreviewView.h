@@ -26,6 +26,7 @@
 
 #include <QWidget>
 
+class QModelIndex;
 class QLabel;
 
 namespace NfDesktop {
@@ -40,6 +41,9 @@ public:
         explicit NfPhotoPreviewView(NfBrowserModel* model, QWidget* parent = nullptr);
         void setModel(NfBrowserModel* model);
         NfBrowserModel* model() const;
+
+public slots:
+        void setPhotoIndex(const QModelIndex& index);
 
 protected:
         void connectModel();

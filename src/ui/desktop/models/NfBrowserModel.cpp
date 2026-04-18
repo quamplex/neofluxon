@@ -84,7 +84,7 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
         case Qt::DecorationRole:
                 return m_photoProvider->getThumbnail(m_photos[index.row()]);
         case Qt::DisplayRole:
-                return QString("Photo %1").arg(index.row() + 1);
+                return m_photoProvider->getThumbnail(m_photos[index.row()]);;
         default:
                 return QVariant();
         }
