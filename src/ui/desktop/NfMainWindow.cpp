@@ -35,6 +35,8 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
+using namespace NfUi;
+
 namespace NfDesktop {
 
         NfMainWindow::NfMainWindow(NfContext *ctx)
@@ -61,7 +63,7 @@ namespace NfDesktop {
         hLayout->setContentsMargins(0,0,0,0);
         hLayout->setSpacing(0);
 
-        auto leftPanel = new NfLeftPanel(this, uiState);
+        auto leftPanel = new NfLeftPanel(m_context, this);
         hLayout->addWidget(leftPanel);
 
         hLayout->addWidget(new NfCentralWidget(m_context, this));

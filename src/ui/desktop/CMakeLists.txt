@@ -5,6 +5,7 @@ set(DESKTOP_HEADERS
 
 set(DESKTOP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/NfApplication.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/NfMainWindow.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
@@ -21,7 +22,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::Widgets
     Qt6::Gui
     ${PROJECT_NAME}::CoreLibrary
+    ${PROJECT_NAME}::CommonUiLibrary
     ${PROJECT_NAME}::DesktopModels
+    ${PROJECT_NAME}::DesktopWidgets
 )
 
 # Include directories for UI-only headers
@@ -35,3 +38,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin/Debug"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/Release"
 )
+
+add_subdirectory(models)
+add_subdirectory(widgets)

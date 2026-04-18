@@ -36,6 +36,11 @@ class NfMainMenu : public NfStyledWidget
 public:
         explicit NfMainMenu(QWidget* parent = nullptr);
 
+public slots:
+        void setShootsMode();
+        void setFolderMode();
+        void setLibraryMode();
+
 signals:
         void shootsClicked();
         void foldersClicked();

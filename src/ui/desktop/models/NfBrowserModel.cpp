@@ -23,6 +23,8 @@
 
 #include "NfBrowserModel.h"
 #include "NfContext.h"
+#include "NfUiState.h"
+#include "NfUiFolderModeState.h"
 #include "NfPhotoProvider.h"
 
 using namespace NfUi;
@@ -32,16 +34,20 @@ namespace NfDesktop {
 NfBrowserModel::NfBrowserModel(NfContext *ctx, QObject* parent)
         : QAbstractListModel(parent)
         , m_context{ctx}
-        , m_photoProvider{new NfPhotoProvider(m_context->core())}
+        , m_photoProvider{new NfPhotoProvider(m_context->core(), this)}
 {
-        QObject::connect(&m_photoProvider,
+        QObject::connect(m_photoProvider,
                          &NfPhotoProvider::photosLoaded,
                          this,
                          &NfBrowserModel::onPhotosLoaded);
-        QObject::connect(&m_photoProvider,
+        QObject::connect(m_photoProvider,
                          &NfPhotoProvider::thumbnailsLoaded,
                          this,
                          &NfBrowserModel::onThumbnailsLoaded);
+        QObject::connect(m_context->uiState->folderModeState(),
+                         &NfUiFolderModeState::pathChanged,
+                         this,
+                         &NfBrowserModel::setPath);
  }
 
 void NfBrowserModel::setPath(const std::filesystem::path &path)

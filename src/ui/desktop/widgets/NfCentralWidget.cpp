@@ -23,29 +23,32 @@
 
 #include "NfCentralWidget.h"
 #include "NfContext.h"
+#include "NfUiState.h"
 #include "NfFolderModel.h"
 #include "NfFolderView.h"
 
 #include <QVBoxLayout>
 
+using namespace NfUi;
+
 namespace NfDesktop {
 
-        NfCentralWidget::NfCentralWidget(NfContext *cxt, QWidget* parent)
+NfCentralWidget::NfCentralWidget(NfContext *ctx, QWidget* parent)
         : QWidget(parent)
         , m_context{ctx}
         , m_currentView{nullptr}
-        , m_folderModel{new NfFolderModel(m_context), this)}
+        , m_layout{new QVBoxLayout(this)}
+        , m_folderModel{new NfFolderModel(m_context, this)}
 {
         setObjectName("NfCentralWidget");
 
-        auto* layout = new QVBoxLayout(this);
-        layout->setContentsMargins(0, 0, 0, 0);
-        setLayout(layout);
+        m_layout->setContentsMargins(0, 0, 0, 0);
+        setLayout(m_layout);
 
-        QObject::connect(m_context->uiState(),
+        QObject::connect(m_context->uiState,
                          &NfUiState::modeChanged,
                          this,
-                         &NfCentralWidget::updateView&);
+                         &NfCentralWidget::updateView);
 
         updateView();
 }
@@ -57,7 +60,7 @@ void NfCentralWidget::showShootsView()
 
 void NfCentralWidget::showFolderView()
 {
-        setCurrentView(new NfFolderView(NfFolderModeContext(m_context),
+        setCurrentView(new NfFolderView(NfFolderContext(m_context),
                                         m_folderModel,
                                         this));
 }
@@ -84,7 +87,7 @@ void NfCentralWidget::setCurrentView(QWidget* view)
 
 void NfCentralWidget::updateView()
 {
-        auto mode = m_context.uiState()->mode();
+        auto mode = m_context->uiState->mode();
 
         switch (mode) {
         case NfUiMode::Shoots:

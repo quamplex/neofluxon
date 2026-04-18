@@ -42,14 +42,14 @@ NeofluxonCore::~NeofluxonCore()
         NF_LOG_DEBUG("called");
 }
 
-NfPhotoLoader& NeofluxonCore::photoLoader() const
+NfPhotoLoader* NeofluxonCore::photoLoader() const
 {
-    return *m_photoLoader;
+        return m_photoLoader.get();
 }
 
-NfGuiCache& NeofluxonCore::guiCache() const
+NfGuiCache* NeofluxonCore::guiCache() const
 {
-    return *m_guiCache;
+        return m_guiCache.get();
 }
 
 } // namespace NfCore

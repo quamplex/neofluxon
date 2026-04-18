@@ -26,6 +26,8 @@
 
 #include <QWidget>
 
+#include <filesystem>
+
 class QTreeView;
 class QFileSystemModel;
 
@@ -39,7 +41,7 @@ public:
     explicit NfPathBrowser(QWidget* parent = nullptr);
 
 signals:
-    void folderSelected(const QString& path);
+    void folderSelected(const std::filesystem::path& path);
 
 private:
     QFileSystemModel* m_model;

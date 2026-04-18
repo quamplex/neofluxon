@@ -75,8 +75,7 @@ NfPathBrowser::NfPathBrowser(QWidget* parent)
         QObject::connect(m_treeView, &QTreeView::doubleClicked,
                          this, [this](const QModelIndex& index)
                          {
-                                 auto path = m_model->filePath(index);
-                                 emit folderSelected(path);
+                                 emit folderSelected(m_model->filePath(index).toStdString());
                          });
 }
 

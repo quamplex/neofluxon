@@ -26,7 +26,7 @@
 
 using namespace NfCore;
 
-namespace NfDesktop {
+namespace NfUi {
 
 void NfQtPixmap::setData(std::unique_ptr<NfImageData> data)
 {
@@ -81,4 +81,4 @@ std::size_t NfQtPixmap::size() const
                 static_cast<std::size_t>(m_pixmapImage.depth()) / 8;
 }
 
-} // namespace NfDesktop
+} // namespace NfUi

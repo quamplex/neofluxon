@@ -28,16 +28,21 @@
 
 class QStackedWidget;
 
+namespace NfUi {
+struct NfContext;
+}
+
+using namespace NfUi;
+
 namespace NfDesktop {
 
 class NfPathBrowser;
-class NfUiState;
 
 class NfLeftPanel : public NfPanel {
   Q_OBJECT
 
 public:
-        explicit NfLeftPanel(QWidget *parent, NfUiState *state);
+        explicit NfLeftPanel(NfContext *ctx, QWidget *parent = nullptr);
         virtual ~NfLeftPanel() = default;
 
 protected slots:
@@ -45,7 +50,7 @@ protected slots:
         void showPathBrowser();
 
 private:
-        NfUiState *state;
+        NfContext *m_context;
         NfPathBrowser* m_pathBrowser;
         QWidget* m_libraryBrowser;
         QStackedWidget* m_stack;

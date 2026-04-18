@@ -39,4 +39,5 @@ target_include_directories(NfDesktopWidgets PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(NfDesktopWidgets PUBLIC
         Qt6::Widgets
         ${PROJECT_NAME}::CommonUiLibrary
+        ${PROJECT_NAME}::DesktopModels
 )

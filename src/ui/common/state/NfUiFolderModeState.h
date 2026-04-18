@@ -23,14 +23,34 @@
 
 #include <QObject>
 
+#include <filesystem>
+
 namespace NfUi {
 
 class NfUiFolderModeState : public QObject
 {
-    Q_OBJECT
+        Q_OBJECT
 
 public:
-    explicit NfUiFolderModeState(QObject* parent = nullptr);
-};
+        enum class ViewMode {
+                Grid,
+                Preview
+        };
 
+        explicit NfUiFolderModeState(QObject* parent = nullptr);
+        ViewMode viewMode() const;
+        const std::filesystem::path& path() const;
+
+signals:
+        void viewModeChanged(ViewMode mode);
+        void pathChanged(const std::filesystem::path& path);
+
+public slots:
+        void setViewMode(ViewMode mode);
+        void setPath(const std::filesystem::path& path);
+
+private:
+        ViewMode m_viewMode;
+        std::filesystem::path m_path;
+};
 } // namespace NfUi

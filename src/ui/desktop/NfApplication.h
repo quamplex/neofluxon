@@ -29,7 +29,7 @@
 #include <QSize>
 
 namespace NfCore {
-        class NeofluxonCore;
+class NeofluxonCore;
 }
 
 using namespace NfCore;
@@ -37,7 +37,6 @@ using namespace NfCore;
 namespace NfDesktop {
 
 class NfPhotoProvider;
-class NfUiState;
 
 class NfApplication: public QApplication
 {

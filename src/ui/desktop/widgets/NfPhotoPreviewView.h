@@ -26,10 +26,11 @@
 
 #include <QWidget>
 
+class QLabel;
+
 namespace NfDesktop {
 
 class NfBrowserModel;
-class QLabel;
 
 class NfPhotoPreviewView : public QWidget
 {
@@ -42,7 +43,7 @@ public:
 
 protected:
         void connectModel();
-        void udpateView();
+        void updateView();
 
 private:
         NfBrowserModel *m_model;

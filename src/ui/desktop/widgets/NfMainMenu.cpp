@@ -44,20 +44,47 @@ NfMainMenu::NfMainMenu(QWidget* parent)
         menuLayout->setSpacing(2);
 
         shootsButton = new QPushButton(tr("Shoots"), this);
-        connect(shootsButton, &QPushButton::clicked, this, &NfMainMenu::shootsClicked);
+        QObject::connect(shootsButton,
+                         &QPushButton::clicked,
+                         this, &NfMainMenu::shootsClicked);
         menuLayout->addWidget(shootsButton);
 
-        libraryButton = new QPushButton(tr("Library"), this);
-        connect(libraryButton, &QPushButton::clicked, this, &NfMainMenu::libraryClicked);
-        menuLayout->addWidget(libraryButton);
-
         foldersButton = new QPushButton(tr("Folders"), this);
-        connect(foldersButton, &QPushButton::clicked, this, &NfMainMenu::foldersClicked);
+        QObject::connect(foldersButton,
+                         &QPushButton::clicked,
+                         this, &NfMainMenu::foldersClicked);
         menuLayout->addWidget(foldersButton);
+
+        libraryButton = new QPushButton(tr("Library"), this);
+        QObject::connect(libraryButton,
+                         &QPushButton::clicked,
+                         this, &NfMainMenu::libraryClicked);
+        menuLayout->addWidget(libraryButton);
 
         menuLayout->addStretch();
 
         setLayout(menuLayout);
+}
+
+void NfMainMenu::setShootsMode()
+{
+        shootsButton->setChecked(true);
+        foldersButton->setChecked(false);
+        libraryButton->setChecked(false);
+}
+
+void NfMainMenu::setFolderMode()
+{
+        shootsButton->setChecked(false);
+        foldersButton->setChecked(true);
+        libraryButton->setChecked(false);
+}
+
+void NfMainMenu::setLibraryMode()
+{
+        shootsButton->setChecked(false);
+        foldersButton->setChecked(false);
+        libraryButton->setChecked(true);
 }
 
 } // namespace NfDesktop

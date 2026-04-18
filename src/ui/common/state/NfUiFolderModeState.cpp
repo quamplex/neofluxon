@@ -26,8 +26,36 @@
 namespace NfUi {
 
 NfUiFolderModeState::NfUiFolderModeState(QObject* parent)
-    : QObject(parent)
+        : QObject(parent)
+        , m_viewMode{ViewMode::Grid}
 {
+}
+
+NfUiFolderModeState::ViewMode NfUiFolderModeState::viewMode() const
+{
+        return m_viewMode;
+}
+
+void NfUiFolderModeState::setViewMode(ViewMode mode)
+{
+        if (m_viewMode == mode)
+                return;
+
+        m_viewMode = mode;
+        emit viewModeChanged(m_viewMode);
+}
+
+const std::filesystem::path& NfUiFolderModeState::path() const
+{
+        return m_path;
+}
+
+void NfUiFolderModeState::setPath(const std::filesystem::path& path)
+{
+        if (m_path != path) {
+                m_path = path;
+                emit pathChanged(path);
+        }
 }
 
 } // namespace NfUi

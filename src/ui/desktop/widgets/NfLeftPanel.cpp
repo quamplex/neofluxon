@@ -22,7 +22,9 @@
  */
 
 #include "NfLeftPanel.h"
+#include "NfContext.h"
 #include "NfUiState.h"
+#include "NfUiFolderModeState.h"
 #include "NfMainMenu.h"
 #include "NfPathBrowser.h"
 
@@ -31,9 +33,9 @@
 
 namespace NfDesktop {
 
-        NfLeftPanel::NfLeftPanel(QWidget *parent, NfUiState *state)
+        NfLeftPanel::NfLeftPanel(NfContext *ctx, QWidget *parent)
         : NfPanel(parent, NfPanel::PanelPosition::AlignLeft)
-        , m_uiState{state}
+        , m_context{ctx}
         , m_pathBrowser{new NfPathBrowser(this)}
         , m_libraryBrowser{new QWidget(this)/*NfLibraryBrowser(this)*/}
         , m_stack{new QStackedWidget(this)}
@@ -53,30 +55,46 @@ namespace NfDesktop {
         setLayout(panelLayout);
 
         QObject::connect(mainMenu, &NfMainMenu::shootsClicked, [this]() {
-                m_uiState->setMode(NfUiMode::Shoots);
+                m_context->uiState->setMode(NfUiMode::Shoots);
         });
         QObject::connect(mainMenu, &NfMainMenu::foldersClicked, [this]() {
-                m_uiState->setMode(NfUiMode::Folders);
+                m_context->uiState->setMode(NfUiMode::Folders);
         });
         QObject::connect(mainMenu, &NfMainMenu::libraryClicked, [this]() {
-                m_uiState->setMode(NfUiMode::Library);
+                m_context->uiState->setMode(NfUiMode::Library);
         });
         QObject::connect(mainMenu, &NfMainMenu::libraryClicked, [this]() {
-                m_uiState->setMode(NfUiMode::Library);
+                m_context->uiState->setMode(NfUiMode::Library);
         });
 
-        switch (m_uiState->mode()) {
-        case NfUiMode::Shoots:
-                break;
-        case NfUiMode::Folders:
-                showPathBrowser();
-                break;
-        case NfUiMode::Library:
-                showLibraryBrowser();
-                break;
-        default:
-                break;
-        }
+        auto updateMode = [this, mainMenu](NfUiMode mode) {
+                switch (mode) {
+                case NfUiMode::Shoots:
+                        mainMenu->setShootsMode();
+                        break;
+                case NfUiMode::Folders:
+                        showPathBrowser();
+                        mainMenu->setFolderMode();
+                        break;
+                case NfUiMode::Library:
+                        showLibraryBrowser();
+                        mainMenu->setLibraryMode();
+                        break;
+                default:
+                        break;
+                }
+        };
+
+        QObject::connect(m_context->uiState,
+                         &NfUiState::modeChanged,
+                         updateMode);
+
+        QObject::connect(m_pathBrowser,
+                         &NfPathBrowser::folderSelected,
+                         m_context->uiState->folderModeState(),
+                         &NfUiFolderModeState::setPath);
+
+        updateMode(m_context->uiState->mode());
 }
 
 void NfLeftPanel::showPathBrowser()

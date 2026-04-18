@@ -24,15 +24,18 @@
 #ifndef NF_FOLDER_CONTEXT_H
 #define NF_FOLDER_CONTEXT_H
 
+#include "NfContext.h"
+
 namespace NfUi {
 
-class NfContext;
+struct NfContext;
 class NfUiState;
 
 class NfFolderContext {
  public:
-        explicit NfFolderContext(NfContext* ctx) : m_context{ctx} {}
-        NfUiState* uiState() const { m_context->uiState(); }
+        explicit NfFolderContext(NfContext* ctx)
+                : m_context{ctx} {}
+        NfUiState* uiState() const { return m_context->uiState; }
 
  private:
         NfContext* m_context;

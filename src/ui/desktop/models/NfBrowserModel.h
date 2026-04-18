@@ -30,7 +30,7 @@
 #include <QAbstractListModel>
 
 namespace NfUi {
-class NfContext;
+struct NfContext;
 class NfPhotoProvider;
 }
 

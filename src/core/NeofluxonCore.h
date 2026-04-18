@@ -33,19 +33,19 @@ class NfGuiCache;
 
 class NeofluxonCore {
 public:
-    NeofluxonCore();
-    ~NeofluxonCore();
-    NeofluxonCore(const NeofluxonCore&) = delete;
-    NeofluxonCore& operator=(const NeofluxonCore&) = delete;
-    NeofluxonCore(NeofluxonCore&&) noexcept = default;
-    NeofluxonCore& operator=(NeofluxonCore&&) noexcept = default;
+        NeofluxonCore();
+        ~NeofluxonCore();
+        NeofluxonCore(const NeofluxonCore&) = delete;
+        NeofluxonCore& operator=(const NeofluxonCore&) = delete;
+        NeofluxonCore(NeofluxonCore&&) noexcept = default;
+        NeofluxonCore& operator=(NeofluxonCore&&) noexcept = default;
 
-    NfPhotoLoader& photoLoader() const;
-    NfGuiCache& guiCache() const;
+        NfPhotoLoader* photoLoader() const;
+        NfGuiCache* guiCache() const;
 
 private:
-    std::unique_ptr<NfPhotoLoader> m_photoLoader;
-    std::unique_ptr<NfGuiCache> m_guiCache;
+        std::unique_ptr<NfPhotoLoader> m_photoLoader;
+        std::unique_ptr<NfGuiCache> m_guiCache;
 };
 
 } // namespace NfCore

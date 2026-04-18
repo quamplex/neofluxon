@@ -33,7 +33,10 @@ class NfUiShootsModeState : public QObject
         Q_OBJECT
 
 public:
+        enum ViewMode {}
         explicit NfUiShootsModeState(QObject* parent = nullptr);
+
+        signal
 };
 
 } // namespace NfUi

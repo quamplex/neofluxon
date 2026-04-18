@@ -26,9 +26,13 @@
 
 #include <QMainWindow>
 
-namespace NfDesktop {
+namespace NfUi {
+struct NfContext;
+}
 
-class NfContext;
+using namespace NfUi;
+
+namespace NfDesktop {
 
 class NfMainWindow : public QMainWindow
 {

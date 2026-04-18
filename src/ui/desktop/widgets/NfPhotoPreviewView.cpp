@@ -25,10 +25,11 @@
 #include "NfBrowserModel.h"
 
 #include <QLabel>
+#include <QVBoxLayout>
 
 namespace NfDesktop {
 
-NfPhotoPreviewView::NfPhotoPreviewView(QWidget* parent, NfBrowserModel *model)
+NfPhotoPreviewView::NfPhotoPreviewView(NfBrowserModel *model, QWidget* parent)
         : QWidget(parent)
         , m_model{model}
         , m_photoPreview{new QLabel(this)}
@@ -70,22 +71,18 @@ void NfPhotoPreviewView::connectModel()
         QObject::connect(m_model,
                          &NfBrowserModel::modelUpdated,
                          this,
-                         &NfPhotoPreviewView::updateView());
+                         &NfPhotoPreviewView::updateView);
         QObject::connect(m_model,
                          &NfBrowserModel::currentPhotoChanged,
                          this,
-                         &NfPhotoPreviewView::updateView());
-        QObject::connect(m_model,
-                         &NfBrowserModel::currentPhotoChanged,
-                         this,
-                         &NfPhotoPreviewView::updateView());
+                         &NfPhotoPreviewView::updateView);
         QObject::connect(m_model,
                          &NfBrowserModel::currentPreviewReady,
                          this,
                          &NfPhotoPreviewView::updateView);
 }
 
-NfPhotoPreviewView::updateView()
+void NfPhotoPreviewView::updateView()
 {
         if (!m_model) {
                 m_photoPreview->clear();

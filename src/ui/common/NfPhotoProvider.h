@@ -36,6 +36,8 @@
 
 namespace NfCore {
 class NeofluxonCore;
+class NfPhotoLoader;
+class NfGuiCache;
 }
 
 using namespace NfCore;

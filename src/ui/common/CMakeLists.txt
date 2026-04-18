@@ -25,7 +25,11 @@ add_library(NfCommonUi STATIC
 
 add_library(${PROJECT_NAME}::CommonUiLibrary ALIAS NfCommonUi)
 
-target_include_directories(NfCommonUi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(NfCommonUi PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/context
+    ${CMAKE_CURRENT_SOURCE_DIR}/state
+)
 
 target_link_libraries(NfCommonUi
         PUBLIC

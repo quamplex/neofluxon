@@ -26,9 +26,16 @@
 
 #include <QWidget>
 
+class QVBoxLayout;
+
+namespace NfUi {
+struct NfContext;
+}
+
+using namespace NfUi;
+
 namespace NfDesktop {
 
-class NfContext;
 class NfFolderModel;
 
 class NfCentralWidget : public QWidget
@@ -49,6 +56,7 @@ class NfCentralWidget : public QWidget
 
         NfContext *m_context;
         NfFolderModel *m_folderModel;
+        QVBoxLayout* m_layout;
         QWidget* m_currentView;
 };
 

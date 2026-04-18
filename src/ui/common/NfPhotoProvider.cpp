@@ -56,7 +56,7 @@ NfPhotoProvider::~NfPhotoProvider()
 void NfPhotoProvider::setPath(const std::filesystem::path& path)
 {
         m_path = path;
-        m_photoLoader.setPath(path);
+        m_photoLoader->setPath(path);
 }
 
 const std::filesystem::path& NfPhotoProvider::getPath() const
@@ -66,14 +66,14 @@ const std::filesystem::path& NfPhotoProvider::getPath() const
 
 const QPixmap& NfPhotoProvider::getThumbnail(const NfPhoto &photo) const
 {
-        const NfImage* cacheImage = m_cache.get(photo.id());
+        const NfImage* cacheImage = m_cache->get(photo.id());
         if (cacheImage) {
                 const auto *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
                 if (thumbnail)
                         return thumbnail->pixmap();
         }
 
-        m_photoLoader.requestThumbnail(photo, std::make_unique<NfQtPixmap>());
+        m_photoLoader->requestThumbnail(photo, std::make_unique<NfQtPixmap>());
 
         return m_thumbnailPlaceholder;
 }
@@ -86,7 +86,7 @@ void NfPhotoProvider::onTimeout()
 
 void NfPhotoProvider::processNewPhotos()
 {
-        auto newPhotos = m_photoLoader.takePhotos();
+        auto newPhotos = m_photoLoader->takePhotos();
         if (!newPhotos.empty()) {
                 NF_LOG_DEBUG("NEW PHOTOS: " << newPhotos.size());
                 emit photosLoaded(newPhotos);
@@ -95,7 +95,7 @@ void NfPhotoProvider::processNewPhotos()
 
 void NfPhotoProvider::processThumbnails()
 {
-        auto thumbnails = m_photoLoader.takeThumbnails();
+        auto thumbnails = m_photoLoader->takeThumbnails();
         if (thumbnails.empty())
                 return;
 
@@ -103,7 +103,7 @@ void NfPhotoProvider::processThumbnails()
         photoIds.reserve(thumbnails.size());
 
         for(auto &thumb : thumbnails) {
-                m_cache.add(thumb.id(), thumb.releaseImage());
+                m_cache->add(thumb.id(), thumb.releaseImage());
                 photoIds.push_back(thumb.id());
         }
 

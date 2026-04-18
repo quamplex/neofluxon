@@ -34,7 +34,7 @@ namespace NfCore {
 
 using namespace NfCore;
 
-namespace NfDesktop {
+namespace NfUi {
 
 
 class NfQtPixmap : public NfImage {
@@ -50,6 +50,6 @@ private:
     QPixmap m_pixmapImage;
 };
 
-} // namespace NfDesktop
+} // namespace NfUi
 
 #endif // NF_QTPIXMAP_H

@@ -24,25 +24,27 @@
 #ifndef NF_CONTEXT_H
 #define NF_CONTEXT_H
 
-using namespace  NfCore;
+#include "core/NeofluxonCore.h"
 
 namespace NfCore {
-class NefluxonCore;
+class NeofluxonCore;
 }
+
+using namespace NfCore;
 
 namespace NfUi {
 
 class NfUiState;
 
 struct NfContext {
-        NefluxonCore* const neofluxonCore;
+        NeofluxonCore* const neofluxonCore;
         NfUiState* const uiState;
-        NefluxonCore* core() const {return neofluxonCore; }
+        NeofluxonCore* core() const {return neofluxonCore; }
 
-        NfContext(NefluxonCore* core,
+        NfContext(NeofluxonCore* core,
                   NfUiState* state)
                 : neofluxonCore{core}
-                , uiState{state}
+                , uiState{state} {}
 };
 
 } // namespace NfUi

@@ -26,13 +26,19 @@
 
 #include "NfFolderContext.h"
 
+#include <QWidget>
+
+namespace NfUi {
+ class NfUiFolderModeState;
+}
+
 using namespace NfUi;
+
+class QVBoxLayout;
 
 namespace NfDesktop {
 
-class NfUiFolderModeState;
 class NfFolderModel;
-class QVBoxLayout;
 class NfBrowserView;
 class NfPhotoPreviewView;
 
@@ -55,7 +61,7 @@ protected:
 private:
         NfFolderContext m_context;
         NfUiFolderModeState *m_state;
-        NfBrowserModel* m_model;
+        NfFolderModel* m_model;
         QVBoxLayout* m_mainLayout;
         NfBrowserView* m_browserView;
         NfPhotoPreviewView* m_photoPreviewView;
