@@ -76,6 +76,7 @@ private slots:
 private:
         void processNewPhotos();
         void processThumbnails();
+        void processPreviews();
 
         NfPhotoLoader *m_photoLoader;
         NfGuiCache *m_thumbnailCache;

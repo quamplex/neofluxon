@@ -40,7 +40,7 @@ NfPhotoProvider::NfPhotoProvider(NeofluxonCore *core,
                                  QObject* parent)
         : QObject(parent)
         , m_photoLoader{core->photoLoader()}
-        , m_thumbnailCache{core->thubnailCache()}
+        , m_thumbnailCache{core->thumbnailCache()}
         , m_previewCache{core->previewCache()}
         , m_thumbnailPlaceholder{":/thumb_w160.jpg"}
 {
@@ -67,7 +67,7 @@ const std::filesystem::path& NfPhotoProvider::getPath() const
 
 const QPixmap& NfPhotoProvider::getThumbnail(const NfPhoto &photo) const
 {
-        const auto* cacheImage = m_thubnailCache->get(photo.id());
+        const auto* cacheImage = m_thumbnailCache->get(photo.id());
         if (cacheImage) {
                 const auto *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
                 if (thumbnail)
@@ -119,7 +119,7 @@ void NfPhotoProvider::processThumbnails()
         photoIds.reserve(thumbnails.size());
 
         for(auto &thumb : thumbnails) {
-                m_cache->add(thumb.id(), thumb.releaseImage());
+                m_thumbnailCache->add(thumb.id(), thumb.releaseImage());
                 photoIds.push_back(thumb.id());
         }
 

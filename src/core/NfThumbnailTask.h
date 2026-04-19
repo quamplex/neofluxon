@@ -21,8 +21,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_THUMBNAIL_H
-#define NF_THUMBNAIL_H
+#ifndef NF_THUMBNAIL_TASK_H
+#define NF_THUMBNAIL_TASK_H
 
 #include "NfTask.h"
 #include "NfPhoto.h"
@@ -59,4 +59,4 @@ private:
 
 } // namespace NfCore
 
-#endif // NF_THUMBNAIL_H
+#endif // NF_THUMBNAIL_TASK_H

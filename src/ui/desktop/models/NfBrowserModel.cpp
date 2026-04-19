@@ -35,7 +35,7 @@ NfBrowserModel::NfBrowserModel(NfContext *ctx, QObject* parent)
         : QAbstractListModel(parent)
         , m_context{ctx}
         , m_photoProvider{new NfPhotoProvider(m_context->core(), this)}
-        , m_previewRange{5}
+        , m_previewRange{10}
 {
         QObject::connect(m_photoProvider,
                          &NfPhotoProvider::photosLoaded,
@@ -48,7 +48,7 @@ NfBrowserModel::NfBrowserModel(NfContext *ctx, QObject* parent)
         QObject::connect(m_photoProvider,
                          &NfPhotoProvider::previewsLoaded,
                          this,
-                         &NfBrowserModel::onPreviewLoaded);
+                         &NfBrowserModel::onPreviewsLoaded);
         QObject::connect(m_context->uiState->folderModeState(),
                          &NfUiFolderModeState::pathChanged,
                          this,
@@ -68,11 +68,6 @@ void NfBrowserModel::setPath(const std::filesystem::path &path)
 const std::filesystem::path& NfBrowserModel::getPath() const
 {
         return m_photoProvider->getPath();
-}
-
-QPixmap NfBrowserModel::currentPreview() const
-{
-        return QPixmap();
 }
 
 int NfBrowserModel::rowCount(const QModelIndex& parent) const
@@ -97,7 +92,7 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
         }
 }
 
-QPixmap NfBrowserModel::getPreview(const QModelIndex& index)
+QPixmap NfBrowserModel::getPreview(const QModelIndex& index) const
 {
         if (!index.isValid() || index.row() >= m_photos.size())
                 return QPixmap();
@@ -112,7 +107,8 @@ QPixmap NfBrowserModel::getPreview(const QModelIndex& index)
         for (int i = start; i <= end; ++i) {
                 if (i == centerRow)
                         continue;
-                m_photoProvider->requestPreview(m_photos[i]);
+                // TODO: request only preview
+                m_photoProvider->getPreview(m_photos[i]);
         }
 
         return previewImage;
@@ -150,7 +146,7 @@ void NfBrowserModel::onThumbnailsLoaded(const std::vector<NfPhotoId> &ids)
         });
 }
 
-void NfBrowserModel::onPreviewLoaded(const std::vector<NfPhotoId> &ids)
+void NfBrowserModel::onPreviewsLoaded(const std::vector<NfPhotoId> &ids)
 {
         std::ranges::for_each(ids, [this](auto& id) {
                 if (auto it = m_itemsMap.find(id); it != m_itemsMap.end()) {

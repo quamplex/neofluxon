@@ -127,7 +127,7 @@ std::vector<NfThumbnail> NfPhotoLoader::takeThumbnails()
         return std::move(m_thumbnailsQueue);
 }
 
-std::vector<NfThumbnail> NfPhotoLoader::takePreviews()
+std::vector<NfPreview> NfPhotoLoader::takePreviews()
 {
         std::scoped_lock lock(m_queueMutex);
         return std::move(m_previewsQueue);

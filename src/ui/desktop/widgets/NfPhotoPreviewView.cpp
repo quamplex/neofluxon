@@ -35,13 +35,12 @@ NfPhotoPreviewView::NfPhotoPreviewView(NfBrowserModel *model, QWidget* parent)
         , m_photoPreview{new QLabel(this)}
 {
         m_photoPreview->setAlignment(Qt::AlignCenter);
-        m_photoPreview->setScaledContents(true);
 
         auto layout = new QVBoxLayout(this);
         layout->addWidget(m_photoPreview);
 
         connectModel();
-        updateView();
+        updatePreview();
 }
 
 void NfPhotoPreviewView::setModel(NfBrowserModel* model)
@@ -55,7 +54,7 @@ void NfPhotoPreviewView::setModel(NfBrowserModel* model)
         m_model = model;
 
         connectModel();
-        updateView();
+        updatePreview();
 }
 
 NfBrowserModel* NfPhotoPreviewView::model() const
@@ -71,8 +70,8 @@ void NfPhotoPreviewView::setPhotoIndex(const QModelIndex& index)
         }
 
         m_previewIndex = index;
-        auto role = NfBrowserModel::ImageDataRole::PreviewRole;
-        m_photoPreview->setPixmap(m_model->data(index, role));
+
+        updatePreview(m_previewIndex);
 }
 
 void NfPhotoPreviewView::connectModel()
@@ -82,12 +81,13 @@ void NfPhotoPreviewView::connectModel()
 
         QObject::connect(m_model,
                          &NfBrowserModel::modelUpdated,
-                         this,
-                         &NfPhotoPreviewView::updateView);
+                         [this]() {
+                                 updatePreview();
+                         });
         QObject::connect(m_model,
                          &NfBrowserModel::previewReady,
                          this,
-                         &NfPhotoPreviewView::updateView);
+                         &NfPhotoPreviewView::updatePreview);
         QObject::connect(m_model,
                          &QAbstractItemModel::dataChanged,
                          this,
@@ -98,6 +98,8 @@ void NfPhotoPreviewView::onDataChanged(const QModelIndex &topLeft,
                                        const QModelIndex &bottomRight,
                                        const QVector<int> &roles)
 {
+        using ImageDataRole = NfBrowserModel::ImageDataRole;
+
         if (!roles.contains(ImageDataRole::PreviewRole) || !m_previewIndex.isValid())
                 return;
 
@@ -110,15 +112,22 @@ void NfPhotoPreviewView::onDataChanged(const QModelIndex &topLeft,
         }
 }
 
-void NfPhotoPreviewView::updateView(const QModelIndex &index)
+void NfPhotoPreviewView::updatePreview(const QModelIndex &index)
 {
-        if (!m_model) {
+        if (!m_model || !index.isValid()) {
                 m_photoPreview->clear();
                 return;
         }
 
         auto role = NfBrowserModel::ImageDataRole::PreviewRole;
-        m_photoPreview->setPixmap(m_model->data(index, role));
+        QVariant v = m_model->data(index, role);
+        if (v.canConvert<QPixmap>()) {
+                QPixmap pixmap = v.value<QPixmap>();
+                m_photoPreview->setPixmap(pixmap.scaled(
+                                                        m_photoPreview->size(),
+                                                        Qt::KeepAspectRatio,
+                                                        Qt::SmoothTransformation));
+        }
 }
 
 } // namespace NfDesktop

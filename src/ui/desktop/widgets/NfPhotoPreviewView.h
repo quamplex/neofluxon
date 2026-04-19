@@ -25,8 +25,8 @@
 #define NF_PHOTO_PREVIEW_VIEW_H
 
 #include <QWidget>
+#include <QModelIndex>
 
-class QModelIndex;
 class QLabel;
 
 namespace NfDesktop {
@@ -47,7 +47,12 @@ public slots:
 
 protected:
         void connectModel();
-        void updateView();
+
+protected slots:
+        void updatePreview(const QModelIndex& index = QModelIndex());
+        void onDataChanged(const QModelIndex &topLeft,
+                           const QModelIndex &bottomRight,
+                           const QVector<int> &roles);
 
 private:
         NfBrowserModel *m_model;

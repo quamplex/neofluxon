@@ -38,8 +38,6 @@ NeofluxonCore::NeofluxonCore()
 
 NeofluxonCore::~NeofluxonCore()
 {
-        m_guiCache.reset();
-        m_photoLoader.reset();
         NF_LOG_DEBUG("called");
 }
 

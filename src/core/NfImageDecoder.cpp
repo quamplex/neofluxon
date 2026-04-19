@@ -79,15 +79,16 @@ std::unique_ptr<NfImageData> NfImageDecoder::previewImageData() const
         auto &thumbList = rawProcessor->imgdata.thumbs_list;
         int count = thumbList.thumbcount;
 
-        if (count == 0) return nullptr;
+        if (count == 0)
+                return nullptr;
 
         // Find the best preview (usually the largest/last one)
         // Often, index 0 is a tiny thumb, and higher indices are previews.
         int bestIndex = 0;
         int maxWidth = 0;
         for (int i = 0; i < count; ++i) {
-                if (thumbList.theader[i].twidth > maxWidth) {
-                        maxWidth = thumbList.theader[i].twidth;
+                if (thumbList.thumblist[i].twidth > maxWidth) {
+                        maxWidth = thumbList.thumblist[i].twidth;
                         bestIndex = i;
                 }
         }

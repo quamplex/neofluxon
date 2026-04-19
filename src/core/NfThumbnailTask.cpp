@@ -55,7 +55,7 @@ uint64_t NfThumbnailTask::generationId() const
 NfThumbnailTask::TaskStatus NfThumbnailTask::execute()
 {
         NfImageDecoder decoder(m_photo);
-        auto image = decoder.previewImageData();
+        auto image = decoder.thumbnailImageData();
         if (!image)
                 return TaskStatus::Failed;
 

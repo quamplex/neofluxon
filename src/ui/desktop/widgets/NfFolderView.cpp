@@ -82,7 +82,8 @@ void NfFolderView::showPreviewView()
         if (!m_photoPreviewView) {
                 m_photoPreviewView = new NfPhotoPreviewView(m_model->browser(), this);
                 QObject::connect(m_browserView, &QListView::clicked,
-                                 m_photoPreviewView, (const QModelIndex& index)
+                                 m_photoPreviewView,
+                                 &NfPhotoPreviewView::setPhotoIndex);
 
                 // Insert at the top
                 m_mainLayout->insertWidget(0, m_photoPreviewView);

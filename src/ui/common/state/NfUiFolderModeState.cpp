@@ -27,7 +27,7 @@ namespace NfUi {
 
 NfUiFolderModeState::NfUiFolderModeState(QObject* parent)
         : QObject(parent)
-        , m_viewMode{ViewMode::Grid}
+        , m_viewMode{ViewMode::Preview}
 {
 }
 

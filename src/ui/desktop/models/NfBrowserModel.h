@@ -44,7 +44,7 @@ class NfBrowserModel : public QAbstractListModel
         Q_OBJECT
 
 public:
-        enum class ImageDataRole {
+        enum ImageDataRole {
                 ThumbnailRole = Qt::DecorationRole,
                 PreviewRole = Qt::UserRole + 1
         };
@@ -55,8 +55,6 @@ public:
 
         void setPath(const std::filesystem::path& path);
         const std::filesystem::path& getPath() const;
-
-        QPixmap currentPreview() const;
 
         int rowCount(const QModelIndex& parent = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -71,6 +69,8 @@ protected slots:
         void onPreviewsLoaded(const std::vector<NfPhotoId> &ids);
 
 private:
+        QPixmap getPreview(const QModelIndex& index) const;
+
         NfContext* m_context;
         NfPhotoProvider *m_photoProvider;
         std::vector<NfPhoto> m_photos;
