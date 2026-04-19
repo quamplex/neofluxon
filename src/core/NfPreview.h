@@ -1,5 +1,5 @@
 /**
- * File name: NfImageDecoder.h
+ * File name: NfPreview.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,29 +21,35 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_IMAGE_DECODER_H
-#define NF_IMAGE_DECODER_H
+#ifndef NF_PREVIEW_H
+#define NF_PREVIEW_H
 
-#include "NfPhoto.h"
+#include "NfPhotoId.h"
 
 #include <memory>
 
 namespace NfCore {
 
-class NfPhoto;
-class NfImageData;
+class NfImage;
 
-class NfImageDecoder {
- public:
-        NfImageDecoder(const NfPhoto &photo);
-        ~NfImageDecoder();
-        std::unique_ptr<NfImageData> thumbnailImageData() const;
-        std::unique_ptr<NfImageData> previewImageData() const;
+class NfPreview {
+public:
+        explicit NfPreview(const NfPhotoId &id, std::unique_ptr<NfImage> img);
+        NfPreview(NfPreview&&) noexcept = default;
+        NfPreview& operator=(NfPreview&&) noexcept = default;
+        NfPreview(const NfPreview&) = delete;
+        NfPreview& operator=(const NfPreview&) = delete;
+
+        const NfPhotoId& id() const;
+        NfImage* getImage() const;
+
+        [[nodiscard]] std::unique_ptr<NfImage> releaseImage();
 
 private:
-        NfPhoto m_photo;
+        NfPhotoId m_photoId;
+        std::unique_ptr<NfImage> m_image;
 };
 
 } // namespace NfCore
 
-#endif // NF_IMAGE_DECODER_H
+#endif // NF_PERVIEW_H

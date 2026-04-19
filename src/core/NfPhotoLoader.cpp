@@ -25,6 +25,7 @@
 #include "NfPathScanner.h"
 #include "NfImage.h"
 #include "NfThumbnailTask.h"
+#include "NfPreviewTask.h"
 #include "NfLogger.h"
 
 namespace NfCore {
@@ -43,7 +44,7 @@ NfPhotoLoader::~NfPhotoLoader()
 void NfPhotoLoader::setPath(const std::filesystem::path &path)
 {
         {
-                std::scoped_lock lock(m_thumbnailsQueueMutex);
+                std::scoped_lock lock(m_queueMutex);
                 m_thumbnailsQueue.clear();
                 m_generationId++;
         }
@@ -61,7 +62,7 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfIma
 {
         auto task = std::make_unique<NfThumbnailTask>(photo, std::move(image));
         {
-                std::scoped_lock lock(m_thumbnailsQueueMutex);
+                std::scoped_lock lock(m_queueMutex);
                 task->setGenerationId(m_generationId);
         }
 
@@ -71,7 +72,7 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfIma
 
                 auto* thumbnailTask = dynamic_cast<NfThumbnailTask*>(result);
                 if (thumbnailTask) {
-                        std::scoped_lock lock(m_thumbnailsQueueMutex);
+                        std::scoped_lock lock(m_queueMutex);
 
                         // Check if the thumbnail belongs to the current generation.
                         // If not, ignore it.
@@ -86,6 +87,35 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfIma
         m_threadPool.submit(std::move(task));
 }
 
+void NfPhotoLoader::requestPreview(const NfPhoto &photo, std::unique_ptr<NfImage> image)
+{
+        auto task = std::make_unique<NfPreviewTask>(photo, std::move(image));
+        {
+                std::scoped_lock lock(m_queueMutex);
+                task->setGenerationId(m_generationId);
+        }
+
+        task->setResult([&](NfTask* result, NfTask::TaskStatus status) {
+                if (status != NfTask::TaskStatus::Success)
+                        return;
+
+                auto* previewTask = dynamic_cast<NfPreviewTask*>(result);
+                if (previewTask) {
+                        std::scoped_lock lock(m_queueMutex);
+
+                        // Check if the preview belongs to the current generation.
+                        // If not, ignore it.
+                        if (previewTask->generationId() != m_generationId)
+                                return;
+
+                        auto preview = previewTask->takePreview();
+                        m_previewsQueue.push_back(std::move(*preview));
+                }
+        });
+
+        m_threadPool.submit(std::move(task));
+}
+
 std::vector<NfPhoto> NfPhotoLoader::takePhotos()
 {
         return m_pathScanner->takePhotos();
@@ -93,8 +123,14 @@ std::vector<NfPhoto> NfPhotoLoader::takePhotos()
 
 std::vector<NfThumbnail> NfPhotoLoader::takeThumbnails()
 {
-        std::scoped_lock lock(m_thumbnailsQueueMutex);
+        std::scoped_lock lock(m_queueMutex);
         return std::move(m_thumbnailsQueue);
+}
+
+std::vector<NfThumbnail> NfPhotoLoader::takePreviews()
+{
+        std::scoped_lock lock(m_queueMutex);
+        return std::move(m_previewsQueue);
 }
 
 } // namespace NfCore

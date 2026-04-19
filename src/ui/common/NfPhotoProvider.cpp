@@ -40,7 +40,8 @@ NfPhotoProvider::NfPhotoProvider(NeofluxonCore *core,
                                  QObject* parent)
         : QObject(parent)
         , m_photoLoader{core->photoLoader()}
-        , m_cache{core->guiCache()}
+        , m_thumbnailCache{core->thubnailCache()}
+        , m_previewCache{core->previewCache()}
         , m_thumbnailPlaceholder{":/thumb_w160.jpg"}
 {
         auto timer = new QTimer(this);
@@ -66,7 +67,7 @@ const std::filesystem::path& NfPhotoProvider::getPath() const
 
 const QPixmap& NfPhotoProvider::getThumbnail(const NfPhoto &photo) const
 {
-        const NfImage* cacheImage = m_cache->get(photo.id());
+        const auto* cacheImage = m_thubnailCache->get(photo.id());
         if (cacheImage) {
                 const auto *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
                 if (thumbnail)
@@ -78,10 +79,25 @@ const QPixmap& NfPhotoProvider::getThumbnail(const NfPhoto &photo) const
         return m_thumbnailPlaceholder;
 }
 
+const QPixmap& NfPhotoProvider::getPreview(const NfPhoto &photo) const
+{
+        const auto* cacheImage = m_previewCache->get(photo.id());
+        if (cacheImage) {
+                const auto *thumbnail = dynamic_cast<const NfQtPixmap*>(cacheImage);
+                if (thumbnail)
+                        return thumbnail->pixmap();
+        }
+
+        m_photoLoader->requestPreview(photo, std::make_unique<NfQtPixmap>());
+
+        return m_thumbnailPlaceholder;
+}
+
 void NfPhotoProvider::onTimeout()
 {
         processNewPhotos();
         processThumbnails();
+        processPreviews();
 }
 
 void NfPhotoProvider::processNewPhotos()
@@ -109,6 +125,24 @@ void NfPhotoProvider::processThumbnails()
 
         if (!photoIds.empty())
                 emit thumbnailsLoaded(photoIds);
+}
+
+void NfPhotoProvider::processPreviews()
+{
+        auto previews = m_photoLoader->takePreviews();
+        if (previews.empty())
+                return;
+
+        std::vector<NfPhotoId> photoIds;
+        photoIds.reserve(previews.size());
+
+        for(auto &preview : previews) {
+                m_previewCache->add(preview.id(), preview.releaseImage());
+                photoIds.push_back(preview.id());
+        }
+
+        if (!photoIds.empty())
+                emit previewsLoaded(photoIds);
 }
 
 } // namespace NfUi

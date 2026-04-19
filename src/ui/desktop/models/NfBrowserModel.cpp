@@ -35,6 +35,7 @@ NfBrowserModel::NfBrowserModel(NfContext *ctx, QObject* parent)
         : QAbstractListModel(parent)
         , m_context{ctx}
         , m_photoProvider{new NfPhotoProvider(m_context->core(), this)}
+        , m_previewRange{5}
 {
         QObject::connect(m_photoProvider,
                          &NfPhotoProvider::photosLoaded,
@@ -44,6 +45,10 @@ NfBrowserModel::NfBrowserModel(NfContext *ctx, QObject* parent)
                          &NfPhotoProvider::thumbnailsLoaded,
                          this,
                          &NfBrowserModel::onThumbnailsLoaded);
+        QObject::connect(m_photoProvider,
+                         &NfPhotoProvider::previewsLoaded,
+                         this,
+                         &NfBrowserModel::onPreviewLoaded);
         QObject::connect(m_context->uiState->folderModeState(),
                          &NfUiFolderModeState::pathChanged,
                          this,
@@ -81,13 +86,36 @@ QVariant NfBrowserModel::data(const QModelIndex& index, int role) const
                 return QVariant();
 
         switch (role) {
-        case Qt::DecorationRole:
+        case ImageDataRole::ThumbnailRole:
                 return m_photoProvider->getThumbnail(m_photos[index.row()]);
+        case ImageDataRole::PreviewRole:
+                return getPreview(index);
         case Qt::DisplayRole:
-                return m_photoProvider->getThumbnail(m_photos[index.row()]);;
+                return QString("Photo %1").arg(index.row() + 1);
         default:
                 return QVariant();
         }
+}
+
+QPixmap NfBrowserModel::getPreview(const QModelIndex& index)
+{
+        if (!index.isValid() || index.row() >= m_photos.size())
+                return QPixmap();
+
+        auto centerRow = index.row();
+        const auto& previewImage = m_photoProvider->getPreview(m_photos[centerRow]);
+
+        int start = std::max(0, centerRow - m_previewRange);
+        int end   = std::min(static_cast<int>(m_photos.size()) - 1,
+                             centerRow + m_previewRange);
+
+        for (int i = start; i <= end; ++i) {
+                if (i == centerRow)
+                        continue;
+                m_photoProvider->requestPreview(m_photos[i]);
+        }
+
+        return previewImage;
 }
 
 void NfBrowserModel::onPhotosLoaded(const std::vector<NfPhoto> &newPhotos)
@@ -117,9 +145,21 @@ void NfBrowserModel::onThumbnailsLoaded(const std::vector<NfPhotoId> &ids)
                 if (auto it = m_itemsMap.find(id); it != m_itemsMap.end()) {
                         const auto& idx = it->second;
                         if (idx.isValid()/* && isIndexVisible(idx)*/)
-                                emit dataChanged(idx, idx, {Qt::DecorationRole});
+                                emit dataChanged(idx, idx, {ImageDataRole::ThumbnailRole});
                 }
         });
 }
+
+void NfBrowserModel::onPreviewLoaded(const std::vector<NfPhotoId> &ids)
+{
+        std::ranges::for_each(ids, [this](auto& id) {
+                if (auto it = m_itemsMap.find(id); it != m_itemsMap.end()) {
+                        const auto& idx = it->second;
+                        if (idx.isValid()/* && isIndexVisible(idx)*/)
+                                emit dataChanged(idx, idx, {ImageDataRole::PreviewRole});
+                }
+        });
+}
+
 
 } // namespace NfDesktop

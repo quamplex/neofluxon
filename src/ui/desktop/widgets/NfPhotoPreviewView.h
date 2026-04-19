@@ -52,6 +52,7 @@ protected:
 private:
         NfBrowserModel *m_model;
         QLabel *m_photoPreview;
+        QModelIndex m_previewIndex;
 };
 
 } // NfDesktop

@@ -62,10 +62,13 @@ public:
         const std::filesystem::path& getPath() const;
 
         const QPixmap& getThumbnail(const NfPhoto &photo) const;
+        const QPixmap& getPreview(const NfPhoto &photo) const;
+        void reqiestPreview(const NfPhoto &photo) const;
 
 signals:
         void photosLoaded(const std::vector<NfPhoto>& photos);
         void thumbnailsLoaded(const std::vector<NfPhotoId>& ids);
+        void previewsLoaded(const std::vector<NfPhotoId>& ids);
 
 private slots:
         void onTimeout();
@@ -75,7 +78,8 @@ private:
         void processThumbnails();
 
         NfPhotoLoader *m_photoLoader;
-        NfGuiCache *m_cache;
+        NfGuiCache *m_thumbnailCache;
+        NfGuiCache *m_previewCache;
         std::filesystem::path m_path;
         QPixmap m_thumbnailPlaceholder;
 };

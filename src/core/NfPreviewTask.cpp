@@ -1,5 +1,5 @@
 /**
- * File name: NfThumbnailTask.cpp
+ * File name: NfPreviewTask.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,18 +21,18 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "NfThumbnailTask.h"
+#include "NfPreviewTask.h"
 #include "NfImageDecoder.h"
 #include "NfImageData.h"
 #include "NfImage.h"
-#include "NfThumbnail.h"
+#include "NfPreview.h"
 
 #include <stdexcept>
 #include <iostream>
 
 namespace NfCore {
 
-NfThumbnailTask::NfThumbnailTask(const NfPhoto& photo,
+NfPreviewTask::NfPreviewTask(const NfPhoto& photo,
                                  std::unique_ptr<NfImage> imageContainer)
         : m_generationId{0}
         , m_photo{photo}
@@ -40,19 +40,19 @@ NfThumbnailTask::NfThumbnailTask(const NfPhoto& photo,
 {
 }
 
-NfThumbnailTask::~NfThumbnailTask() = default;
+NfPreviewTask::~NfPreviewTask() = default;
 
-void NfThumbnailTask::setGenerationId(uint64_t generationId)
+void NfPreviewTask::setGenerationId(uint64_t generationId)
 {
         m_generationId = generationId;
 }
 
-uint64_t NfThumbnailTask::generationId() const
+uint64_t NfPreviewTask::generationId() const
 {
         return m_generationId;
 }
 
-NfThumbnailTask::TaskStatus NfThumbnailTask::execute()
+NfPreviewTask::TaskStatus NfPreviewTask::execute()
 {
         NfImageDecoder decoder(m_photo);
         auto image = decoder.previewImageData();
@@ -63,9 +63,9 @@ NfThumbnailTask::TaskStatus NfThumbnailTask::execute()
         return TaskStatus::Success;
 }
 
-std::unique_ptr<NfThumbnail> NfThumbnailTask::takeThumbnail()
+std::unique_ptr<NfPreview> NfPreviewTask::takePreview()
 {
-        return std::make_unique<NfThumbnail>(m_photo.id(), std::move(m_imageContainer));
+        return std::make_unique<NfPreview>(m_photo.id(), std::move(m_imageContainer));
 }
 
 } // namespace NfCore

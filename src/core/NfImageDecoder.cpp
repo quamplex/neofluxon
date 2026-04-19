@@ -70,5 +70,42 @@ std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData() const
         return imageData;
 }
 
+std::unique_ptr<NfImageData> NfImageDecoder::previewImageData() const
+{
+        auto rawProcessor = std::make_unique<LibRaw>();
+        if (rawProcessor->open_file(m_photo.path().string().c_str()) != LIBRAW_SUCCESS)
+                return nullptr;
+
+        auto &thumbList = rawProcessor->imgdata.thumbs_list;
+        int count = thumbList.thumbcount;
+
+        if (count == 0) return nullptr;
+
+        // Find the best preview (usually the largest/last one)
+        // Often, index 0 is a tiny thumb, and higher indices are previews.
+        int bestIndex = 0;
+        int maxWidth = 0;
+        for (int i = 0; i < count; ++i) {
+                if (thumbList.theader[i].twidth > maxWidth) {
+                        maxWidth = thumbList.theader[i].twidth;
+                        bestIndex = i;
+                }
+        }
+
+        // Unpack the specific index we found
+        if (rawProcessor->unpack_thumb_ex(bestIndex) != LIBRAW_SUCCESS) {
+                return nullptr;
+        }
+
+        auto &t = rawProcessor->imgdata.thumbnail;
+        if (t.tformat != LIBRAW_THUMBNAIL_JPEG || t.tlength == 0)
+                return nullptr;
+
+        auto imageData = std::make_unique<NfImageData>();
+        imageData->setData(reinterpret_cast<const unsigned char*>(t.thumb), t.tlength);
+
+        return imageData;
+}
+
 } // namespace NfCore
 

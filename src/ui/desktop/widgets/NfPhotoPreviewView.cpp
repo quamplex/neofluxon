@@ -70,7 +70,9 @@ void NfPhotoPreviewView::setPhotoIndex(const QModelIndex& index)
                 return;
         }
 
-        m_photoPreview->setPixmap(m_model->data(index, Qt::DisplayRole));
+        m_previewIndex = index;
+        auto role = NfBrowserModel::ImageDataRole::PreviewRole;
+        m_photoPreview->setPixmap(m_model->data(index, role));
 }
 
 void NfPhotoPreviewView::connectModel()
@@ -83,23 +85,40 @@ void NfPhotoPreviewView::connectModel()
                          this,
                          &NfPhotoPreviewView::updateView);
         QObject::connect(m_model,
-                         &NfBrowserModel::currentPhotoChanged,
+                         &NfBrowserModel::previewReady,
                          this,
                          &NfPhotoPreviewView::updateView);
         QObject::connect(m_model,
-                         &NfBrowserModel::currentPreviewReady,
+                         &QAbstractItemModel::dataChanged,
                          this,
-                         &NfPhotoPreviewView::updateView);
+                         &NfPhotoPreviewView::onDataChanged);
 }
 
-void NfPhotoPreviewView::updateView()
+void NfPhotoPreviewView::onDataChanged(const QModelIndex &topLeft,
+                                       const QModelIndex &bottomRight,
+                                       const QVector<int> &roles)
+{
+        if (!roles.contains(ImageDataRole::PreviewRole) || !m_previewIndex.isValid())
+                return;
+
+        for (int row = topLeft.row(); row <= bottomRight.row(); ++row) {
+                QModelIndex idx = m_model->index(row, topLeft.column());
+                if (idx == m_previewIndex) {
+                        updatePreview(idx);
+                        break;
+                }
+        }
+}
+
+void NfPhotoPreviewView::updateView(const QModelIndex &index)
 {
         if (!m_model) {
                 m_photoPreview->clear();
                 return;
         }
 
-        m_photoPreview->setPixmap();
+        auto role = NfBrowserModel::ImageDataRole::PreviewRole;
+        m_photoPreview->setPixmap(m_model->data(index, role));
 }
 
 } // namespace NfDesktop

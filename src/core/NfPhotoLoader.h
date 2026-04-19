@@ -26,6 +26,7 @@
 
 #include "NfPhoto.h"
 #include "NfThumbnail.h"
+#include "NfPreview.h"
 #include "NfForegroundThreadPool.h"
 
 #include <filesystem>
@@ -47,9 +48,11 @@ public:
         const std::filesystem::path& getPath() const;
 
         void requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfImage> image);
+        void requestPreview(const NfPhoto &photo, std::unique_ptr<NfImage> image);
 
         std::vector<NfPhoto> takePhotos();
         std::vector<NfThumbnail> takeThumbnails();
+        std::vector<NfPreview> takePreviews();
 
  protected:
 
@@ -57,9 +60,10 @@ public:
         std::unique_ptr<NfPathScanner> m_pathScanner;
         std::filesystem::path m_path;
         NfForegroundThreadPool m_threadPool;
-        std::mutex m_thumbnailsQueueMutex;
+        std::mutex m_queueMutex;
         uint64_t m_generationId;
         std::vector<NfThumbnail> m_thumbnailsQueue;
+        std::vector<NfPreview> m_previewsQueue;
 };
 
 } // namespace NfCore

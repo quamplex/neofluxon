@@ -1,5 +1,5 @@
 /**
- * File name: NfImageDecoder.h
+ * File name: NfPreviewTask.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,29 +21,42 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_IMAGE_DECODER_H
-#define NF_IMAGE_DECODER_H
+#ifndef NF_PREVIEW_H
+#define NF_PREVIEW_H
 
+#include "NfTask.h"
 #include "NfPhoto.h"
 
 #include <memory>
+#include <string>
+#include <cstdint>
 
 namespace NfCore {
 
-class NfPhoto;
-class NfImageData;
+class NfImage;
+class NfPreview;
 
-class NfImageDecoder {
- public:
-        NfImageDecoder(const NfPhoto &photo);
-        ~NfImageDecoder();
-        std::unique_ptr<NfImageData> thumbnailImageData() const;
-        std::unique_ptr<NfImageData> previewImageData() const;
+class NfPreviewTask : public NfTask {
+public:
+        NfPreviewTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
+        ~NfPreviewTask();
+
+        void setGenerationId(uint64_t generationId);
+        uint64_t generationId() const;
+
+        TaskStatus execute() override;
+
+        std::unique_ptr<NfPreview> takePreview();
+
+        [[nodiscard]] std::string getErrorMessage() const { return m_errorMessage; }
 
 private:
+        uint64_t m_generationId;
         NfPhoto m_photo;
+        std::unique_ptr<NfImage> m_imageContainer;
+        std::string m_errorMessage;
 };
 
 } // namespace NfCore
 
-#endif // NF_IMAGE_DECODER_H
+#endif // NF_PREVIEW_H

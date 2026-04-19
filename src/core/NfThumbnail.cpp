@@ -1,5 +1,5 @@
 /**
- * File name: NfGuiThumbnail.cpp
+ * File name: NfThumbnail.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor

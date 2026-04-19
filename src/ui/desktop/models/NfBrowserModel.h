@@ -44,6 +44,11 @@ class NfBrowserModel : public QAbstractListModel
         Q_OBJECT
 
 public:
+        enum class ImageDataRole {
+                ThumbnailRole = Qt::DecorationRole,
+                PreviewRole = Qt::UserRole + 1
+        };
+
         explicit NfBrowserModel(NfContext *ctx,
                                 QObject* parent = nullptr);
         ~NfBrowserModel() = default;
@@ -58,12 +63,12 @@ public:
 
 signals:
         void modelUpdated();
-        void currentPhotoChanged(const QModelIndex& index);
-        void currentPreviewReady(const QModelIndex& index);
+        void previewReady(const QModelIndex& index);
 
 protected slots:
         void onPhotosLoaded(const std::vector<NfPhoto> &newPhotos);
         void onThumbnailsLoaded(const std::vector<NfPhotoId> &ids);
+        void onPreviewsLoaded(const std::vector<NfPhotoId> &ids);
 
 private:
         NfContext* m_context;
@@ -71,6 +76,7 @@ private:
         std::vector<NfPhoto> m_photos;
         std::unordered_map<NfPhotoId, QPersistentModelIndex> m_itemsMap;
         std::filesystem::path m_path;
+        const int m_previewRange;
 };
 
 } // namespace NfDesktop

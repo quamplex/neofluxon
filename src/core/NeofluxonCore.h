@@ -41,11 +41,13 @@ public:
         NeofluxonCore& operator=(NeofluxonCore&&) noexcept = default;
 
         NfPhotoLoader* photoLoader() const;
-        NfGuiCache* guiCache() const;
+        NfGuiCache* thumbnailCache() const;
+        NfGuiCache* previewCache() const;
 
 private:
         std::unique_ptr<NfPhotoLoader> m_photoLoader;
-        std::unique_ptr<NfGuiCache> m_guiCache;
+        std::unique_ptr<NfGuiCache> m_thumbnailCache;
+        std::unique_ptr<NfGuiCache> m_previewCache;
 };
 
 } // namespace NfCore
