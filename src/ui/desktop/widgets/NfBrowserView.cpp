@@ -115,4 +115,29 @@ void NfBrowserView::mouseDoubleClickEvent(QMouseEvent* event)
         QListView::mouseDoubleClickEvent(event);
 }
 
+void NfBrowserView::keyPressEvent(QKeyEvent *event)
+{
+        QListView::keyPressEvent(event);
+
+        switch (event->key()) {
+        case Qt::Key_Left:
+        case Qt::Key_Right:
+        case Qt::Key_Up:
+        case Qt::Key_Down:
+        case Qt::Key_Home:
+        case Qt::Key_End:
+        case Qt::Key_PageUp:
+        case Qt::Key_PageDown:
+                {
+                        auto index = currentIndex();
+                        if (index.isValid())
+                                scrollTo(index, QAbstractItemView::PositionAtCenter);
+                        event->accept();
+                        break;
+                }
+        default:
+                break;
+        }
+}
+
 } // namespace NfDesktop

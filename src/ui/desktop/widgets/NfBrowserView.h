@@ -37,36 +37,36 @@ class NfBrowserView : public QListView
     Q_OBJECT
 
 public:
-    enum class LayoutMode
-    {
-        GridView,
-        FilmstripView
-    };
+        enum class LayoutMode {
+                        GridView,
+                        FilmstripView
+        };
 
-    explicit NfBrowserView(QWidget* parent = nullptr);
+        explicit NfBrowserView(QWidget* parent = nullptr);
 
-    void setLayoutMode(LayoutMode mode);
-    LayoutMode layoutMode() const;
+        void setLayoutMode(LayoutMode mode);
+        LayoutMode layoutMode() const;
 
-    void setThumbnailSize(int size);
-    int thumbnailSize() const;
+        void setThumbnailSize(int size);
+        int thumbnailSize() const;
 
 signals:
-    void photoActivated(const QModelIndex& index);
-    void photoHovered(const QModelIndex& index);
+        void photoActivated(const QModelIndex& index);
+        void photoHovered(const QModelIndex& index);
 
 protected:
-    void resizeEvent(QResizeEvent* event) override;
-    void wheelEvent(QWheelEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseDoubleClickEvent(QMouseEvent* event) override;
+        void resizeEvent(QResizeEvent* event) override;
+        void wheelEvent(QWheelEvent* event) override;
+        void mouseMoveEvent(QMouseEvent* event) override;
+        void mouseDoubleClickEvent(QMouseEvent* event) override;
+        void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    void updateLayout();
+        void updateLayout();
 
 private:
-    LayoutMode m_layoutMode;
-    int m_thumbnailSize;
+        LayoutMode m_layoutMode;
+        int m_thumbnailSize;
 };
 
 } // namespace NfDesktop

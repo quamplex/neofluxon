@@ -30,6 +30,7 @@
 #include "NfPhotoPreviewView.h"
 
 #include <QVBoxLayout>
+#include <QKeyEvent>
 
 using namespace NfUi;
 
@@ -85,7 +86,8 @@ void NfFolderView::showPreviewView()
 
         if (!m_photoPreviewView) {
                 m_photoPreviewView = new NfPhotoPreviewView(m_model->browser(), this);
-                QObject::connect(m_browserView, &QListView::clicked,
+                QObject::connect(m_browserView->selectionModel(),
+                                 &QItemSelectionModel::currentChanged,
                                  m_photoPreviewView,
                                  &NfPhotoPreviewView::setPhotoIndex);
 
@@ -110,6 +112,33 @@ void NfFolderView::updateView()
         case NfUiFolderModeState::ViewMode::Grid:
         default:
                 showGridView();
+                break;
+        }
+}
+
+void NfFolderView::keyPressEvent(QKeyEvent *event)
+{
+        switch (event->key()) {
+        case Qt::Key_Left:
+        case Qt::Key_Right:
+        case Qt::Key_Up:
+        case Qt::Key_Down:
+        case Qt::Key_Home:
+        case Qt::Key_End:
+        case Qt::Key_PageUp:
+        case Qt::Key_PageDown:
+                {
+                        m_browserView->setFocus();
+
+                        // Forward the event to the browser view.
+                        QCoreApplication::sendEvent(m_browserView, event);
+
+                        event->accept();
+                        break;
+                }
+
+        default:
+                QWidget::keyPressEvent(event);
                 break;
         }
 }

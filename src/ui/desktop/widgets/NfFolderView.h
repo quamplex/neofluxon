@@ -57,6 +57,7 @@ protected slots:
 protected:
         void showGridView();
         void showPreviewView();
+        void keyPressEvent(QKeyEvent *event) override;
 
 private:
         NfFolderContext m_context;
