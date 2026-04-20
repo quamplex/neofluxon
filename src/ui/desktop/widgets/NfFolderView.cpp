@@ -58,6 +58,10 @@ NfFolderView::NfFolderView(const NfFolderContext &ctx,
                          &NfUiFolderModeState::viewModeChanged,
                          this,
                          &NfFolderView::updateView);
+        QObject::connect(m_browserView, &QListView::doubleClicked,
+                         [this](const QModelIndex &index) {
+                                 m_state->setViewMode(NfUiFolderModeState::ViewMode::Preview);
+                         });
 
         updateView();
 }
@@ -91,6 +95,9 @@ void NfFolderView::showPreviewView()
                 // Index 0 (Preview) gets more space, Index 1 (Filmstrip) gets less
                 m_mainLayout->setStretch(0, 7);
                 m_mainLayout->setStretch(1, 3);
+
+                m_photoPreviewView->setPhotoIndex(m_browserView->currentIndex());
+                m_browserView->scrollTo(m_browserView->currentIndex(), QAbstractItemView::PositionAtCenter);
         }
 }
 

@@ -39,7 +39,7 @@ NfBrowserView::NfBrowserView(QWidget* parent)
 
         setMouseTracking(true);
 
-        setSelectionMode(QAbstractItemView::ExtendedSelection);
+        setSelectionMode(QAbstractItemView::SingleSelection);
 
         setUniformItemSizes(true);
         setSpacing(0);
