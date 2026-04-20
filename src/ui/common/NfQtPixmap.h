@@ -39,15 +39,18 @@ namespace NfUi {
 
 class NfQtPixmap : public NfImage {
 public:
-    NfQtPixmap() = default;
-    ~NfQtPixmap() override = default;
+        NfQtPixmap() = default;
+        ~NfQtPixmap() override = default;
 
-    void setData(std::unique_ptr<NfImageData> data) override;
+        void setData(std::unique_ptr<NfImageData> data) override;
     const QPixmap& pixmap() const;
-    std::size_t size() const override;
+        std::size_t size() const override;
+
+protected:
+        void fixOrientation(QImage &img, int orientation);
 
 private:
-    QPixmap m_pixmapImage;
+        QPixmap m_pixmapImage;
 };
 
 } // namespace NfUi

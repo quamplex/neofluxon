@@ -118,6 +118,16 @@ int NfImageData::channels() const
         return m_channels;
 }
 
+void NfImageData::setOrientation(int orientation)
+{
+        m_orientation = orientation;
+}
+
+int NfImageData::orientation() const
+{
+        return m_orientation;
+}
+
 NfImageData::ImageFormat NfImageData::format() const
 {
         return ImageFormat::Format_ARGB32_Premultiplied;

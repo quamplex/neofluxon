@@ -54,16 +54,50 @@ void NfQtPixmap::setData(std::unique_ptr<NfImageData> data)
 
         //const int bytesPerLine = data->width() * data->channels();
         QImage img;
-        img.loadFromData(data->data(), data->size());
-        //data->width(),
-        //           data->height(),
-        //           bytesPerLine,
-        //           fmt);
+        auto res = img.loadFromData(data->data(), data->size());
+        if (res) {
+                if (data->orientation() > 0)
+                        fixOrientation(img, data->orientation());
+                m_pixmapImage = QPixmap::fromImage(img.copy());
+                NfImage::setData(std::move(data));
+        }
 
-        // Deep copy to detach from NfImageData memory
-        m_pixmapImage = QPixmap::fromImage(img.copy());
+}
 
-        NfImage::setData(std::move(data));
+void NfQtPixmap::fixOrientation(QImage &img, int orientation)
+{
+        QTransform transform;
+
+        switch (orientation) {
+        case 1: // Vertical Flip
+                transform.scale(1, -1);
+                break;
+        case 2: // Horizontal Flip
+                transform.scale(-1, 1);
+                break;
+        case 3: // 180° Rotation
+                transform.rotate(180);
+                break;
+        case 4: // 90° CW + Vertical Flip
+                transform.rotate(90);
+                transform.scale(1, -1);
+                break;
+        case 5: // 90° CCW (270° CW)
+                transform.rotate(270);
+                break;
+        case 6: // 90° CW
+                transform.rotate(90);
+                break;
+        case 7: // 90° CW + Horizontal Flip
+                transform.rotate(90);
+                transform.scale(-1, 1);
+                break;
+        default: // 0 is normal
+                break;
+        }
+
+        if (!transform.isIdentity())
+                img = img.transformed(transform, Qt::SmoothTransformation);
 }
 
 const QPixmap& NfQtPixmap::pixmap() const
@@ -77,8 +111,8 @@ std::size_t NfQtPixmap::size() const
                 return 0;
 
         return static_cast<std::size_t>(m_pixmapImage.width()) *
-                static_cast<std::size_t>(m_pixmapImage.height()) *
-                static_cast<std::size_t>(m_pixmapImage.depth()) / 8;
+               static_cast<std::size_t>(m_pixmapImage.height()) *
+               static_cast<std::size_t>(m_pixmapImage.depth()) / 8;
 }
 
 } // namespace NfUi

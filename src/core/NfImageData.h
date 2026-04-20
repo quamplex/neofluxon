@@ -61,6 +61,8 @@ public:
         int height() const;
         void setChannels(int c);
         int channels() const;
+        void setOrientation(int orientation);
+        int orientation() const;
         ImageFormat format() const;
 
 private:
@@ -68,6 +70,7 @@ private:
         int m_width;
         int m_height;
         int m_channels;
+        int m_orientation;
 };
 
 } // namespace NfCore

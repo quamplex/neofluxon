@@ -65,7 +65,7 @@ std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData() const
 
         auto imageData = std::make_unique<NfImageData>();
         imageData->setData(reinterpret_cast<const unsigned char*>(t.thumb), t.tlength);
-        NF_LOG_DEBUG("setData len: " << t.tlength);
+        imageData->setOrientation(rawProcessor->imgdata.sizes.flip);
 
         return imageData;
 }
@@ -104,6 +104,7 @@ std::unique_ptr<NfImageData> NfImageDecoder::previewImageData() const
 
         auto imageData = std::make_unique<NfImageData>();
         imageData->setData(reinterpret_cast<const unsigned char*>(t.thumb), t.tlength);
+        imageData->setOrientation(rawProcessor->imgdata.sizes.flip);
 
         return imageData;
 }
