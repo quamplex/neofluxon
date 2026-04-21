@@ -24,6 +24,7 @@
 #include "NfGuiCache.h"
 //#include "NfDiskCache.h"
 #include "NfImage.h"
+#include "NfLogger.h"
 
 namespace NfCore {
 
@@ -138,6 +139,7 @@ void NfGuiCache::evictUntilFits(std::size_t requiredSize)
                         // Save to disk if available, otherwise discard
                         //if (m_diskCache)
                         //        m_diskCache->add(oldestId, std::move(it->second));
+                        NF_LOG_DEBUG("photo evicted: " << it->first.value());
 
                         m_memoryCache.erase(it);
                         m_currentSizeBytes -= evictedSize;

@@ -26,6 +26,8 @@
 
 #include "NfPhoto.h"
 
+#include <libraw/libraw_types.h>
+
 #include <memory>
 
 namespace NfCore {
@@ -39,6 +41,11 @@ class NfImageDecoder {
         ~NfImageDecoder();
         std::unique_ptr<NfImageData> thumbnailImageData() const;
         std::unique_ptr<NfImageData> previewImageData() const;
+
+protected:
+        static int selectBestForTarget(const libraw_thumbnail_list_t& thumbList, int targetSize);
+        static int selectThumbnail(const libraw_thumbnail_list_t& thumbList);
+        static int selectPreview(const libraw_thumbnail_list_t& thumbList);
 
 private:
         NfPhoto m_photo;

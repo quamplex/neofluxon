@@ -26,7 +26,7 @@
 #include "NfImage.h"
 #include "NfLogger.h"
 
-#include "libraw/libraw.h"
+#include <libraw/libraw.h>
 
 namespace NfCore {
 
@@ -45,23 +45,29 @@ std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData() const
                 return nullptr;
         }
 
-        auto &thumbList = rawProcessor->imgdata.thumbs_list;
-        int count = thumbList.thumbcount;
-        NF_LOG_DEBUG("thumbList.thumbcount: " << count);
+        int bestIndex = selectThumbnail(rawProcessor->imgdata.thumbs_list);
 
-        if (count == 0)
+        if (bestIndex < 0) {
+                // TODO: generate thumbnail from the raw image.
+                NF_LOG_ERROR("no thumbnail");
                 return nullptr;
+        }
 
-        // TODO
-        if (rawProcessor->unpack_thumb_ex(0) != LIBRAW_SUCCESS)
+        NF_LOG_ERROR("unpack thumbnail at index: " << bestIndex);
+        if (rawProcessor->unpack_thumb_ex(bestIndex) != LIBRAW_SUCCESS) {
+                NF_LOG_ERROR("can't unpack thumbnail at index: " << bestIndex);
                 return nullptr;
+        }
 
         NF_LOG_DEBUG("thumbnail unpack: OK");
 
         auto &t = rawProcessor->imgdata.thumbnail;
 
-        if (t.tformat != LIBRAW_THUMBNAIL_JPEG || t.tlength == 0)
+        if (t.tformat != LIBRAW_THUMBNAIL_JPEG || t.tlength == 0) {
+                NF_LOG_ERROR("thumbnail is not JPEG");
+                // TODO: generate thumbnail from the raw image.
                 return nullptr;
+        }
 
         auto imageData = std::make_unique<NfImageData>();
         imageData->setData(reinterpret_cast<const unsigned char*>(t.thumb), t.tlength);
@@ -73,40 +79,79 @@ std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData() const
 std::unique_ptr<NfImageData> NfImageDecoder::previewImageData() const
 {
         auto rawProcessor = std::make_unique<LibRaw>();
-        if (rawProcessor->open_file(m_photo.path().string().c_str()) != LIBRAW_SUCCESS)
+        if (rawProcessor->open_file(m_photo.path().string().c_str()) != LIBRAW_SUCCESS) {
+                NF_LOG_ERROR("can't open file: " << m_photo.path());
                 return nullptr;
-
-        auto &thumbList = rawProcessor->imgdata.thumbs_list;
-        int count = thumbList.thumbcount;
-
-        if (count == 0)
-                return nullptr;
-
-        // Find the best preview (usually the largest/last one)
-        // Often, index 0 is a tiny thumb, and higher indices are previews.
-        int bestIndex = 0;
-        int maxWidth = 0;
-        for (int i = 0; i < count; ++i) {
-                if (thumbList.thumblist[i].twidth > maxWidth) {
-                        maxWidth = thumbList.thumblist[i].twidth;
-                        bestIndex = i;
-                }
         }
 
-        // Unpack the specific index we found
+        auto bestIndex = selectPreview(rawProcessor->imgdata.thumbs_list);
+        if (bestIndex < 0) {
+                NF_LOG_ERROR("can't find preview");
+                // TODO: generate preview from the raw image.
+                return nullptr;
+        }
+
+        NF_LOG_ERROR("unpack preview at index: " << bestIndex);
         if (rawProcessor->unpack_thumb_ex(bestIndex) != LIBRAW_SUCCESS) {
+                NF_LOG_ERROR("can't unpack the preview image");
                 return nullptr;
         }
+
+        NF_LOG_DEBUG("preview unpack: OK");
 
         auto &t = rawProcessor->imgdata.thumbnail;
-        if (t.tformat != LIBRAW_THUMBNAIL_JPEG || t.tlength == 0)
+        if (t.tformat != LIBRAW_THUMBNAIL_JPEG || t.tlength == 0) {
+                NF_LOG_ERROR("preview image is not JPEG");
+                // TODO: generate preview from the raw image.
                 return nullptr;
+        }
 
         auto imageData = std::make_unique<NfImageData>();
         imageData->setData(reinterpret_cast<const unsigned char*>(t.thumb), t.tlength);
         imageData->setOrientation(rawProcessor->imgdata.sizes.flip);
 
         return imageData;
+}
+
+int NfImageDecoder::selectThumbnail(const libraw_thumbnail_list_t& list)
+{
+        return selectBestForTarget(list, 256);
+}
+
+int NfImageDecoder::selectPreview(const libraw_thumbnail_list_t& list)
+{
+        return selectBestForTarget(list, 1600);
+}
+
+int NfImageDecoder::selectBestForTarget(const libraw_thumbnail_list_t& list,
+                                        int targetSize)
+{
+        int bestIndex = -1;
+        int minDistance = INT_MAX;
+
+        NF_LOG_DEBUG("target: " << targetSize);
+
+        for (int i = 0; i < list.thumbcount; i++) {
+                int w = list.thumblist[i].twidth;
+                int h = list.thumblist[i].theight;
+
+                NF_LOG_DEBUG("[" << i << "][" << w << "x" << h << "]");
+
+                if (w <= 0 || h <= 0)
+                        continue;
+
+                int size = std::max(w, h);
+                int distance = std::abs(size - targetSize);
+
+                if (distance < minDistance) {
+                        minDistance = distance;
+                        bestIndex = i;
+                }
+        }
+
+        NF_LOG_DEBUG("Best index:" << bestIndex);
+
+    return bestIndex;
 }
 
 } // namespace NfCore

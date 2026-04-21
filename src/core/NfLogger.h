@@ -96,22 +96,22 @@ class NfLogger {
 #else
 #define NF_LOG_INFO(msg) \
     NfCore::NfLogger::log(NfCore::NfLogger::LogLevel::Info, \
-       ([context = __PRETTY_FUNCTION__]() {      \
+       ([&, context = __PRETTY_FUNCTION__]() {        \
             std::ostringstream oss; \
             oss << "[" << NEOFLUXON_NAME << "] " \
                 << "[" << std::this_thread::get_id() << "] " \
-                << context_fnc << " " \
+                << context << " " \
                 << msg; \
             return oss.str(); \
         })() \
     )
 #define NF_LOG_ERROR(msg) \
     NfCore::NfLogger::log(NfCore::NfLogger::LogLevel::Error, \
-        ([context = __PRETTY_FUNCTION__]() { \
+      ([&, context = __PRETTY_FUNCTION__]() {        \
             std::ostringstream oss; \
             oss << "[" << NEOFLUXON_NAME << "] " \
                 << "[" << std::this_thread::get_id() << "] " \
-                << context_fnc << " " \
+                << context << " " \
                 << msg; \
             return oss.str(); \
         })() \
