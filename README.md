@@ -25,20 +25,41 @@ import → culling → archive
 
 The second stage will be non-destructive editing and export.
 
-Currently, there is no release yet; the code is in an experimental/development stage.
-You can check the repository tags. At the moment, it can browse the file system and display thumbnails for CR3 RAW files.
+### Current Status
 
-It is developed in C++ and Qt. The code is split into two parts:
-the core (which is pure C++ and not dependent on Qt), and the UI part written in Qt (C++).
+The project is in development/experimental stage.
+No official releases are available yet.
+ See repository tags for current development snapshots.
 
-Neofluxon is free software (GPLv3).
+### What it can do now
 
-## Dependencies
+- File system browsing for RAW photos
+- Display thumbnails and previews (grid layout or filmstrip + preview)
+- Keyboard navigation for previewing images
+- Supported RAW formats:
+    * Canon (`.cr2`, `.cr3`)
+    * Nikon (`.nef`)
+    * Fujifilm (`.raf`)
+    * Adobe Digital Negative (`.dng`)
+    * Non-RAW formats like JPEG and PNG are not supported yet (development in progress)
 
-- Qt6
-- LibRaw (https://www.libraw.org)
+### Technical Overview & Licensing
 
-### Build
+Neofluxon is developed in **C++** and **Qt**. The codebase is architecturally divided into two primary layers:
 
-- CMake ≥ 3.25
-- C++23
+* **Core:** Written in pure C++, maintaining zero dependency on the GUI framework.
+* **UI:** The graphical interface layer implemented using Qt (C++).
+
+### Free Software
+
+Neofluxon is [Free Software](https://www.gnu.org/philosophy/free-sw.en.html), released under the **GPLv3** license. The term "free" refers to freedom—users are free to run, study, modify, and distribute the software. It does not refer to price.
+
+### Dependencies
+
+* **Qt6**
+* **LibRaw** ([https://www.libraw.org](https://www.libraw.org))
+
+### Build Requirements
+
+* **CMake** ≥ 3.25
+* **C++23**
