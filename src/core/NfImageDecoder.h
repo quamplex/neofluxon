@@ -25,6 +25,7 @@
 #define NF_IMAGE_DECODER_H
 
 #include "NfPhoto.h"
+#include "NfImageData.h"
 
 #include <libraw/libraw_types.h>
 
@@ -33,7 +34,6 @@
 namespace NfCore {
 
 class NfPhoto;
-class NfImageData;
 
 class NfImageDecoder {
  public:
@@ -46,6 +46,8 @@ protected:
         static int selectBestForTarget(const libraw_thumbnail_list_t& thumbList, int targetSize);
         static int selectThumbnail(const libraw_thumbnail_list_t& thumbList);
         static int selectPreview(const libraw_thumbnail_list_t& thumbList);
+        static bool isSupportedFormat(int format);
+        static NfImageData::ImageFormat libRawToNfImageFormat(int format);
 
 private:
         NfPhoto m_photo;

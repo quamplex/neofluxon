@@ -23,6 +23,7 @@
 
 #include "NfQtPixmap.h"
 #include "core/NfImageData.h"
+#include "core/NfLogger.h"
 
 using namespace NfCore;
 
@@ -30,38 +31,45 @@ namespace NfUi {
 
 void NfQtPixmap::setData(std::unique_ptr<NfImageData> data)
 {
-        //if (data->empty() || data->width() <= 0 || data->height() <= 0) {
-        //        m_pixmapImage = QPixmap();
-        //        return;
-        //}
+        m_pixmapImage = QPixmap();
 
-        /*QImage::Format fmt = QImage::Format_Invalid;
-
-        switch (data->format()) {
-        case NfImageData::ImageFormat::Format_RGB888:
-                fmt = QImage::Format_RGB888;
-                break;
-        case NfImageData::ImageFormat::Format_RGBA8888:
-                fmt = QImage::Format_RGBA8888;
-                break;
-        case NfImageData::ImageFormat::Format_ARGB32_Premultiplied:
-                fmt = QImage::Format_ARGB32_Premultiplied;
-                break;
-        default:
-                m_pixmapImage = QPixmap();
+        if (!data || data->empty() || data->width() <= 0 || data->height() <= 0)
                 return;
-                }*/
 
-        //const int bytesPerLine = data->width() * data->channels();
         QImage img;
-        auto res = img.loadFromData(data->data(), data->size());
-        if (res) {
-                if (data->orientation() > 0)
-                        fixOrientation(img, data->orientation());
-                m_pixmapImage = QPixmap::fromImage(img.copy());
-                NfImage::setData(std::move(data));
+        const auto* rawPtr = reinterpret_cast<const uchar*>(data->data());
+        bool isLoaded = false;
+
+        if (data->format() == NfImageData::ImageFormat::Format_JPEG) {
+                isLoaded = img.loadFromData(rawPtr, data->size());
+        } else {
+                auto qtFmt = QImage::Format_Invalid;
+                switch (data->format()) {
+                case NfImageData::ImageFormat::Format_RGB888:
+                        qtFmt = QImage::Format_RGB888;
+                        break;
+                case NfImageData::ImageFormat::Format_RGBA8888:
+                        qtFmt = QImage::Format_RGBA8888;
+                        break;
+                case NfImageData::ImageFormat::Format_ARGB32_Premultiplied:
+                        qtFmt = QImage::Format_ARGB32_Premultiplied;
+                        break;
+                default:
+                        return;
+                }
+
+                img = QImage(rawPtr, data->width(), data->height(), qtFmt);
+                isLoaded = !img.isNull();
         }
 
+        if (!isLoaded)
+                return;
+
+        if (data->orientation() > 0)
+                fixOrientation(img, data->orientation());
+
+        m_pixmapImage = QPixmap::fromImage(img.copy());
+        NfImage::setData(std::move(data));
 }
 
 void NfQtPixmap::fixOrientation(QImage &img, int orientation)

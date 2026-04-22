@@ -34,6 +34,9 @@ class NfImageData
 public:
 
         enum class ImageFormat : int {
+                Format_Unknown,
+                Format_JPEG,
+                Format_BITMAP,
                 Format_Invalid,
                 Format_RGB888,
                 Format_RGBA8888,
@@ -63,6 +66,7 @@ public:
         int channels() const;
         void setOrientation(int orientation);
         int orientation() const;
+        void setFormat(ImageFormat format);
         ImageFormat format() const;
 
 private:
@@ -71,6 +75,7 @@ private:
         int m_height;
         int m_channels;
         int m_orientation;
+        ImageFormat m_format;
 };
 
 } // namespace NfCore

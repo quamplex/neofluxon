@@ -55,11 +55,11 @@ uint64_t NfThumbnailTask::generationId() const
 NfThumbnailTask::TaskStatus NfThumbnailTask::execute()
 {
         NfImageDecoder decoder(m_photo);
-        auto image = decoder.thumbnailImageData();
-        if (!image)
+        auto imageData = decoder.thumbnailImageData();
+        if (!imageData)
                 return TaskStatus::Failed;
 
-        m_imageContainer->setData(std::move(image));
+        m_imageContainer->setData(std::move(imageData));
         return TaskStatus::Success;
 }
 

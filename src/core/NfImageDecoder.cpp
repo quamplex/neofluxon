@@ -22,7 +22,6 @@
  */
 
 #include "NfImageDecoder.h"
-#include "NfImageData.h"
 #include "NfImage.h"
 #include "NfLogger.h"
 
@@ -39,21 +38,27 @@ NfImageDecoder::~NfImageDecoder() = default;
 
 std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData() const
 {
+        NF_LOG_DEBUG("open file: " << m_photo.path());
+
         auto rawProcessor = std::make_unique<LibRaw>();
         if (rawProcessor->open_file(m_photo.path().string().c_str()) != LIBRAW_SUCCESS) {
                 NF_LOG_DEBUG("can't open file : " << m_photo.path());
                 return nullptr;
         }
 
-        int bestIndex = selectThumbnail(rawProcessor->imgdata.thumbs_list);
+        NF_LOG_DEBUG("open file OK");
+        NF_LOG_DEBUG("original size:"
+                     << rawProcessor->imgdata.sizes.width
+                     << "x" << rawProcessor->imgdata.sizes.height);
 
+        int bestIndex = selectThumbnail(rawProcessor->imgdata.thumbs_list);
         if (bestIndex < 0) {
-                // TODO: generate thumbnail from the raw image.
                 NF_LOG_ERROR("no thumbnail");
                 return nullptr;
         }
 
         NF_LOG_ERROR("unpack thumbnail at index: " << bestIndex);
+
         if (rawProcessor->unpack_thumb_ex(bestIndex) != LIBRAW_SUCCESS) {
                 NF_LOG_ERROR("can't unpack thumbnail at index: " << bestIndex);
                 return nullptr;
@@ -63,35 +68,50 @@ std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData() const
 
         auto &t = rawProcessor->imgdata.thumbnail;
 
-        if (t.tformat != LIBRAW_THUMBNAIL_JPEG || t.tlength == 0) {
-                NF_LOG_ERROR("thumbnail is not JPEG");
-                // TODO: generate thumbnail from the raw image.
+        NF_LOG_DEBUG("thumbnail format: " << t.tformat);
+
+        if (!isSupportedFormat(t.tformat)) {
+                NF_LOG_ERROR("format " << t.tformat << " not supported");
                 return nullptr;
         }
 
         auto imageData = std::make_unique<NfImageData>();
         imageData->setData(reinterpret_cast<const unsigned char*>(t.thumb), t.tlength);
+        imageData->setFormat(libRawToNfImageFormat(t.tformat));
         imageData->setOrientation(rawProcessor->imgdata.sizes.flip);
+        imageData->setWidth(t.twidth);
+        imageData->setHeight(t.theight);
+
+        NF_LOG_DEBUG("thumbnail loaded:  " << m_photo.path());
+        NF_LOG_DEBUG("format: " << static_cast<int>(imageData->format()));
+        NF_LOG_DEBUG("dimentions: " << imageData->width() << "x" << imageData->height());
 
         return imageData;
 }
 
 std::unique_ptr<NfImageData> NfImageDecoder::previewImageData() const
 {
+        NF_LOG_DEBUG("open file: " << m_photo.path());
+
         auto rawProcessor = std::make_unique<LibRaw>();
         if (rawProcessor->open_file(m_photo.path().string().c_str()) != LIBRAW_SUCCESS) {
                 NF_LOG_ERROR("can't open file: " << m_photo.path());
                 return nullptr;
         }
 
+        NF_LOG_DEBUG("open file OK");
+        NF_LOG_DEBUG("original size:"
+                     << rawProcessor->imgdata.sizes.width
+                     << "x" << rawProcessor->imgdata.sizes.height);
+
         auto bestIndex = selectPreview(rawProcessor->imgdata.thumbs_list);
         if (bestIndex < 0) {
                 NF_LOG_ERROR("can't find preview");
-                // TODO: generate preview from the raw image.
                 return nullptr;
         }
 
-        NF_LOG_ERROR("unpack preview at index: " << bestIndex);
+        NF_LOG_DEBUG("unpack preview at index: " << bestIndex);
+
         if (rawProcessor->unpack_thumb_ex(bestIndex) != LIBRAW_SUCCESS) {
                 NF_LOG_ERROR("can't unpack the preview image");
                 return nullptr;
@@ -100,17 +120,44 @@ std::unique_ptr<NfImageData> NfImageDecoder::previewImageData() const
         NF_LOG_DEBUG("preview unpack: OK");
 
         auto &t = rawProcessor->imgdata.thumbnail;
-        if (t.tformat != LIBRAW_THUMBNAIL_JPEG || t.tlength == 0) {
-                NF_LOG_ERROR("preview image is not JPEG");
-                // TODO: generate preview from the raw image.
+
+        NF_LOG_ERROR("format: " << t.tformat);
+
+        if (!isSupportedFormat(t.tformat)) {
+                NF_LOG_ERROR("format " << t.tformat << " not supported");
                 return nullptr;
         }
 
         auto imageData = std::make_unique<NfImageData>();
         imageData->setData(reinterpret_cast<const unsigned char*>(t.thumb), t.tlength);
+        imageData->setFormat(libRawToNfImageFormat(t.tformat));
         imageData->setOrientation(rawProcessor->imgdata.sizes.flip);
+        imageData->setWidth(t.twidth);
+        imageData->setHeight(t.theight);
+
+        NF_LOG_DEBUG("preview loaded:  " << m_photo.path());
+        NF_LOG_DEBUG("format: " << static_cast<int>(imageData->format()));
+        NF_LOG_DEBUG("dimentions: " << imageData->width() << "x" << imageData->height());
 
         return imageData;
+}
+
+NfImageData::ImageFormat NfImageDecoder::libRawToNfImageFormat(int format)
+{
+        switch (format) {
+        case LIBRAW_THUMBNAIL_JPEG:
+                return NfImageData::ImageFormat::Format_JPEG;
+        case LIBRAW_THUMBNAIL_BITMAP:
+                return NfImageData::ImageFormat::Format_RGB888;
+        default:
+                return NfImageData::ImageFormat::Format_Unknown;
+        }
+}
+
+bool NfImageDecoder::isSupportedFormat(int format)
+{
+        return (format == LIBRAW_THUMBNAIL_JPEG)
+                || (format == LIBRAW_THUMBNAIL_BITMAP);
 }
 
 int NfImageDecoder::selectThumbnail(const libraw_thumbnail_list_t& list)

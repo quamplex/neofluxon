@@ -29,6 +29,7 @@ NfImageData::NfImageData()
         : m_width{0}
         , m_height{0}
         , m_channels{0}
+        , m_format{ImageFormat::Format_Unknown}
 {
 }
 
@@ -37,6 +38,7 @@ NfImageData::NfImageData(size_t size)
         , m_width{0}
         , m_height{0}
         , m_channels{0}
+        , m_format{ImageFormat::Format_Unknown}
 {
 }
 
@@ -128,9 +130,14 @@ int NfImageData::orientation() const
         return m_orientation;
 }
 
+void NfImageData::setFormat(NfImageData::ImageFormat format)
+{
+        m_format = format;
+}
+
 NfImageData::ImageFormat NfImageData::format() const
 {
-        return ImageFormat::Format_ARGB32_Premultiplied;
-};
+        return m_format;
+}
 
 } // namespace NfCore
