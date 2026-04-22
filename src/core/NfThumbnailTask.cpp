@@ -25,7 +25,6 @@
 #include "NfImageDecoder.h"
 #include "NfImageData.h"
 #include "NfImage.h"
-#include "NfThumbnail.h"
 
 #include <stdexcept>
 #include <iostream>
@@ -53,12 +52,12 @@ uint64_t NfThumbnailTask::generationId() const
         return m_generationId;
 }
 
-void NfThumbnailTask::setImageSource(ImageSource source)
+void NfThumbnailTask::setImageSource(NfThumbnailTask::ImageSource source)
 {
         m_imageSource = source;
 }
 
-ImageSource NfThumbnailTask::imageSource() const
+NfThumbnailTask::ImageSource NfThumbnailTask::imageSource() const
 {
         return m_imageSource;
 }
@@ -76,7 +75,9 @@ NfThumbnailTask::TaskStatus NfThumbnailTask::execute()
 
 std::unique_ptr<NfThumbnail> NfThumbnailTask::takeThumbnail()
 {
-        return std::make_unique<NfThumbnail>(m_photo.id(), std::move(m_imageContainer));
+        auto thumb = std::make_unique<NfThumbnail>(m_photo.id(), std::move(m_imageContainer));
+        thumb->setImageSource(imageSource());
+        return thumb;
 }
 
 } // namespace NfCore

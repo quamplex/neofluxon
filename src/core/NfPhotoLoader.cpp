@@ -58,16 +58,17 @@ const std::filesystem::path& NfPhotoLoader::getPath() const
         return m_path;
 }
 
-void NfPhotoLoader::requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfImage> image)
+void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
+                                     ImageContainerCallback imageContainer)
 {
-        auto task = std::make_unique<NfThumbnailTask>(photo, std::move(image));
+        auto task = std::make_unique<NfThumbnailTask>(photo, imageContainer());
         {
                 std::scoped_lock lock(m_queueMutex);
                 task->setGenerationId(m_generationId);
         }
 
         task->setImageSource(NfThumbnailTask::ImageSource::EmbeddedImage);
-        task->setPriority(ImagePriority::EmbeddedImage);
+        task->setPriority(static_cast<int>(ImagePriority::EmbeddedImage));
         task->setResult([&](NfTask* result, NfTask::TaskStatus status) {
                 if (status != NfTask::TaskStatus::Success)
                         return;
@@ -86,16 +87,18 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfIma
                 }
         });
 
+        NF_LOG_DEBUG("submit embedded thumbnail task");
+
         m_threadPool.submit(std::move(task));
 
-        task = std::make_unique<NfThumbnailTask>(photo, std::move(image));
+        task = std::make_unique<NfThumbnailTask>(photo, imageContainer());
         {
                 std::scoped_lock lock(m_queueMutex);
                 task->setGenerationId(m_generationId);
         }
 
         task->setImageSource(NfThumbnailTask::ImageSource::GeneratedImage);
-        task->setPriority(ImagePriority::GeneratedImage);
+        task->setPriority(static_cast<int>(ImagePriority::GeneratedImage));
         task->setResult([&](NfTask* result, NfTask::TaskStatus status) {
                 if (status != NfTask::TaskStatus::Success)
                         return;
@@ -114,19 +117,22 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfIma
                 }
         });
 
+        NF_LOG_DEBUG("submit generate thumbnail task");
+
         m_threadPool.submit(std::move(task));
 }
 
-void NfPhotoLoader::requestPreview(const NfPhoto &photo, std::unique_ptr<NfImage> image)
+void NfPhotoLoader::requestPreview(const NfPhoto &photo,
+                                   ImageContainerCallback imageContainer)
 {
-        auto task = std::make_unique<NfPreviewTask>(photo, std::move(image));
+        auto task = std::make_unique<NfPreviewTask>(photo, imageContainer());
         {
                 std::scoped_lock lock(m_queueMutex);
                 task->setGenerationId(m_generationId);
         }
 
         task->setImageSource(NfPreviewTask::ImageSource::EmbeddedImage);
-        task->setPriority(ImagePriority::GeneratedImage);
+        task->setPriority(static_cast<int>(ImagePriority::GeneratedImage));
         task->setResult([&](NfTask* result, NfTask::TaskStatus status) {
                 if (status != NfTask::TaskStatus::Success)
                         return;
@@ -147,20 +153,14 @@ void NfPhotoLoader::requestPreview(const NfPhoto &photo, std::unique_ptr<NfImage
 
         m_threadPool.submit(std::move(task));
 
-        task = std::make_unique<NfPreviewTask>(photo, std::move(image));
+        task = std::make_unique<NfPreviewTask>(photo, imageContainer());
         {
                 std::scoped_lock lock(m_queueMutex);
                 task->setGenerationId(m_generationId);
         }
 
         task->setImageSource(NfPreviewTask::ImageSource::GeneratedImage);
-        task->setPriority(ImagePriority::GeneratedImage);
-        auto task = std::make_unique<NfPreviewTask>(photo, std::move(image));
-        {
-                std::scoped_lock lock(m_queueMutex);
-                task->setGenerationId(m_generationId);
-        }
-
+        task->setPriority(static_cast<int>(ImagePriority::GeneratedImage));
         task->setResult([&](NfTask* result, NfTask::TaskStatus status) {
                 if (status != NfTask::TaskStatus::Success)
                         return;

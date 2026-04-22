@@ -33,6 +33,7 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
+#include <functional>
 
 namespace NfCore {
 
@@ -43,12 +44,15 @@ class NfPhotoLoader {
 public:
         NfPhotoLoader();
         ~NfPhotoLoader();
+        using ImageContainerCallback = std::function<std::unique_ptr<NfImage>()>;
 
         void setPath(const std::filesystem::path &path);
         const std::filesystem::path& getPath() const;
 
-        void requestThumbnail(const NfPhoto &photo, std::unique_ptr<NfImage> image);
-        void requestPreview(const NfPhoto &photo, std::unique_ptr<NfImage> image);
+        void requestThumbnail(const NfPhoto &photo,
+                              ImageContainerCallback imageContainer);
+        void requestPreview(const NfPhoto &photo,
+                            ImageContainerCallback imagecontainer);
 
         std::vector<NfPhoto> takePhotos();
         std::vector<NfThumbnail> takeThumbnails();

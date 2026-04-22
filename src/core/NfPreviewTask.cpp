@@ -37,6 +37,7 @@ NfPreviewTask::NfPreviewTask(const NfPhoto& photo,
         : m_generationId{0}
         , m_photo{photo}
         , m_imageContainer{std::move(imageContainer)}
+        , m_imageSource{ImageSource::EmbeddedImage}
 {
 }
 
@@ -52,6 +53,16 @@ uint64_t NfPreviewTask::generationId() const
         return m_generationId;
 }
 
+void NfPreviewTask::setImageSource(NfPreviewTask::ImageSource source)
+{
+        m_imageSource = source;
+}
+
+NfPreviewTask::ImageSource NfPreviewTask::imageSource() const
+{
+        return m_imageSource;
+}
+
 NfPreviewTask::TaskStatus NfPreviewTask::execute()
 {
         NfImageDecoder decoder(m_photo);
@@ -65,7 +76,10 @@ NfPreviewTask::TaskStatus NfPreviewTask::execute()
 
 std::unique_ptr<NfPreview> NfPreviewTask::takePreview()
 {
-        return std::make_unique<NfPreview>(m_photo.id(), std::move(m_imageContainer));
+        auto preview = std::make_unique<NfPreview>(m_photo.id(),
+                                                   std::move(m_imageContainer));
+        preview->setImageSource(imageSource());
+        return preview;
 }
 
 } // namespace NfCore

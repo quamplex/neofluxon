@@ -29,7 +29,18 @@ namespace NfCore {
 NfThumbnail::NfThumbnail(const NfPhotoId &id, std::unique_ptr<NfImage> img)
         : m_photoId{id}
         , m_image{std::move(img)}
+        , m_imageSource{ImageSource::EmbeddedImage}
 {
+}
+
+void NfThumbnail::setImageSource(NfThumbnail::ImageSource source)
+{
+        m_imageSource = source;
+}
+
+NfThumbnail::ImageSource NfThumbnail::imageSource() const
+{
+        return m_imageSource;
 }
 
 const NfPhotoId& NfThumbnail::id() const

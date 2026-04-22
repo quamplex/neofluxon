@@ -33,6 +33,7 @@
 #include <atomic>
 #include <memory>
 #include <cstddef>
+#include <vector>
 
 namespace NfCore {
 
@@ -54,10 +55,7 @@ private:
 
         struct TaskCompare {
                 bool operator()(const std::unique_ptr<NfTask>& a,
-                                const std::unique_ptr<NfTask>& b) const
-                {
-                        return a->priority() < b->priority();
-                }
+                                const std::unique_ptr<NfTask>& b) const;
         };
 
         std::vector<std::jthread> m_poolThreads;

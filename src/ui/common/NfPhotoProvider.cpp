@@ -74,7 +74,9 @@ const QPixmap& NfPhotoProvider::getThumbnail(const NfPhoto &photo) const
                         return thumbnail->pixmap();
         }
 
-        m_photoLoader->requestThumbnail(photo, std::make_unique<NfQtPixmap>());
+        m_photoLoader->requestThumbnail(photo, []() {
+                return std::make_unique<NfQtPixmap>(); }
+        );
 
         return m_thumbnailPlaceholder;
 }
@@ -88,7 +90,9 @@ const QPixmap& NfPhotoProvider::getPreview(const NfPhoto &photo) const
                         return thumbnail->pixmap();
         }
 
-        m_photoLoader->requestPreview(photo, std::make_unique<NfQtPixmap>());
+        m_photoLoader->requestPreview(photo, []() {
+                return std::make_unique<NfQtPixmap>(); }
+        );
 
         return m_thumbnailPlaceholder;
 }
@@ -121,6 +125,9 @@ void NfPhotoProvider::processThumbnails()
         for(auto &thumb : thumbnails) {
                 auto updateImage = (thumb.imageSource()
                                     == NfThumbnail::ImageSource::GeneratedImage);
+
+                NF_LOG_DEBUG("update image: " << updateImage);
+
                 m_thumbnailCache->add(thumb.id(), thumb.releaseImage(), updateImage);
                 photoIds.push_back(thumb.id());
         }
@@ -139,8 +146,11 @@ void NfPhotoProvider::processPreviews()
         photoIds.reserve(previews.size());
 
         for(auto &preview : previews) {
-                auto updateImage = (thumb.imageSource()
+                auto updateImage = (preview.imageSource()
                                     == NfPreview::ImageSource::GeneratedImage);
+
+                NF_LOG_DEBUG("update image: " << updateImage);
+
                 m_previewCache->add(preview.id(), preview.releaseImage(), updateImage);
                 photoIds.push_back(preview.id());
         }

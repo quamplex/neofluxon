@@ -26,15 +26,14 @@
 
 #include "NfTask.h"
 #include "NfPhoto.h"
+#include "NfPreview.h"
 
 #include <memory>
-#include <string>
 #include <cstdint>
 
 namespace NfCore {
 
 class NfImage;
-class NfPreview;
 
 class NfPreviewTask : public NfTask {
 public:
@@ -46,17 +45,17 @@ public:
         void setGenerationId(uint64_t generationId);
         uint64_t generationId() const;
 
+        void setImageSource(ImageSource source);
+        ImageSource imageSource() const;
+
         TaskStatus execute() override;
-
         std::unique_ptr<NfPreview> takePreview();
-
-        [[nodiscard]] std::string getErrorMessage() const { return m_errorMessage; }
 
 private:
         uint64_t m_generationId;
         NfPhoto m_photo;
         std::unique_ptr<NfImage> m_imageContainer;
-        std::string m_errorMessage;
+        ImageSource m_imageSource;
 };
 
 } // namespace NfCore

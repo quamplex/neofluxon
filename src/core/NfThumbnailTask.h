@@ -26,15 +26,14 @@
 
 #include "NfTask.h"
 #include "NfPhoto.h"
+#include "NfThumbnail.h"
 
 #include <memory>
-#include <string>
 #include <cstdint>
 
 namespace NfCore {
 
 class NfImage;
-class NfThumbnail;
 
 class NfThumbnailTask : public NfTask {
 public:
@@ -52,14 +51,11 @@ public:
 
         std::unique_ptr<NfThumbnail> takeThumbnail();
 
-        [[nodiscard]] std::string getErrorMessage() const { return m_errorMessage; }
-
 private:
         uint64_t m_generationId;
         NfPhoto m_photo;
         std::unique_ptr<NfImage> m_imageContainer;
         ImageSource m_imageSource;
-        std::string m_errorMessage;
 };
 
 } // namespace NfCore

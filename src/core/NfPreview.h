@@ -34,12 +34,19 @@ class NfImage;
 
 class NfPreview {
 public:
+       enum class ImageSource {
+               EmbeddedImage,
+               GeneratedImage
+        };
+
         explicit NfPreview(const NfPhotoId &id, std::unique_ptr<NfImage> img);
         NfPreview(NfPreview&&) noexcept = default;
         NfPreview& operator=(NfPreview&&) noexcept = default;
         NfPreview(const NfPreview&) = delete;
         NfPreview& operator=(const NfPreview&) = delete;
 
+        void setImageSource(ImageSource source);
+        ImageSource imageSource() const;
         const NfPhotoId& id() const;
         NfImage* getImage() const;
 
@@ -48,6 +55,7 @@ public:
 private:
         NfPhotoId m_photoId;
         std::unique_ptr<NfImage> m_image;
+        ImageSource m_imageSource;
 };
 
 } // namespace NfCore

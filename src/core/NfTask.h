@@ -44,7 +44,7 @@ public:
         void setResult(TaskResultHandler handler);
         void notifyCompletion(TaskStatus status = TaskStatus::Success);
         [[nodiscard]] bool hasResultHandler() const;
-        void setPirority(int value);
+        void setPriority(int value);
         int priority() const;
 
 protected:

@@ -55,6 +55,7 @@ void NfGuiCache::add(const NfPhotoId &id,
                 auto& cacheImage = it->second.second;
                 // Update the image only if it is marked to be replaced.
                 if (replace) {
+                        NF_LOG_DEBUG("replace older image");
                         std::size_t oldSizeBytes = cacheImage->size();
                         cacheImage = std::move(image);
                         m_currentSizeBytes -= oldSizeBytes;

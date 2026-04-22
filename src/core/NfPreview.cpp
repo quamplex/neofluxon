@@ -32,6 +32,16 @@ NfPreview::NfPreview(const NfPhotoId &id, std::unique_ptr<NfImage> img)
 {
 }
 
+void NfPreview::setImageSource(NfPreview::ImageSource source)
+{
+        m_imageSource = source;
+}
+
+NfPreview::ImageSource NfPreview::imageSource() const
+{
+        return m_imageSource;
+}
+
 const NfPhotoId& NfPreview::id() const
 {
         return m_photoId;
