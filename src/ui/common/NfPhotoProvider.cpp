@@ -119,7 +119,9 @@ void NfPhotoProvider::processThumbnails()
         photoIds.reserve(thumbnails.size());
 
         for(auto &thumb : thumbnails) {
-                m_thumbnailCache->add(thumb.id(), thumb.releaseImage());
+                auto updateImage = (thumb.imageSource()
+                                    == NfThumbnail::ImageSource::GeneratedImage);
+                m_thumbnailCache->add(thumb.id(), thumb.releaseImage(), updateImage);
                 photoIds.push_back(thumb.id());
         }
 
@@ -137,7 +139,9 @@ void NfPhotoProvider::processPreviews()
         photoIds.reserve(previews.size());
 
         for(auto &preview : previews) {
-                m_previewCache->add(preview.id(), preview.releaseImage());
+                auto updateImage = (thumb.imageSource()
+                                    == NfPreview::ImageSource::GeneratedImage);
+                m_previewCache->add(preview.id(), preview.releaseImage(), updateImage);
                 photoIds.push_back(preview.id());
         }
 

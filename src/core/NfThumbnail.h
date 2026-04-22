@@ -34,6 +34,11 @@ class NfImage;
 
 class NfThumbnail {
 public:
+        enum class ImageSource {
+                EmbeddedImage,
+                GeneratedImage
+        };
+
         explicit NfThumbnail(const NfPhotoId &id, std::unique_ptr<NfImage> img);
         NfThumbnail(NfThumbnail&&) noexcept = default;
         NfThumbnail& operator=(NfThumbnail&&) noexcept = default;

@@ -41,7 +41,7 @@ public:
 
     /// Adds or replaces an image. Updates LRU order.
     /// Image is rejected if it exceeds max cache size.
-    void add(const NfPhotoId &id, std::unique_ptr<NfImage> image);
+    void add(const NfPhotoId &id, std::unique_ptr<NfImage> image, bool replace = false);
 
     // Returns image if present and marks it as recently used.
     /// @warning Returned pointer may become invalid after any cache modification.

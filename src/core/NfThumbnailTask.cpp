@@ -37,6 +37,7 @@ NfThumbnailTask::NfThumbnailTask(const NfPhoto& photo,
         : m_generationId{0}
         , m_photo{photo}
         , m_imageContainer{std::move(imageContainer)}
+        , m_imageSource{ImageSource::EmbeddedImage}
 {
 }
 
@@ -50,6 +51,16 @@ void NfThumbnailTask::setGenerationId(uint64_t generationId)
 uint64_t NfThumbnailTask::generationId() const
 {
         return m_generationId;
+}
+
+void NfThumbnailTask::setImageSource(ImageSource source)
+{
+        m_imageSource = source;
+}
+
+ImageSource NfThumbnailTask::imageSource() const
+{
+        return m_imageSource;
 }
 
 NfThumbnailTask::TaskStatus NfThumbnailTask::execute()

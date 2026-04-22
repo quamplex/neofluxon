@@ -38,11 +38,15 @@ class NfThumbnail;
 
 class NfThumbnailTask : public NfTask {
 public:
+        using ImageSource = NfThumbnail::ImageSource;
+
         NfThumbnailTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
         ~NfThumbnailTask();
 
         void setGenerationId(uint64_t generationId);
         uint64_t generationId() const;
+        void setImageSource(ImageSource source);
+        ImageSource imageSource() const;
 
         TaskStatus execute() override;
 
@@ -54,6 +58,7 @@ private:
         uint64_t m_generationId;
         NfPhoto m_photo;
         std::unique_ptr<NfImage> m_imageContainer;
+        ImageSource m_imageSource;
         std::string m_errorMessage;
 };
 

@@ -38,6 +38,8 @@ class NfPreview;
 
 class NfPreviewTask : public NfTask {
 public:
+        using ImageSource = NfPreview::ImageSource;
+
         NfPreviewTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
         ~NfPreviewTask();
 

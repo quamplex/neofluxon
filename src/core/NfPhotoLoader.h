@@ -57,6 +57,11 @@ public:
  protected:
 
  private:
+        enum class ImagePriority {
+                EmbeddedImage = 0,
+                GeneratedImage = 1
+        };
+
         std::unique_ptr<NfPathScanner> m_pathScanner;
         std::filesystem::path m_path;
         NfForegroundThreadPool m_threadPool;

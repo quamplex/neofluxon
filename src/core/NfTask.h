@@ -44,12 +44,15 @@ public:
         void setResult(TaskResultHandler handler);
         void notifyCompletion(TaskStatus status = TaskStatus::Success);
         [[nodiscard]] bool hasResultHandler() const;
+        void setPirority(int value);
+        int priority() const;
 
 protected:
         NfTask() = default;
 
 private:
         TaskResultHandler m_onComplete;
+        int m_priority = 0;
 };
 
 } // namespace NfCore

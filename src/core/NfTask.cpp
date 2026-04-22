@@ -43,4 +43,14 @@ bool NfTask::hasResultHandler() const
         return static_cast<bool>(m_onComplete);
 }
 
+void NfTask::setPirority(int value)
+{
+        m_priority = value;
+}
+
+int NfTask::priority() const
+{
+        return m_priority;
+}
+
 } // namespace NfCore

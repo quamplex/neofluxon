@@ -37,7 +37,9 @@ NfGuiCache::NfGuiCache(/*NfDiskCache* diskCache, */std::size_t maxSizeBytes)
 
 NfGuiCache::~NfGuiCache() = default;
 
-void NfGuiCache::add(const NfPhotoId &id, std::unique_ptr<NfImage> image)
+void NfGuiCache::add(const NfPhotoId &id,
+                     std::unique_ptr<NfImage> image,
+                     bool replace)
 {
         if (!image)
                 return;
@@ -48,14 +50,20 @@ void NfGuiCache::add(const NfPhotoId &id, std::unique_ptr<NfImage> image)
         if (imageSizeBytes > m_maxSizeBytes)
                 return;
 
-        // Check if already exists - update and move to front
+        // Check if already exists. Update and move to front
         if (auto it = m_memoryCache.find(id); it != m_memoryCache.end()) {
                 auto& cacheImage = it->second.second;
-                std::size_t oldSizeBytes = cacheImage->size();
-                cacheImage = std::move(image);
-                m_currentSizeBytes -= oldSizeBytes;
-                m_currentSizeBytes += imageSizeBytes;
+                // Update the image only if it is marked to be replaced.
+                if (replace) {
+                        std::size_t oldSizeBytes = cacheImage->size();
+                        cacheImage = std::move(image);
+                        m_currentSizeBytes -= oldSizeBytes;
+                        m_currentSizeBytes += imageSizeBytes;
+                }
+
+                // Move to front
                 refreshAccess(it->second.first);
+
                 return;
         }
 
