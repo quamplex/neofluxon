@@ -83,4 +83,8 @@ size_t NfImage::size() const
         return m_data->size();
 }
 
+void NfImage::resize(int w, int h)
+{
+}
+
 } // namespace NfCore

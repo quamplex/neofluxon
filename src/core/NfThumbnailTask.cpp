@@ -65,11 +65,20 @@ NfThumbnailTask::ImageSource NfThumbnailTask::imageSource() const
 NfThumbnailTask::TaskStatus NfThumbnailTask::execute()
 {
         NfImageDecoder decoder(m_photo);
-        auto imageData = decoder.thumbnailImageData();
+
+        std::unique_ptr<NfImageData> imageData;
+        if (imageSource() == ImageSource::EmbeddedImage)
+                imageData = decoder.thumbnailImageData();
+        else
+                imageData = decoder.rawImage();
+
         if (!imageData)
                 return TaskStatus::Failed;
 
         m_imageContainer->setData(std::move(imageData));
+        if (imageSource() == ImageSource::GeneratedImage)
+                m_imageContainer->resize(256, 256);
+
         return TaskStatus::Success;
 }
 

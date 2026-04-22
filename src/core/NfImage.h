@@ -46,6 +46,7 @@ class NfImage
         std::string_view format() const;
         bool isValid() const;
         virtual size_t size() const;
+        virtual void resize(int w, int h);
 
  protected:
         std::unique_ptr<NfImageData> m_data;

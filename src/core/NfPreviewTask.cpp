@@ -66,11 +66,20 @@ NfPreviewTask::ImageSource NfPreviewTask::imageSource() const
 NfPreviewTask::TaskStatus NfPreviewTask::execute()
 {
         NfImageDecoder decoder(m_photo);
-        auto image = decoder.previewImageData();
-        if (!image)
+
+        std::unique_ptr<NfImageData> imageData;
+        if (imageSource() == ImageSource::EmbeddedImage)
+                imageData = decoder.previewImageData();
+        else
+                imageData = decoder.generatePreview();
+
+        if (!imageData)
                 return TaskStatus::Failed;
 
-        m_imageContainer->setData(std::move(image));
+        m_imageContainer->setData(std::move(imageData));
+        if (imageSource() == ImageSource::GeneratedImage)
+                m_imageContainer->resize(1600, 1600);
+
         return TaskStatus::Success;
 }
 

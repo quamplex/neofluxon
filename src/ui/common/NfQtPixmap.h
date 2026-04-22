@@ -43,8 +43,9 @@ public:
         ~NfQtPixmap() override = default;
 
         void setData(std::unique_ptr<NfImageData> data) override;
-    const QPixmap& pixmap() const;
+        const QPixmap& pixmap() const;
         std::size_t size() const override;
+        void resize(int w, int h) override;
 
 protected:
         void fixOrientation(QImage &img, int orientation);

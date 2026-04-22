@@ -154,6 +154,64 @@ NfImageData::ImageFormat NfImageDecoder::libRawToNfImageFormat(int format)
         }
 }
 
+std::unique_ptr<NfImageData> NfImageDecoder::rawImage() const
+{
+        auto rawProcessor = std::make_unique<LibRaw>();
+        if (rawProcessor->open_file(m_photo.path().string().c_str()) != LIBRAW_SUCCESS)
+                return nullptr;
+
+        if (rawProcessor->unpack() != LIBRAW_SUCCESS)
+                return nullptr;
+
+        // Standard LibRaw development settings
+        rawProcessor->imgdata.params.output_bps = 8;
+        rawProcessor->imgdata.params.use_auto_wb = 1;
+        rawProcessor->imgdata.params.gamm[0] = 1.0 / 2.4;
+        rawProcessor->imgdata.params.gamm[1] = 12.92;
+
+        if (rawProcessor->dcraw_process() != LIBRAW_SUCCESS)
+                return nullptr;
+
+        int err = 0;
+        auto* processed = rawProcessor->dcraw_make_mem_image(&err);
+        if (!processed || processed->colors != 3) {
+                if (processed)
+                        rawProcessor->dcraw_clear_mem(processed);
+                return nullptr;
+        }
+
+        auto imageData = std::make_unique<NfImageData>();
+
+        // Calculate RGBA size: width * height * 4
+        size_t pixelCount = processed->width * processed->height;
+        size_t rgbaSize = pixelCount * 4;
+        std::vector<unsigned char> rgbaBuffer(rgbaSize);
+
+        // Interleave RGB into RGBA
+        const unsigned char* src = processed->data;
+        unsigned char* dst = rgbaBuffer.data();
+
+        for (size_t i = 0; i < pixelCount; ++i) {
+                dst[0] = src[0]; // R
+                dst[1] = src[1]; // G
+                dst[2] = src[2]; // B
+                dst[3] = 255; // A (Opaque)
+                src += 3;
+                dst += 4;
+        }
+
+        // Set the data into your NfImage object
+        imageData->setData(rgbaBuffer.data(), rgbaBuffer.size());
+        imageData->setFormat(NfImageData::ImageFormat::Format_RGBA8888);
+        imageData->setWidth(processed->width);
+        imageData->setHeight(processed->height);
+        imageData->setOrientation(rawProcessor->imgdata.sizes.flip);
+
+        rawProcessor->dcraw_clear_mem(processed);
+
+        return imageData;
+}
+
 bool NfImageDecoder::isSupportedFormat(int format)
 {
         return (format == LIBRAW_THUMBNAIL_JPEG)
