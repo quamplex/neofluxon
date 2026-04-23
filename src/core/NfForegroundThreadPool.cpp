@@ -89,7 +89,9 @@ void NfForegroundThreadPool::threadLoop(std::stop_token stoken)
 bool NfForegroundThreadPool::TaskCompare::operator()(const std::unique_ptr<NfTask>& a,
                                                      const std::unique_ptr<NfTask>& b) const
 {
-        return a->priority() < b->priority();
+        if (a->priority() != b->priority())
+                return a->priority() > b->priority();
+        return a->sequence() < b->sequence();
 }
 
 } // namespace NfCore

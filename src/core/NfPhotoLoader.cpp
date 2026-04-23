@@ -69,6 +69,10 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
 
         task->setImageSource(NfThumbnailTask::ImageSource::EmbeddedImage);
         task->setPriority(static_cast<int>(ImagePriority::EmbeddedImage));
+        {
+                std::scoped_lock lock(m_queueMutex);
+                task->setSequence(m_sequence++);
+        }
         task->setResult([&](NfTask* result, NfTask::TaskStatus status) {
                 if (status != NfTask::TaskStatus::Success)
                         return;
@@ -85,7 +89,7 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
                         auto thumbnail = thumbnailTask->takeThumbnail();
                         m_thumbnailsQueue.push_back(std::move(*thumbnail));
                 }
-        });
+                });
 
         NF_LOG_DEBUG("submit embedded thumbnail task");
 
@@ -99,6 +103,10 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
 
         task->setImageSource(NfThumbnailTask::ImageSource::GeneratedImage);
         task->setPriority(static_cast<int>(ImagePriority::GeneratedImage));
+        {
+                std::scoped_lock lock(m_queueMutex);
+                task->setSequence(m_sequence++);
+        }
         task->setResult([&](NfTask* result, NfTask::TaskStatus status) {
                 if (status != NfTask::TaskStatus::Success)
                         return;

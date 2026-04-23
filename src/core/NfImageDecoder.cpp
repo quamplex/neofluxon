@@ -26,6 +26,7 @@
 #include "NfLogger.h"
 
 #include <libraw/libraw.h>
+#include <omp.h>
 
 namespace NfCore {
 
@@ -156,27 +157,44 @@ NfImageData::ImageFormat NfImageDecoder::libRawToNfImageFormat(int format)
 
 std::unique_ptr<NfImageData> NfImageDecoder::rawImage() const
 {
-        auto rawProcessor = std::make_unique<LibRaw>();
-        if (rawProcessor->open_file(m_photo.path().string().c_str()) != LIBRAW_SUCCESS)
+        NF_LOG_DEBUG("OMP Threads available: " << omp_get_max_threads());
+
+        LibRaw rawProcessor;
+
+        if (rawProcessor.open_file(m_photo.path().string().c_str()) != LIBRAW_SUCCESS)
                 return nullptr;
 
-        if (rawProcessor->unpack() != LIBRAW_SUCCESS)
+        //rawProcessor.imgdata.params.half_size = 1;
+        rawProcessor.imgdata.params.use_fuji_rotate = 0;
+
+        if (rawProcessor.unpack() != LIBRAW_SUCCESS)
                 return nullptr;
 
-        // Standard LibRaw development settings
-        rawProcessor->imgdata.params.output_bps = 8;
-        rawProcessor->imgdata.params.use_auto_wb = 1;
-        rawProcessor->imgdata.params.gamm[0] = 1.0 / 2.4;
-        rawProcessor->imgdata.params.gamm[1] = 12.92;
+        // Use linear interpolation.
+        rawProcessor.imgdata.params.user_qual = 0;
+        rawProcessor.imgdata.params.output_bps = 8;
 
-        if (rawProcessor->dcraw_process() != LIBRAW_SUCCESS)
+        // Use Camera White Balance
+        rawProcessor.imgdata.params.use_camera_wb = 1;
+        rawProcessor.imgdata.params.use_auto_wb = 0;
+
+        // Disable heavy noise reduction or brightness loops
+        rawProcessor.imgdata.params.no_auto_bright = 1;
+
+        auto start = std::chrono::high_resolution_clock::now();
+        if (rawProcessor.dcraw_process() != LIBRAW_SUCCESS)
                 return nullptr;
+
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        NF_LOG_INFO("load image time: " << duration.count() << "us");
+
 
         int err = 0;
-        auto* processed = rawProcessor->dcraw_make_mem_image(&err);
+        auto* processed = rawProcessor.dcraw_make_mem_image(&err);
         if (!processed || processed->colors != 3) {
                 if (processed)
-                        rawProcessor->dcraw_clear_mem(processed);
+                        rawProcessor.dcraw_clear_mem(processed);
                 return nullptr;
         }
 
@@ -205,9 +223,13 @@ std::unique_ptr<NfImageData> NfImageDecoder::rawImage() const
         imageData->setFormat(NfImageData::ImageFormat::Format_RGBA8888);
         imageData->setWidth(processed->width);
         imageData->setHeight(processed->height);
-        imageData->setOrientation(rawProcessor->imgdata.sizes.flip);
+        imageData->setOrientation(rawProcessor.imgdata.sizes.flip);
 
-        rawProcessor->dcraw_clear_mem(processed);
+        rawProcessor.dcraw_clear_mem(processed);
+
+        NF_LOG_INFO("thumbnail loaded:  " << m_photo.path());
+        NF_LOG_INFO("format: " << static_cast<int>(imageData->format()));
+        NF_LOG_INFO("dimentions: " << imageData->width() << "x" << imageData->height());
 
         return imageData;
 }

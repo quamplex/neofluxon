@@ -46,6 +46,8 @@ public:
         [[nodiscard]] bool hasResultHandler() const;
         void setPriority(int value);
         int priority() const;
+        void setSequence(uint64_t s) { m_sequence = s; }
+        uint64_t sequence() const { return m_sequence; }
 
 protected:
         NfTask() = default;
@@ -53,6 +55,7 @@ protected:
 private:
         TaskResultHandler m_onComplete;
         int m_priority = 0;
+        uint64_t m_sequence = 0;
 };
 
 } // namespace NfCore

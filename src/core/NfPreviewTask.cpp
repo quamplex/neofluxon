@@ -71,7 +71,7 @@ NfPreviewTask::TaskStatus NfPreviewTask::execute()
         if (imageSource() == ImageSource::EmbeddedImage)
                 imageData = decoder.previewImageData();
         else
-                imageData = decoder.generatePreview();
+                imageData = decoder.rawImage();
 
         if (!imageData)
                 return TaskStatus::Failed;

@@ -73,6 +73,7 @@ public:
         uint64_t m_generationId;
         std::vector<NfThumbnail> m_thumbnailsQueue;
         std::vector<NfPreview> m_previewsQueue;
+        uint64_t m_sequence = 0;
 };
 
 } // namespace NfCore

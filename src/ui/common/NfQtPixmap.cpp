@@ -106,6 +106,8 @@ void NfQtPixmap::fixOrientation(QImage &img, int orientation)
 
         if (!transform.isIdentity())
                 img = img.transformed(transform, Qt::SmoothTransformation);
+
+        NfImage::setData(nullptr);
 }
 
 const QPixmap& NfQtPixmap::pixmap() const
@@ -123,11 +125,11 @@ std::size_t NfQtPixmap::size() const
                static_cast<std::size_t>(m_pixmapImage.depth()) / 8;
 }
 
-void NfQtPixmap::resize(int w, int h) override
+void NfQtPixmap::resize(int w, int h)
 {
         m_pixmapImage = m_pixmapImage.scaled(w, h, Qt::KeepAspectRatio);
-        setWidth(m_pixmapImage.width());
-        setHeight(m_pixmapImage.height());
+        //setWidth(m_pixmapImage.width());
+        //setHeight(m_pixmapImage.height());
 }
 
 } // namespace NfUi

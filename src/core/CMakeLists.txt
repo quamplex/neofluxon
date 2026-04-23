@@ -1,3 +1,5 @@
+find_package(OpenMP REQUIRED)
+
 file(GLOB CORE_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 )
@@ -19,4 +21,5 @@ target_include_directories(NfCore PUBLIC
 
 target_link_libraries(NfCore PRIVATE
         raw
+        OpenMP::OpenMP_CXX
 )

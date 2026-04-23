@@ -42,8 +42,6 @@ class NfImageDecoder {
         std::unique_ptr<NfImageData> thumbnailImageData() const;
         std::unique_ptr<NfImageData> previewImageData() const;
         std::unique_ptr<NfImageData> rawImage() const;
-        std::unique_ptr<NfImageData> generateThumbnail() const;
-        std::unique_ptr<NfImageData> generatePreview() const;
 
 protected:
         static int selectBestForTarget(const libraw_thumbnail_list_t& thumbList, int targetSize);
