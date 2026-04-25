@@ -26,57 +26,40 @@
 #include "NfImageData.h"
 #include "NfImage.h"
 
-#include <stdexcept>
-#include <iostream>
-
 namespace NfCore {
 
 NfThumbnailTask::NfThumbnailTask(const NfPhoto& photo,
                                  std::unique_ptr<NfImage> imageContainer)
-        : m_generationId{0}
-        , m_photo{photo}
-        , m_imageContainer{std::move(imageContainer)}
-        , m_imageSource{ImageSource::EmbeddedImage}
+        : NfThumbnailTask(photo, std::move(imageContainer))
 {
 }
 
 NfThumbnailTask::~NfThumbnailTask() = default;
 
-void NfThumbnailTask::setGenerationId(uint64_t generationId)
-{
-        m_generationId = generationId;
-}
-
-uint64_t NfThumbnailTask::generationId() const
-{
-        return m_generationId;
-}
-
-void NfThumbnailTask::setImageSource(NfThumbnailTask::ImageSource source)
-{
-        m_imageSource = source;
-}
-
-NfThumbnailTask::ImageSource NfThumbnailTask::imageSource() const
-{
-        return m_imageSource;
-}
-
 NfThumbnailTask::TaskStatus NfThumbnailTask::execute()
 {
         NfImageDecoder decoder(m_photo);
-
         std::unique_ptr<NfImageData> imageData;
-        if (imageSource() == ImageSource::EmbeddedImage)
+        bool isRawData = false;
+
+        const auto method = extractionMethod();
+
+        if (method == ExtractionMethod::Embedded
+            || method == ExtractionMethod::Fastest) {
                 imageData = decoder.thumbnailImageData();
-        else
+        }
+
+        if (!imageData && (method == ExtractionMethod::FromRaw
+                           || method == ExtractionMethod::Fastest)) {
                 imageData = decoder.rawImage();
+                isRawData = true;
+        }
 
         if (!imageData)
                 return TaskStatus::Failed;
 
         m_imageContainer->setData(std::move(imageData));
-        if (imageSource() == ImageSource::GeneratedImage)
+        if (isRawData)
                 m_imageContainer->resize(256, 256);
 
         return TaskStatus::Success;

@@ -1,5 +1,5 @@
 /**
- * File name: NfThumbnailTask.h
+ * File name: NfImageTask.cpp
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,26 +21,46 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_THUMBNAIL_TASK_H
-#define NF_THUMBNAIL_TASK_H
-
 #include "NfImageTask.h"
 
-#include <memory>
+#include "NfImage.h"
 
 namespace NfCore {
 
-class NfImage;
-class NfThumbnail;
+NfImageTask::NfImageTask(const NfPhoto& photo,
+                         std::unique_ptr<NfImage> imageContainer)
+        : m_generationId{0}
+        , m_photo{photo}
+        , m_imageContainer{std::move(imageContainer)}
+        , m_extractionMethod{ExtractionMethod::Fastest}
+{
+}
 
-class NfThumbnailTask : public NfImageTask {
-public:
-        NfThumbnailTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
-        ~NfThumbnailTask();
-        TaskStatus execute() override;
-        std::unique_ptr<NfThumbnail> takeThumbnail();
-};
+NfImageTask::~NfImageTask() = default;
+
+void NfImageTask::setGenerationId(uint64_t generationId)
+{
+        m_generationId = generationId;
+}
+
+uint64_t NfImageTask::generationId() const
+{
+        return m_generationId;
+}
+
+void NfImageTask::setExtractionMethod(NfImageTask::ExtractionMethod method)
+{
+        m_extractionMethod = method;
+}
+
+NfImageTask::ExtractionMethod NfImageTask::extractionMethod() const
+{
+        return m_extractionMethod;
+}
+
+std::unique_ptr<NfImage> NfImageTask::takeImage()
+{
+        return m_imageContainer;
+}
 
 } // namespace NfCore
-
-#endif // NF_THUMBNAIL_TASK_H

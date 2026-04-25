@@ -31,6 +31,14 @@ namespace NfCore {
 
 class NfTask {
 public:
+        enum class Priority : int {
+                Immediate = 0,
+                High      = 20,
+                Normal    = 50,
+                Low       = 80,
+                Idle      = 100
+        };
+}
 
         enum class TaskStatus {
                 Success,
@@ -44,7 +52,8 @@ public:
         void setResult(TaskResultHandler handler);
         void notifyCompletion(TaskStatus status = TaskStatus::Success);
         [[nodiscard]] bool hasResultHandler() const;
-        void setPriority(int value);
+        void setPriority(Priority p);
+        void setPriority(int p);
         int priority() const;
         void setSequence(uint64_t s) { m_sequence = s; }
         uint64_t sequence() const { return m_sequence; }
@@ -54,7 +63,7 @@ protected:
 
 private:
         TaskResultHandler m_onComplete;
-        int m_priority = 0;
+        int m_priority = static_cast<int>(Priority::Immediate);
         uint64_t m_sequence = 0;
 };
 

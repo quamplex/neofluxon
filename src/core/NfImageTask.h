@@ -1,5 +1,5 @@
 /**
- * File name: NfPreviewTask.h
+ * File name: NfImageTask.h
  * Project: Neofluxon (a photography workflow software)
  *
  * Copyright (C) 2026 Iurie Nistor
@@ -21,12 +21,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef NF_PREVIEW_TASK_H
-#define NF_PREVIEW_TASK_H
+#ifndef NF_IAMGE_TASK_H
+#define NF_IAMGE_TASK_H
 
 #include "NfTask.h"
 #include "NfPhoto.h"
-#include "NfPreview.h"
+#include "NfThumbnail.h"
 
 #include <memory>
 #include <cstdint>
@@ -35,13 +35,33 @@ namespace NfCore {
 
 class NfImage;
 
-class NfPreviewTask : public NfTask {
+class NfImageTask : public NfTask {
 public:
-        NfPreviewTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
-        ~NfPreviewTask();
-        TaskStatus execute() override;
+        enum class ExtractionMethod {
+                Embedded,
+                FromRaw,
+
+                // Attempt to extract the embedded image;
+                // fallback to RAW decoding if unavailable.
+                Fastest
+        };
+
+        NfImageTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
+        ~NfImageTask();
+
+        void setGenerationId(uint64_t generationId);
+        uint64_t generationId() const;
+        void setExtractionMethod(ExtractionMethod method);
+        ExtractionMethod extractionMethod() const;
+        std::unique_ptr<NfImage> takeImage();
+
+private:
+        uint64_t m_generationId;
+        NfPhoto m_photo;
+        std::unique_ptr<NfImage> m_imageContainer;
+        ExtractionMethod m_extractionMethod;
 };
 
 } // namespace NfCore
 
-#endif // NF_PREVIEW_TASK_H
+#endif // NF_IMAGE_TASK_H
