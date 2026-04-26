@@ -47,6 +47,10 @@ public:
         };
 
         NfImageTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
+        NfImageTask(NfImageTask&&) noexcept = default;
+        NfImageTask& operator=(NfImageTask&&) noexcept = default;
+        NfImageTask(const NfImageTask&) = delete;
+        NfImageTask& operator=(const NfImageTask&) = delete;
         ~NfImageTask();
 
         void setGenerationId(uint64_t generationId);
@@ -54,6 +58,10 @@ public:
         void setExtractionMethod(ExtractionMethod method);
         ExtractionMethod extractionMethod() const;
         std::unique_ptr<NfImage> takeImage();
+        const NfPhoto& getPhoto() const;
+
+protected:
+        NfImage* imageContainer() const;
 
 private:
         uint64_t m_generationId;

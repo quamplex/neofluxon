@@ -38,7 +38,6 @@ public:
                 Low       = 80,
                 Idle      = 100
         };
-}
 
         enum class TaskStatus {
                 Success,

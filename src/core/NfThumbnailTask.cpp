@@ -25,12 +25,13 @@
 #include "NfImageDecoder.h"
 #include "NfImageData.h"
 #include "NfImage.h"
+#include "NfLogger.h"
 
 namespace NfCore {
 
 NfThumbnailTask::NfThumbnailTask(const NfPhoto& photo,
                                  std::unique_ptr<NfImage> imageContainer)
-        : NfThumbnailTask(photo, std::move(imageContainer))
+        : NfImageTask(photo, std::move(imageContainer))
 {
 }
 
@@ -38,38 +39,42 @@ NfThumbnailTask::~NfThumbnailTask() = default;
 
 NfThumbnailTask::TaskStatus NfThumbnailTask::execute()
 {
-        NfImageDecoder decoder(m_photo);
+        NfImageDecoder decoder(getPhoto());
         std::unique_ptr<NfImageData> imageData;
-        bool isRawData = false;
+        constexpr int maxTarget = 250;
+        constexpr int minTarget = 120;
 
         const auto method = extractionMethod();
 
         if (method == ExtractionMethod::Embedded
             || method == ExtractionMethod::Fastest) {
-                imageData = decoder.thumbnailImageData();
+                NF_LOG_DEBUG("load embedded image");
+                imageData = decoder.thumbnailImageData(minTarget);
         }
 
         if (!imageData && (method == ExtractionMethod::FromRaw
                            || method == ExtractionMethod::Fastest)) {
+                NF_LOG_DEBUG("no suitable embedded image, load from raw");
                 imageData = decoder.rawImage();
-                isRawData = true;
         }
 
         if (!imageData)
                 return TaskStatus::Failed;
 
-        m_imageContainer->setData(std::move(imageData));
-        if (isRawData)
-                m_imageContainer->resize(256, 256);
+        imageContainer()->setData(std::move(imageData));
+
+        auto h = imageContainer()->height();
+        if (h > maxTarget) {
+                NF_LOG_DEBUG("resize to target: " << maxTarget);
+                imageContainer()->resize(maxTarget, maxTarget);
+        }
 
         return TaskStatus::Success;
 }
 
 std::unique_ptr<NfThumbnail> NfThumbnailTask::takeThumbnail()
 {
-        auto thumb = std::make_unique<NfThumbnail>(m_photo.id(), std::move(m_imageContainer));
-        thumb->setImageSource(imageSource());
-        return thumb;
+        return std::make_unique<NfThumbnail>(getPhoto().id(), takeImage());
 }
 
 } // namespace NfCore

@@ -37,7 +37,7 @@ NfImageDecoder::NfImageDecoder(const NfPhoto &photo)
 
 NfImageDecoder::~NfImageDecoder() = default;
 
-std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData() const
+std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData(int targetRes) const
 {
         NF_LOG_DEBUG("open file: " << m_photo.path());
 
@@ -52,13 +52,13 @@ std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData() const
                      << rawProcessor->imgdata.sizes.width
                      << "x" << rawProcessor->imgdata.sizes.height);
 
-        int bestIndex = selectThumbnail(rawProcessor->imgdata.thumbs_list);
+        int bestIndex = selectBestForTarget(rawProcessor->imgdata.thumbs_list, targetRes);
         if (bestIndex < 0) {
-                NF_LOG_ERROR("no thumbnail");
+                NF_LOG_DEBUG("no thumbnail");
                 return nullptr;
         }
 
-        NF_LOG_ERROR("unpack thumbnail at index: " << bestIndex);
+        NF_LOG_DEBUG("unpack thumbnail at index: " << bestIndex);
 
         if (rawProcessor->unpack_thumb_ex(bestIndex) != LIBRAW_SUCCESS) {
                 NF_LOG_ERROR("can't unpack thumbnail at index: " << bestIndex);
@@ -90,7 +90,7 @@ std::unique_ptr<NfImageData> NfImageDecoder::thumbnailImageData() const
         return imageData;
 }
 
-std::unique_ptr<NfImageData> NfImageDecoder::previewImageData() const
+std::unique_ptr<NfImageData> NfImageDecoder::previewImageData(int targetRes) const
 {
         NF_LOG_DEBUG("open file: " << m_photo.path());
 
@@ -105,9 +105,9 @@ std::unique_ptr<NfImageData> NfImageDecoder::previewImageData() const
                      << rawProcessor->imgdata.sizes.width
                      << "x" << rawProcessor->imgdata.sizes.height);
 
-        auto bestIndex = selectPreview(rawProcessor->imgdata.thumbs_list);
+        auto bestIndex = selectBestForTarget(rawProcessor->imgdata.thumbs_list, targetRes);
         if (bestIndex < 0) {
-                NF_LOG_ERROR("can't find preview");
+                NF_LOG_DEBUG("can't find preview");
                 return nullptr;
         }
 
@@ -240,16 +240,6 @@ bool NfImageDecoder::isSupportedFormat(int format)
                 || (format == LIBRAW_THUMBNAIL_BITMAP);
 }
 
-int NfImageDecoder::selectThumbnail(const libraw_thumbnail_list_t& list)
-{
-        return selectBestForTarget(list, 256);
-}
-
-int NfImageDecoder::selectPreview(const libraw_thumbnail_list_t& list)
-{
-        return selectBestForTarget(list, 1600);
-}
-
 int NfImageDecoder::selectBestForTarget(const libraw_thumbnail_list_t& list,
                                         int targetSize)
 {
@@ -264,21 +254,13 @@ int NfImageDecoder::selectBestForTarget(const libraw_thumbnail_list_t& list,
 
                 NF_LOG_DEBUG("[" << i << "][" << w << "x" << h << "]");
 
-                if (w <= 0 || h <= 0)
-                        continue;
-
-                int size = std::max(w, h);
-                int distance = std::abs(size - targetSize);
-
-                if (distance < minDistance) {
-                        minDistance = distance;
-                        bestIndex = i;
+                if (h >= targetSize) {
+                        NF_LOG_DEBUG("best index:" << i);
+                        return i;
                 }
         }
 
-        NF_LOG_DEBUG("Best index:" << bestIndex);
-
-    return bestIndex;
+    return -1;
 }
 
 } // namespace NfCore

@@ -67,9 +67,8 @@ void NfPhotoLoader::requestThumbnail(const NfPhoto &photo,
                 task->setGenerationId(m_generationId);
         }
 
-        task->setImageSource(NfThumbnailTask::ImageSource::EmbeddedImage);
-        task->setPriority(NfTask::Immediat);
-        task->setExtractionMethod(NfImageTask::ExtractionMethod::)
+        task->setPriority(NfTask::Priority::Immediate);
+        task->setExtractionMethod(NfImageTask::ExtractionMethod::Fastest);
         {
                 std::scoped_lock lock(m_queueMutex);
                 task->setSequence(m_sequence++);
@@ -106,8 +105,8 @@ void NfPhotoLoader::requestPreview(const NfPhoto &photo,
                 task->setGenerationId(m_generationId);
         }
 
-        task->setImageSource(NfPreviewTask::ImageSource::EmbeddedImage);
-        task->setPriority(NfTask::Priority::Immediate));
+        task->setPriority(NfTask::Priority::Immediate);
+        task->setExtractionMethod(NfImageTask::ExtractionMethod::Fastest);
         task->setResult([&](NfTask* result, NfTask::TaskStatus status) {
                 if (status != NfTask::TaskStatus::Success)
                         return;
@@ -137,6 +136,11 @@ std::vector<NfPhoto> NfPhotoLoader::takePhotos()
 std::vector<NfThumbnail> NfPhotoLoader::takeThumbnails()
 {
         std::scoped_lock lock(m_queueMutex);
+        for (auto const& t: m_thumbnailsQueue) {
+                NF_LOG_DEBUG("thumbnail: ["
+                             << t.getImage()->width()
+                             << "x" << t.getImage()->height() << "]");
+        }
         return std::move(m_thumbnailsQueue);
 }
 

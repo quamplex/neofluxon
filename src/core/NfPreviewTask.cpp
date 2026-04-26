@@ -33,62 +33,48 @@
 namespace NfCore {
 
 NfPreviewTask::NfPreviewTask(const NfPhoto& photo,
-                                 std::unique_ptr<NfImage> imageContainer)
-        : m_generationId{0}
-        , m_photo{photo}
-        , m_imageContainer{std::move(imageContainer)}
-        , m_imageSource{ImageSource::EmbeddedImage}
+                             std::unique_ptr<NfImage> imageContainer)
+        : NfImageTask(photo, std::move(imageContainer))
 {
 }
 
 NfPreviewTask::~NfPreviewTask() = default;
 
-void NfPreviewTask::setGenerationId(uint64_t generationId)
-{
-        m_generationId = generationId;
-}
-
-uint64_t NfPreviewTask::generationId() const
-{
-        return m_generationId;
-}
-
-void NfPreviewTask::setImageSource(NfPreviewTask::ImageSource source)
-{
-        m_imageSource = source;
-}
-
-NfPreviewTask::ImageSource NfPreviewTask::imageSource() const
-{
-        return m_imageSource;
-}
-
 NfPreviewTask::TaskStatus NfPreviewTask::execute()
 {
-        NfImageDecoder decoder(m_photo);
-
+        NfImageDecoder decoder(getPhoto());
         std::unique_ptr<NfImageData> imageData;
-        if (imageSource() == ImageSource::EmbeddedImage)
-                imageData = decoder.previewImageData();
-        else
+        constexpr int targetRes = 1600;
+
+        const auto method = extractionMethod();
+
+        if (method == ExtractionMethod::Embedded
+            || method == ExtractionMethod::Fastest) {
+                imageData = decoder.previewImageData(targetRes);
+        }
+
+        if (!imageData && (method == ExtractionMethod::FromRaw
+                           || method == ExtractionMethod::Fastest)) {
                 imageData = decoder.rawImage();
+        }
 
         if (!imageData)
                 return TaskStatus::Failed;
 
-        m_imageContainer->setData(std::move(imageData));
-        if (imageSource() == ImageSource::GeneratedImage)
-                m_imageContainer->resize(1600, 1600);
+        imageContainer()->setData(std::move(imageData));
+
+        auto w = imageContainer()->width();
+        auto h = imageContainer()->height();
+
+        if (w > targetRes || h > targetRes)
+                imageContainer()->resize(targetRes, targetRes);
 
         return TaskStatus::Success;
 }
 
 std::unique_ptr<NfPreview> NfPreviewTask::takePreview()
 {
-        auto preview = std::make_unique<NfPreview>(m_photo.id(),
-                                                   std::move(m_imageContainer));
-        preview->setImageSource(imageSource());
-        return preview;
+        return std::make_unique<NfPreview>(getPhoto().id(), takeImage());
 }
 
 } // namespace NfCore

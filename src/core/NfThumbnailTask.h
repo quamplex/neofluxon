@@ -36,7 +36,12 @@ class NfThumbnail;
 class NfThumbnailTask : public NfImageTask {
 public:
         NfThumbnailTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
+        NfThumbnailTask(NfThumbnailTask&&) noexcept = default;
+        NfThumbnailTask& operator=(NfThumbnailTask&&) noexcept = default;
+        NfThumbnailTask(const NfThumbnailTask&) = delete;
+        NfThumbnailTask& operator=(const NfThumbnailTask&) = delete;
         ~NfThumbnailTask();
+
         TaskStatus execute() override;
         std::unique_ptr<NfThumbnail> takeThumbnail();
 };

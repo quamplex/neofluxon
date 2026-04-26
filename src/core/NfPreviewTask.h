@@ -24,22 +24,27 @@
 #ifndef NF_PREVIEW_TASK_H
 #define NF_PREVIEW_TASK_H
 
-#include "NfTask.h"
+#include "NfImageTask.h"
 #include "NfPhoto.h"
 #include "NfPreview.h"
 
 #include <memory>
-#include <cstdint>
 
 namespace NfCore {
 
 class NfImage;
 
-class NfPreviewTask : public NfTask {
+class NfPreviewTask : public NfImageTask {
 public:
         NfPreviewTask(const NfPhoto& photo, std::unique_ptr<NfImage> imageContainer);
+        NfPreviewTask(NfPreviewTask&&) noexcept = default;
+        NfPreviewTask& operator=(NfPreviewTask&&) noexcept = default;
+        NfPreviewTask(const NfPreviewTask&) = delete;
+        NfPreviewTask& operator=(const NfPreviewTask&) = delete;
         ~NfPreviewTask();
+
         TaskStatus execute() override;
+        std::unique_ptr<NfPreview> takePreview();
 };
 
 } // namespace NfCore

@@ -127,7 +127,11 @@ std::size_t NfQtPixmap::size() const
 
 void NfQtPixmap::resize(int w, int h)
 {
-        m_pixmapImage = m_pixmapImage.scaled(w, h, Qt::KeepAspectRatio);
+        m_pixmapImage = m_pixmapImage.scaledToHeight(h,
+                                                     Qt::SmoothTransformation
+                                                     );
+        NF_LOG_INFO("scaled: " <<  m_pixmapImage.height());
+        //m_pixmapImage = m_pixmapImage.scaled(INT_MAX, h, Qt::KeepAspectRatio);
         //setWidth(m_pixmapImage.width());
         //setHeight(m_pixmapImage.height());
 }

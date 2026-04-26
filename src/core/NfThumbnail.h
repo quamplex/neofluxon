@@ -34,28 +34,20 @@ class NfImage;
 
 class NfThumbnail {
 public:
-        enum class ImageSource {
-                EmbeddedImage,
-                GeneratedImage
-        };
-
         explicit NfThumbnail(const NfPhotoId &id, std::unique_ptr<NfImage> img);
         NfThumbnail(NfThumbnail&&) noexcept = default;
         NfThumbnail& operator=(NfThumbnail&&) noexcept = default;
         NfThumbnail(const NfThumbnail&) = delete;
         NfThumbnail& operator=(const NfThumbnail&) = delete;
 
-        void setImageSource(ImageSource source);
-        ImageSource imageSource() const;
         const NfPhotoId& id() const;
         NfImage* getImage() const;
 
-        [[nodiscard]] std::unique_ptr<NfImage> releaseImage();
+        std::unique_ptr<NfImage> releaseImage();
 
 private:
         NfPhotoId m_photoId;
         std::unique_ptr<NfImage> m_image;
-        ImageSource m_imageSource;
 };
 
 } // namespace NfCore

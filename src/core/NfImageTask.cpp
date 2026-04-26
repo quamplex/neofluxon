@@ -22,7 +22,6 @@
  */
 
 #include "NfImageTask.h"
-
 #include "NfImage.h"
 
 namespace NfCore {
@@ -60,7 +59,17 @@ NfImageTask::ExtractionMethod NfImageTask::extractionMethod() const
 
 std::unique_ptr<NfImage> NfImageTask::takeImage()
 {
-        return m_imageContainer;
+        return std::move(m_imageContainer);
+}
+
+const NfPhoto& NfImageTask::getPhoto() const
+{
+        return m_photo;
+}
+
+NfImage* NfImageTask::imageContainer() const
+{
+        return m_imageContainer.get();
 }
 
 } // namespace NfCore
